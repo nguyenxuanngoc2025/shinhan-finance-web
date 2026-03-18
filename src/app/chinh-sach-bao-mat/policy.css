@@ -1,0 +1,112 @@
+/* ===== POLICY PAGES — chinh-sach-bao-mat, mien-tru-trach-nhiem ===== */
+.policy-page {
+  margin-top: 70px;
+  background: #fff;
+  min-height: 80vh;
+}
+
+/* Hero */
+.policy-hero {
+  background: linear-gradient(135deg, #007bc3 0%, #00559a 100%);
+  padding: 48px 0 40px;
+  color: #fff;
+}
+.policy-hero h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 8px 0 4px;
+  font-family: 'Inter', var(--font-family);
+}
+.policy-hero p {
+  font-size: 13px;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* Breadcrumb */
+.policy-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  opacity: 0.85;
+}
+.policy-breadcrumb a { color: #fff; text-decoration: underline; }
+.policy-breadcrumb span { color: rgba(255,255,255,0.7); }
+.policy-breadcrumb span:last-child { color: #fff; text-decoration: none; }
+
+/* Body */
+.policy-body {
+  padding: 48px 0 80px;
+}
+
+/* Content typography */
+.policy-content {
+  max-width: 800px;
+}
+.policy-intro {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 32px;
+  padding: 20px 24px;
+  background: #f0f6fc;
+  border-left: 4px solid #007bc3;
+  border-radius: 0 8px 8px 0;
+}
+.policy-content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #007bc3;
+  margin: 36px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e8f1f8;
+}
+.policy-content h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a2233;
+  margin: 20px 0 8px;
+}
+.policy-content p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 12px;
+}
+.policy-content ul {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+.policy-content li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 8px;
+}
+.policy-content a {
+  color: #007bc3;
+  text-decoration: underline;
+}
+
+/* Contact box */
+.policy-contact-box {
+  margin-top: 40px;
+  padding: 24px 28px;
+  background: #f6f9fd;
+  border-radius: 12px;
+  border: 1px solid #d0e4f5;
+}
+.policy-contact-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #007bc3;
+  margin: 0 0 16px;
+}
+.policy-contact-box p { margin-bottom: 8px; }
+
+@media (max-width: 768px) {
+  .policy-hero h1 { font-size: 24px; }
+  .policy-body { padding: 32px 0 60px; }
+}

@@ -1,0 +1,65 @@
+﻿   Γû▓ Next.js 15.4.11
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 31.0s
+   Linting and checking validity of types ...
+
+./src/middleware.ts
+2:10  Warning: 'withPayload' is defined but never used.  @typescript-eslint/no-unused-vars
+4:34  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/22) ...
+   Generating static pages (5/22) 
+node.exe :  ΓÜá metadataBase property in metadata export is not set for 
+resolving social open graph or twitter images, using "http://localhost:3000". 
+See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadat
+abase
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( ΓÜá metadataBa...ta#metadatabase:S 
+   tring) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   Generating static pages (10/22) 
+   Generating static pages (16/22) 
+ Γ£ô Generating static pages (22/22)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                                            Size  First Load JS
+Γöî Γùï /                                                               5.29 kB         112 kB
+Γö£ Γùï /_not-found                                                       997 B         102 kB
+Γö£ ╞Æ /admin/[[...segments]]                                          12.3 kB         562 kB
+Γö£ ╞Æ /api/[...slug]                                                    135 B         101 kB
+Γö£ Γùï /chinh-sach-bao-mat                                               133 B         107 kB
+Γö£ Γùï /dang-ky-vay                                                     7.4 kB         115 kB
+Γö£ Γùï /mien-tru-trach-nhiem                                             133 B         107 kB
+Γö£ Γùï /mo-the                                                         4.96 kB         113 kB
+Γö£ Γùï /robots.txt                                                       135 B         101 kB
+Γö£ Γùï /san-pham                                                       1.87 kB         111 kB
+Γö£ Γùï /san-pham/the-tin-dung                                          4.95 kB         112 kB
+Γö£ Γùï /san-pham/vay-tin-chap                                             4 kB         112 kB
+Γö£ Γùï /san-pham/vay-tra-gop                                            4.2 kB         112 kB
+Γö£ Γùï /sitemap.xml                                                      135 B         101 kB
+Γö£ Γùï /tin-tuc                                                        5.32 kB         113 kB
+Γöö ΓùÅ /tin-tuc/[slug]                                                 2.23 kB         107 kB
+    Γö£ /tin-tuc/bat-deal-le-bat-uu-dai-cung-the-first
+    Γö£ /tin-tuc/thanh-toan-nhanh-gon-bat-tron-deal-hoi-tai-ishinhan
+    Γö£ /tin-tuc/shinhan-finance-duoc-vinh-danh-don-vi-tieu-bieu
+    Γöö [+3 more paths]
++ First Load JS shared by all                                        101 kB
+  Γö£ chunks/4bd1b696-cc729d47eba2cee4.js                             54.1 kB
+  Γö£ chunks/5964-217149ecc4b4e5f3.js                                   44 kB
+  Γöö other shared chunks (total)                                     2.79 kB
+
+
+╞Æ Middleware                                                        25.4 kB
+
+Γùï  (Static)   prerendered as static content
+ΓùÅ  (SSG)      prerendered as static HTML (uses generateStaticParams)
+╞Æ  (Dynamic)  server-rendered on demand
+

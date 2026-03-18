@@ -1,0 +1,25 @@
+services:
+  shinhan-web:
+    build: .
+    container_name: shinhan-web
+    restart: unless-stopped
+    ports:
+      - "3005:3000"
+    volumes:
+      - shinhan-uploads:/app/public/uploads
+      - shinhan-data:/app/src/data
+    environment:
+      - NODE_ENV=production
+      - ADMIN_EMAIL=admin@shinhan.com
+      - ADMIN_PASSWORD=shinhan2026
+      - ADMIN_TOKEN=shinhan-cms-2026
+    networks:
+      - caddy-network
+
+volumes:
+  shinhan-uploads:
+  shinhan-data:
+
+networks:
+  caddy-network:
+    external: true

@@ -1,0 +1,31 @@
+{
+  "name": "shinhan-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3005",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@payloadcms/db-sqlite": "^3.79.1",
+    "@payloadcms/next": "^3.79.1",
+    "@payloadcms/richtext-lexical": "^3.79.1",
+    "@supabase/supabase-js": "^2.99.2",
+    "graphql": "^16.13.1",
+    "next": "15.4.11",
+    "payload": "^3.79.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.7",
+    "typescript": "^5"
+  }
+}

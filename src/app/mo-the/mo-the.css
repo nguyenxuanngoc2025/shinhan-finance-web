@@ -1,0 +1,98 @@
+/* ===== MO THE — Overrides & Custom ===== */
+/* Mọi styling chính kế thừa từ credit-card.css + dang-ky-vay.css */
+
+/* ── Căn lề chuẩn: đồng nhất max-width 960px toàn trang ── */
+/* override .container của globals để khớp với .lf-container */
+.cc-page .container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── HERO TITLE ĐIỂM NHẤN ── */
+.mo-the-hero-section {
+  padding-bottom: 48px;
+}
+
+.mo-the-hero-title {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f0f4f8;
+}
+
+.mo-the-brand {
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--shinhan-blue, #007bc3);
+  font-family: 'Inter', var(--font-family);
+  letter-spacing: -1px;
+  line-height: 1;
+  /* Gradient underline accent */
+  background: linear-gradient(135deg, #007bc3, #00b9ef);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mo-the-separator {
+  font-size: 28px;
+  color: #c0cdd8;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.mo-the-subtitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary, #1a2233);
+  font-family: 'Inter', var(--font-family);
+  line-height: 1.3;
+}
+
+/* ── SCALE 4 CARDS XUỐNG 60% ── */
+/* override cc-feature-card sizes để nhỏ gọn hơn */
+.mo-the-features-sm .cc-feature-card {
+  padding: 18px 22px;
+  min-height: 144px;
+}
+
+.mo-the-features-sm .cc-feature-big {
+  font-size: 52px;
+  line-height: 52px;
+}
+
+.mo-the-features-sm .cc-feature-label {
+  font-size: 17px;
+}
+
+.mo-the-features-sm .cc-feature-number {
+  margin-bottom: 14px;
+}
+
+.mo-the-features-sm .cc-feature-desc {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── FORM SECTION — chuẩn hóa màu sắc ── */
+/* lf-form-section dùng nền trắng, container căn giữa chuẩn */
+.lf-form-section {
+  background: #f6f8fb;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .mo-the-hero-title {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mo-the-brand { font-size: 30px; }
+  .mo-the-subtitle { font-size: 16px; }
+  .mo-the-separator { display: none; }
+  .mo-the-features-sm .cc-feature-big { font-size: 38px; line-height: 38px; }
+  .mo-the-features-sm .cc-feature-label { font-size: 14px; }
+}

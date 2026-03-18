@@ -1,0 +1,481 @@
+/* =============================================
+   SHINHAN CMS — ADMIN THEME
+   WordPress-style: Dark Sidebar + Light Content
+   Inspired by Antigravity IDE
+   Default: Light mode
+   ============================================= */
+
+/* ===== VARIABLES ===== */
+:root {
+  /* Sidebar (dark always like WordPress/Antigravity) */
+  --sidebar-bg: #1e1e2e;
+  --sidebar-hover: #2a2a3e;
+  --sidebar-active: rgba(0, 120, 212, 0.15);
+  --sidebar-text: rgba(255, 255, 255, 0.7);
+  --sidebar-text-hover: #ffffff;
+  --sidebar-text-active: #60a5fa;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-width: 260px;
+  --sidebar-group-label: rgba(255, 255, 255, 0.35);
+
+  /* Content area (light) */
+  --content-bg: #f5f7fa;
+  --content-surface: #ffffff;
+  --content-text: #1f2937;
+  --content-text-secondary: #6b7280;
+  --content-text-muted: #9ca3af;
+  --content-border: #e5e7eb;
+  --content-border-hover: #d1d5db;
+
+  /* Accent */
+  --accent: #0078D4;
+  --accent-hover: #006abc;
+  --accent-light: rgba(0, 120, 212, 0.08);
+  --accent-glow: rgba(0, 120, 212, 0.15);
+
+  /* Topbar */
+  --topbar-bg: #ffffff;
+  --topbar-border: #e5e7eb;
+  --topbar-height: 56px;
+
+  /* Success / Error */
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+}
+
+/* ===== RESET PAYLOAD THEME VARS ===== */
+.payload__theme--light,
+html[data-theme="light"] {
+  --theme-elevation-0: var(--content-bg) !important;
+  --theme-elevation-50: #edf0f5 !important;
+  --theme-elevation-100: var(--content-surface) !important;
+  --theme-elevation-150: #f9fafb !important;
+  --theme-elevation-200: #f3f4f6 !important;
+  --theme-elevation-500: var(--content-text-secondary) !important;
+  --theme-elevation-800: var(--content-text) !important;
+  --theme-elevation-1000: #000000 !important;
+  --theme-text: var(--content-text) !important;
+  --theme-bg: var(--content-bg) !important;
+  --theme-input-bg: var(--content-surface) !important;
+}
+
+/* ===== FORCE FONT ===== */
+body, * {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+body {
+  background: var(--content-bg) !important;
+}
+
+/* ===== SIDEBAR FIXED LEFT ===== */
+
+/* Payload nav wrapper — force sidebar layout */
+.nav {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: var(--sidebar-width) !important;
+  height: 100vh !important;
+  background: var(--sidebar-bg) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  z-index: 1000 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  border-right: 1px solid var(--sidebar-border) !important;
+  padding: 0 !important;
+}
+
+/* Sidebar scrollbar */
+.nav::-webkit-scrollbar { width: 4px; }
+.nav::-webkit-scrollbar-track { background: transparent; }
+.nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+/* Nav header/logo area */
+.nav__header,
+.nav .nav__logo {
+  padding: 20px 20px 16px !important;
+  border-bottom: 1px solid var(--sidebar-border) !important;
+  margin-bottom: 8px !important;
+}
+
+.nav__logo-label,
+.nav .nav__logo span {
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.3px !important;
+}
+
+/* Nav groups */
+.nav-group {
+  padding: 0 12px !important;
+  margin-bottom: 4px !important;
+}
+
+/* Group labels (COLLECTIONS, GIAO DIỆN) */
+.nav-group__label,
+.nav-group__toggle,
+.nav-group > button,
+.nav-group [class*="label"] {
+  color: var(--sidebar-group-label) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.2px !important;
+  text-transform: uppercase !important;
+  padding: 12px 12px 6px !important;
+  background: none !important;
+  border: none !important;
+}
+
+/* Nav links */
+.nav-group__content a,
+.nav a[href*="/admin/"],
+.nav a[href*="/collections/"],
+.nav a[href*="/globals/"] {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  margin: 1px 0 !important;
+  border-radius: 6px !important;
+  color: var(--sidebar-text) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+  gap: 10px !important;
+}
+
+.nav-group__content a:hover,
+.nav a[href*="/admin/"]:hover {
+  background: var(--sidebar-hover) !important;
+  color: var(--sidebar-text-hover) !important;
+}
+
+.nav-group__content a[aria-current="page"],
+.nav-group__content a.active,
+.nav a.active {
+  background: var(--sidebar-active) !important;
+  color: var(--sidebar-text-active) !important;
+  font-weight: 600 !important;
+}
+
+/* Logout button */
+.nav__logout,
+button[class*="logout"],
+a[href*="/logout"] {
+  margin-top: auto !important;
+  padding: 12px 20px !important;
+  border-top: 1px solid var(--sidebar-border) !important;
+  color: var(--sidebar-text) !important;
+  font-size: 13px !important;
+  transition: all 0.15s !important;
+}
+.nav__logout:hover,
+button[class*="logout"]:hover,
+a[href*="/logout"]:hover {
+  color: var(--error) !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+
+/* Account link in sidebar */
+a[href*="/admin/account"] {
+  padding: 12px 20px !important;
+  border-top: 1px solid var(--sidebar-border) !important;
+}
+
+/* ===== MAIN CONTENT PUSH RIGHT ===== */
+
+/* Push content to the right of fixed sidebar */
+.template-default,
+.template-default__wrap,
+.template-default__content {
+  margin-left: var(--sidebar-width) !important;
+  min-height: 100vh !important;
+  background: var(--content-bg) !important;
+}
+
+/* ===== TOP BAR ===== */
+.app-header,
+[class*="app-header"] {
+  background: var(--topbar-bg) !important;
+  border-bottom: 1px solid var(--topbar-border) !important;
+  height: var(--topbar-height) !important;
+  padding: 0 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+}
+
+/* Breadcrumbs */
+.step-nav,
+[class*="step-nav"] {
+  font-size: 13px !important;
+  color: var(--content-text-muted) !important;
+}
+.step-nav a { color: var(--content-text-secondary) !important; }
+.step-nav a:hover { color: var(--accent) !important; }
+
+/* ===== DASHBOARD ===== */
+
+/* Section headings */
+h1 { color: var(--content-text) !important; font-size: 24px !important; font-weight: 700 !important; letter-spacing: -0.5px !important; }
+h2 { color: var(--content-text) !important; font-size: 18px !important; font-weight: 600 !important; letter-spacing: -0.3px !important; }
+h3 { color: var(--content-text) !important; font-size: 15px !important; font-weight: 600 !important; }
+h4 { color: var(--content-text) !important; font-size: 14px !important; font-weight: 600 !important; }
+
+/* Dashboard cards grid */
+.dashboard__card-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+  gap: 16px !important;
+}
+
+/* Dashboard cards */
+.dashboard__card,
+[class*="card"] {
+  background: var(--content-surface) !important;
+  border: 1px solid var(--content-border) !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+}
+
+.dashboard__card:hover,
+[class*="card"]:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 0 4px 12px rgba(0,120,212,0.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+.dashboard__card h4 {
+  color: var(--content-text) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+/* + (create new) */
+.dashboard__card a[href*="create"],
+.dashboard__card [class*="plus"] {
+  color: var(--accent) !important;
+  font-size: 20px !important;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  padding: 8px 16px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.btn--style-primary,
+button.btn--style-primary {
+  background: var(--accent) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+.btn--style-primary:hover {
+  background: var(--accent-hover) !important;
+  box-shadow: 0 4px 12px rgba(0,120,212,0.25) !important;
+}
+
+.btn--style-secondary {
+  background: var(--content-surface) !important;
+  border: 1px solid var(--content-border) !important;
+  color: var(--content-text) !important;
+}
+.btn--style-secondary:hover {
+  background: #f9fafb !important;
+  border-color: var(--content-border-hover) !important;
+}
+
+/* ===== FORM FIELDS ===== */
+.field-type input,
+.field-type textarea,
+.field-type select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+textarea, select {
+  background: var(--content-surface) !important;
+  border: 1px solid var(--content-border) !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  color: var(--content-text) !important;
+  transition: all 0.15s !important;
+}
+
+.field-type input:focus,
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow) !important;
+  outline: none !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--content-text-muted) !important;
+}
+
+label {
+  color: var(--content-text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+/* ===== TABLE ===== */
+table { border-collapse: separate !important; border-spacing: 0 !important; }
+
+table thead {
+  background: #f9fafb !important;
+}
+table thead th {
+  color: var(--content-text-muted) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid var(--content-border) !important;
+}
+
+table tbody tr {
+  transition: background 0.1s !important;
+}
+table tbody tr:hover {
+  background: var(--accent-light) !important;
+}
+table tbody td {
+  color: var(--content-text) !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+/* ===== PILLS / BADGES ===== */
+.pill {
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  padding: 4px 10px !important;
+}
+
+/* ===== POPUP / DRAWER ===== */
+.popup, .drawer, [class*="popup"], [class*="drawer"] {
+  background: var(--content-surface) !important;
+  border: 1px solid var(--content-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12) !important;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* ===== TOAST / NOTIFICATIONS ===== */
+.toast-item, [class*="toast"] {
+  background: var(--content-surface) !important;
+  border: 1px solid var(--content-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1) !important;
+  color: var(--content-text) !important;
+}
+
+/* ===== SEARCH ===== */
+.search-filter input {
+  background: var(--content-surface) !important;
+  border: 1px solid var(--content-border) !important;
+  border-radius: 8px !important;
+}
+
+/* ===== LOADING BAR ===== */
+.loading-overlay__bar { background: var(--accent) !important; }
+
+/* ===== SELECTION ===== */
+::selection { background: rgba(0, 120, 212, 0.2); }
+
+/* ===== LINKS ===== */
+a { color: var(--accent) !important; text-decoration: none !important; }
+a:hover { color: var(--accent-hover) !important; }
+
+/* ===== HIDE MOBILE HAMBURGER ON DESKTOP ===== */
+@media (min-width: 1024px) {
+  .nav-toggler,
+  .hamburger,
+  button[class*="hamburger"],
+  [class*="nav-toggle"] {
+    display: none !important;
+  }
+}
+
+/* ===== MOBILE: overlay sidebar ===== */
+@media (max-width: 1023px) {
+  .nav {
+    transform: translateX(-100%) !important;
+    transition: transform 0.25s ease !important;
+  }
+  .nav--open {
+    transform: translateX(0) !important;
+  }
+  .template-default,
+  .template-default__wrap,
+  .template-default__content {
+    margin-left: 0 !important;
+  }
+}
+
+/* ===== GUTTER / CONTENT SPACING ===== */
+.gutter--left { padding-left: 32px !important; }
+.gutter--right { padding-right: 32px !important; }
+
+/* ===== NexOn FOOTER ===== */
+.template-default__wrap::after {
+  content: 'Powered by NexOn';
+  display: block;
+  text-align: center;
+  padding: 32px 0 20px;
+  font-size: 11px;
+  color: var(--content-text-muted);
+  letter-spacing: 0.3px;
+}
+
+/* =========================================================
+   DARK MODE — khi user chọn "Dark" trong Payload Settings
+   ========================================================= */
+html[data-theme="dark"] {
+  --content-bg: #0f1117;
+  --content-surface: #1a1d27;
+  --content-text: #e5e7eb;
+  --content-text-secondary: #9ca3af;
+  --content-text-muted: #6b7280;
+  --content-border: #2d3143;
+  --content-border-hover: #3d4157;
+  --topbar-bg: #1a1d27;
+  --topbar-border: #2d3143;
+}
+
+html[data-theme="dark"] .dashboard__card h4 { color: #e5e7eb !important; }
+html[data-theme="dark"] table thead { background: #1a1d27 !important; }
+html[data-theme="dark"] table tbody tr:hover { background: rgba(0,120,212,0.08) !important; }
+html[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #3d4157; }

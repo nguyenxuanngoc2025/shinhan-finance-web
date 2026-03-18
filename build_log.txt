@@ -1,0 +1,54 @@
+﻿   Γû▓ Next.js 15.4.11
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 39.0s
+   Linting and checking validity of types ...
+
+./src/middleware.ts
+2:10  Warning: 'withPayload' is defined but never used.  @typescript-eslint/no-unused-vars
+4:34  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/22) ...
+node.exe :  ΓÜá metadataBase property in metadata export is not set for 
+resolving social open graph or twitter images, using "http://localhost:3000". 
+See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadat
+abase
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( ΓÜá metadataBa...ta#metadatabase:S 
+   tring) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ Γ¿» useSearchParams() should be wrapped in a suspense boundary at page 
+"/dang-ky-vay". Read more: 
+https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at g 
+(E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\.next\server\chunks\24.js:3:15628)
+    at l 
+(E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\.next\server\chunks\24.js:7:55933)
+    at s (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\.next\server\app\dang-ky-vay\
+page.js:1:11770)
+    at n4 (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\node_modules\next\dist\compi
+led\next-server\app-page.runtime.prod.js:2:81697)
+    at n8 (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\node_modules\next\dist\compi
+led\next-server\app-page.runtime.prod.js:2:83467)
+    at n9 (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\node_modules\next\dist\compi
+led\next-server\app-page.runtime.prod.js:2:103676)
+    at n5 (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\node_modules\next\dist\compi
+led\next-server\app-page.runtime.prod.js:2:101094)
+    at n3 (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\node_modules\next\dist\compi
+led\next-server\app-page.runtime.prod.js:2:82049)
+    at n8 (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\node_modules\next\dist\compi
+led\next-server\app-page.runtime.prod.js:2:83513)
+    at n8 (E:\ANTIGRAVITY\SHINHAN_WEB\shinhan-nextjs\node_modules\next\dist\compi
+led\next-server\app-page.runtime.prod.js:2:100435)
+Error occurred prerendering page "/dang-ky-vay". Read more: 
+https://nextjs.org/docs/messages/prerender-error
+Export encountered an error on /dang-ky-vay/page: /dang-ky-vay, exiting the 
+build.
+   Generating static pages (5/22) 
+ Γ¿» Next.js build worker exited with code: 1 and signal: null
