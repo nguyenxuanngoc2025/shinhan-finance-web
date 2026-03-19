@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 type SiteSettings = {
   logo: string
+  footer_logo: string
   favicon: string
   site_name: string
   site_description: string
@@ -16,6 +17,7 @@ type SiteSettings = {
 
 const DEFAULTS: SiteSettings = {
   logo: '/images/logo/SVFC_LOGO.png',
+  footer_logo: '/images/logo/logo-white.png',
   favicon: '',
   site_name: 'Shinhan Finance',
   site_description: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam',

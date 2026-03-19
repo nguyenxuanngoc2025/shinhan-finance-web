@@ -1,21 +1,10 @@
 'use client'
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-
-const DEFAULT_FOOTER_LOGO = '/images/logo/logo-white.png'
+import { useSiteSettings } from './SiteSettingsContext'
 
 export default function Footer() {
-  const [footerLogo, setFooterLogo] = useState(DEFAULT_FOOTER_LOGO)
-
-  useEffect(() => {
-    fetch('/api/cms/settings?key=general')
-      .then(r => r.json())
-      .then(res => {
-        if (res.data?.footer_logo) setFooterLogo(res.data.footer_logo)
-      })
-      .catch(() => {})
-  }, [])
+  const { footer_logo } = useSiteSettings()
 
   return (
     <footer className="footer" id="footer">
@@ -119,12 +108,12 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="container">
           <div className="footer-bottom-inner">
-            {/* Logo — load từ CMS settings (footer_logo), không dùng CSS filter */}
+            {/* Logo — from CMS via SiteSettingsContext */}
             <div className="footer-logo-wrap">
               <Link href="/" aria-label="Shinhan Finance - Trang chủ">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={footerLogo}
+                  src={footer_logo}
                   alt="Shinhan Finance"
                   style={{height: 22, width: 'auto'}}
                 />
