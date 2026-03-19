@@ -42,13 +42,12 @@ export default function NewsSection() {
 
   // Fetch from Supabase API — override hardcode if available
   useEffect(() => {
-    fetch('/api/cms/posts')
+    // Only fetch high-priority posts (Shinhan official) for homepage
+    fetch('/api/cms/posts?priority=high&limit=4')
       .then(r => r.json())
       .then(res => {
         if (res.data && res.data.length > 0) {
-          const published = res.data
-            .filter((p: any) => p.status === 'published')
-            .slice(0, 4)
+          const published = res.data.slice(0, 4)
           if (published.length > 0) {
             setArticles(published)
           }

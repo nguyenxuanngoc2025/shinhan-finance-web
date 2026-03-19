@@ -15,6 +15,24 @@ export async function GET() {
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
+  const all = searchParams.get('all')
+
+  // DELETE ALL mode
+  if (all === 'true') {
+    const { data: files } = await supabaseAdmin.from('media').select('url')
+    const { error } = await supabaseAdmin.from('media').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    // Try delete physical files
+    if (files) {
+      for (const f of files) {
+        if (f.url?.startsWith('/uploads/')) {
+          try { await unlink(path.join(process.cwd(), 'public', f.url)) } catch { /* ignore */ }
+        }
+      }
+    }
+    return NextResponse.json({ success: true, deleted: files?.length ?? 0 })
+  }
+
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 
   // Get file info first

@@ -133,6 +133,7 @@ const menuGroups: MenuGroup[] = [
     collapsible: true,
     items: [
       { label: 'Lãi suất & Tham số', href: '/admin/settings/rates', icon: 'calculator' },
+      { label: 'Tự động hóa', href: '/admin/settings/automation', icon: 'settings' },
       { label: 'Mã theo dõi', href: '/admin/settings/tracking', icon: 'chart' },
       { label: 'Thông tin tài khoản', href: '/admin/settings/account', icon: 'user' },
       { label: 'Người dùng', href: '/admin/settings/users', icon: 'partner' },

@@ -111,12 +111,14 @@ export default function Footer() {
             {/* Logo — from CMS via SiteSettingsContext */}
             <div className="footer-logo-wrap">
               <Link href="/" aria-label="Shinhan Finance - Trang chủ">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={footer_logo}
-                  alt="Shinhan Finance"
-                  style={{height: 22, width: 'auto'}}
-                />
+                {footer_logo ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={footer_logo}
+                    alt="Shinhan Finance"
+                    style={{height: 22, width: 'auto'}}
+                  />
+                ) : null}
               </Link>
             </div>
             {/* Copyright */}

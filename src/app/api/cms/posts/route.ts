@@ -1,15 +1,47 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 
-// GET /api/cms/posts — List all posts
-export async function GET() {
-  const { data, error } = await supabaseAdmin
+// GET /api/cms/posts — List posts with optional filters
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const source = searchParams.get('source')
+  const priority = searchParams.get('priority')
+  const category = searchParams.get('category')
+  const status = searchParams.get('status')
+  const limit = parseInt(searchParams.get('limit') || '50')
+  const page = parseInt(searchParams.get('page') || '1')
+  const excludePriority = searchParams.get('exclude_priority')
+
+  let query = supabaseAdmin
     .from('posts')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
 
+  // Apply filters
+  if (source) query = query.eq('source', source)
+  if (priority) query = query.eq('priority', priority)
+  if (excludePriority) query = query.neq('priority', excludePriority)
+  if (category) query = query.eq('category', category)
+  if (status) query = query.eq('status', status)
+  else query = query.eq('status', 'published') // default: only published
+
+  // Pagination
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  query = query.range(from, to)
+
+  const { data, error, count } = await query
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ data })
+  return NextResponse.json({
+    data,
+    pagination: {
+      page,
+      limit,
+      total: count || 0,
+      totalPages: Math.ceil((count || 0) / limit)
+    }
+  })
 }
 
 // POST /api/cms/posts — Create new post
@@ -31,6 +63,14 @@ export async function POST(request: Request) {
       seo_description: body.seo_description || null,
       status: body.status || 'draft',
       published_at: body.status === 'published' ? new Date().toISOString() : null,
+      // Auto SEO fields
+      source: body.source || 'manual',
+      priority: body.priority || 'normal',
+      auto_generated: body.auto_generated || false,
+      source_url: body.source_url || null,
+      keyword_target: body.keyword_target || null,
+      author: body.author || null,
+      canonical_url: body.canonical_url || null,
     })
     .select()
     .single()

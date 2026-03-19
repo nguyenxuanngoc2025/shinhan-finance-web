@@ -19,7 +19,14 @@ const NAV_ITEMS = [
       { label: 'Thông báo', href: '/tin-tuc?tab=thong-bao', icon: 'fas fa-bullhorn',      desc: 'Thông báo chính thức' },
       { label: 'Sự kiện',   href: '/tin-tuc?tab=su-kien',   icon: 'fas fa-calendar-alt',  desc: 'Sự kiện nổi bật' },
       { label: 'Khuyến mại',href: '/tin-tuc?tab=khuyen-mai',icon: 'fas fa-tag',            desc: 'Ưu đãi hấp dẫn' },
-      { label: 'Blog',      href: '/tin-tuc?tab=blog',      icon: 'fas fa-edit',           desc: 'Kiến thức tài chính' },
+    ],
+  },
+  {
+    label: 'Blog',
+    href: '/blog',
+    children: [
+      { label: 'Tin tài chính', href: '/blog', icon: 'fas fa-chart-line', desc: 'Cập nhật thị trường' },
+      { label: 'Kiến thức vay', href: '/blog', icon: 'fas fa-book-open', desc: 'Hướng dẫn tài chính' },
     ],
   },
 ]
@@ -32,7 +39,8 @@ const MOBILE_LINKS = [
   { label: 'Thông báo', href: '/tin-tuc?tab=thong-bao', indent: true },
   { label: 'Sự kiện', href: '/tin-tuc?tab=su-kien', indent: true },
   { label: 'Khuyến mại', href: '/tin-tuc?tab=khuyen-mai', indent: true },
-  { label: 'Blog', href: '/tin-tuc?tab=blog', indent: true },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Tin tài chính', href: '/blog', indent: true },
 ]
 
 export default function Header() {
@@ -63,13 +71,15 @@ export default function Header() {
 
           {/* Logo — from CMS via SiteSettingsContext */}
           <Link href="/" className="header-logo" aria-label="Shinhan Finance">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={logo}
-              alt="Shinhan Finance"
-              className="header-logo-img"
-              style={{width:160,height:'auto',maxHeight:44}}
-            />
+            {logo ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={logo}
+                alt="Shinhan Finance"
+                className="header-logo-img"
+                style={{width:160,height:'auto',maxHeight:44}}
+              />
+            ) : null}
           </Link>
 
           {/* Cụm phải: Nav + Actions */}
