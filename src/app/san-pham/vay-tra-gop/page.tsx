@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import '../../dang-ky-vay/dang-ky-vay.css'
 import '../vay-tin-chap/vay-tin-chap.css'
@@ -38,6 +38,26 @@ export default function VayTraGopPage() {
   const [loanTerm, setLoanTerm] = useState(12)
   const [activeSection, setActiveSection] = useState('bangtinhh')
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [config, setConfig] = useState({
+    min_rate: 0,
+    max_rate: 36,
+    min_down_payment_pct: 20,
+    installment_rate: 36,
+  })
+
+  // Fetch dynamic config from settings
+  const fetchConfig = useCallback(() => {
+    fetch('/api/cms/settings?key=loan_products.vay_tra_gop')
+      .then(r => r.json())
+      .then(res => {
+        if (res.data) {
+          setConfig(prev => ({ ...prev, ...res.data }))
+        }
+      })
+      .catch(() => { /* keep defaults */ })
+  }, [])
+
+  useEffect(() => { fetchConfig() }, [fetchConfig])
 
   const loanAmount = Math.max(productPrice - downPayment, 0)
   const monthly = calcMonthly(loanAmount, loanTerm)
@@ -204,7 +224,7 @@ export default function VayTraGopPage() {
                   </div>
                   <div className="lf-est-rate">
                     <span>Lãi suất minh họa tối thiểu (%/năm)*</span>
-                    <strong>0% – 36%</strong>
+                    <strong>{config.min_rate}% – {config.max_rate}%</strong>
                   </div>
                 </div>
 

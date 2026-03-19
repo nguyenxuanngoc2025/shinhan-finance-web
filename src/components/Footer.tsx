@@ -1,7 +1,22 @@
+'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
+const DEFAULT_FOOTER_LOGO = '/images/logo/SVFC_LOGO.png'
+
 export default function Footer() {
+  const [footerLogo, setFooterLogo] = useState(DEFAULT_FOOTER_LOGO)
+
+  useEffect(() => {
+    fetch('/api/cms/settings?key=general')
+      .then(r => r.json())
+      .then(res => {
+        if (res.data?.footer_logo) setFooterLogo(res.data.footer_logo)
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <footer className="footer" id="footer">
       {/* Hình mờ góc trên trái */}
@@ -66,7 +81,7 @@ export default function Footer() {
             </p>
             <p><strong>Email:</strong> <a href="mailto:dvkh@shinhanfinance.com.vn">dvkh@shinhanfinance.com.vn</a></p>
 
-            {/* Social Icons — SVG từ trang gốc Shinhan */}
+            {/* Social Icons */}
             <div className="footer-social">
               <a href="https://www.youtube.com/@ShinhanFinanceVietnam" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="social-icon">
                 <Image src="/images/social/ic-youtube.svg" alt="YouTube" width={36} height={36} unoptimized />
@@ -85,7 +100,7 @@ export default function Footer() {
               </a>
             </div>
 
-            {/* App Buttons - hình ảnh tải từ Shinhan, lưu local */}
+            {/* App Buttons */}
             <div className="footer-apps">
               <a href="#" className="app-img-btn">
                 <Image src="/images/app/app-store.png" alt="Tải về trên App Store" width={135} height={40} />
@@ -104,10 +119,15 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="container">
           <div className="footer-bottom-inner">
-            {/* Logo trắng — gắn link về trang chủ */}
+            {/* Logo — load từ CMS settings (footer_logo), không dùng CSS filter */}
             <div className="footer-logo-wrap">
               <Link href="/" aria-label="Shinhan Finance - Trang chủ">
-                <Image src="/images/logo/SVFC_LOGO.png" alt="Shinhan Finance" width={140} height={38} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={footerLogo}
+                  alt="Shinhan Finance"
+                  style={{height: 22, width: 'auto'}}
+                />
               </Link>
             </div>
             {/* Copyright */}

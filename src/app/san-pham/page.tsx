@@ -81,7 +81,7 @@ export default function ProductsPage() {
             const c = cfg.vay_tin_chap
             return { ...p, features: [
               `Lãi suất thấp từ ${c.min_rate}%/năm`,
-              `Hạn mức vay đến ${c.max_amount >= 1e6 ? c.max_amount / 1e6 + ' triệu' : c.max_amount}`,
+              `Hạn mức vay đến ${c.max_amount >= 1e9 ? (c.max_amount / 1e9 === Math.floor(c.max_amount / 1e9) ? c.max_amount / 1e9 + ' tỷ' : (c.max_amount / 1e9).toFixed(1) + ' tỷ') : c.max_amount >= 1e6 ? (c.max_amount / 1e6 === Math.floor(c.max_amount / 1e6) ? c.max_amount / 1e6 + ' triệu' : (c.max_amount / 1e6).toFixed(1) + ' triệu') : c.max_amount}`,
               `Tùy chọn thanh toán đến ${c.max_term_months} tháng`,
               'Không cần tài sản thế chấp',
             ]}

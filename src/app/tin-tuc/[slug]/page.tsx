@@ -26,56 +26,100 @@ type Props = {
   params: Promise<{ slug: string }>
 }
 
-// Fetch post from CMS API (server-side)
-async function getPostFromCMS(slug: string) {
+type ArticleData = {
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  category: NewsCategory
+  date: string
+  image: string
+}
+
+// Fetch all posts from CMS API (server-side)
+async function getAllCmsPosts() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3005'
     const res = await fetch(`${baseUrl}/api/cms/posts`, { next: { revalidate: 60 } })
-    if (!res.ok) return null
+    if (!res.ok) return []
     const { data } = await res.json()
-    return data?.find((p: any) => p.slug === slug) || null
+    return (data || []).filter((p: any) => p.status === 'published')
   } catch {
-    return null
+    return []
+  }
+}
+
+// Convert CMS post to article format
+function cmsToArticle(cmsPost: any, hardcoded?: any): ArticleData {
+  let content = ''
+  if (typeof cmsPost.content === 'string') {
+    content = cmsPost.content
+  } else if (Array.isArray(cmsPost.content)) {
+    content = cmsPost.content.map((c: any) => c.text || c.html || '').join('')
+  }
+  // If CMS content is empty, use hardcoded content as fallback
+  if (!content && hardcoded) {
+    content = hardcoded.content
+  }
+
+  return {
+    slug: cmsPost.slug,
+    title: cmsPost.title,
+    excerpt: cmsPost.excerpt || hardcoded?.excerpt || '',
+    content,
+    category: (cmsPost.category || hardcoded?.category || 'blog') as NewsCategory,
+    date: cmsPost.published_at || cmsPost.created_at || hardcoded?.date || '',
+    image: cmsPost.cover_image || hardcoded?.image || '/images/news/default.jpg',
   }
 }
 
 // Merge CMS data with hardcoded fallback
-async function getArticle(slug: string) {
-  // Try CMS first
-  const cmsPost = await getPostFromCMS(slug)
-  // Also get hardcoded version
+async function getArticle(slug: string): Promise<ArticleData | null> {
+  const cmsPosts = await getAllCmsPosts()
+  const cmsPost = cmsPosts.find((p: any) => p.slug === slug)
   const hardcoded = NEWS_ARTICLES.find(a => a.slug === slug)
 
-  if (cmsPost) {
-    // Convert CMS post format to article format
-    let content = ''
-    if (typeof cmsPost.content === 'string') {
-      content = cmsPost.content
-    } else if (Array.isArray(cmsPost.content)) {
-      content = cmsPost.content.map((c: any) => c.text || c.html || '').join('')
-    }
-    // If CMS content is empty, use hardcoded content as fallback
-    if (!content && hardcoded) {
-      content = hardcoded.content
-    }
-
-    return {
-      slug: cmsPost.slug,
-      title: cmsPost.title,
-      excerpt: cmsPost.excerpt || hardcoded?.excerpt || '',
-      content,
-      category: (cmsPost.category || hardcoded?.category || 'blog') as NewsCategory,
-      date: cmsPost.published_at || cmsPost.created_at || hardcoded?.date || '',
-      image: cmsPost.cover_image || hardcoded?.image || '/images/news/default.jpg',
-    }
-  }
-
-  // Fallback to hardcoded
+  if (cmsPost) return cmsToArticle(cmsPost, hardcoded)
   return hardcoded || null
 }
 
+// Get all articles for related section
+async function getAllArticles(): Promise<ArticleData[]> {
+  const cmsPosts = await getAllCmsPosts()
+
+  // Start with CMS posts
+  const articles: ArticleData[] = cmsPosts.map((p: any) => {
+    const hardcoded = NEWS_ARTICLES.find(a => a.slug === p.slug)
+    return cmsToArticle(p, hardcoded)
+  })
+
+  // Add hardcoded posts that are not in CMS
+  for (const hc of NEWS_ARTICLES) {
+    if (!cmsPosts.find((p: any) => p.slug === hc.slug)) {
+      articles.push(hc)
+    }
+  }
+
+  return articles
+}
+
 export async function generateStaticParams() {
-  return NEWS_ARTICLES.map(article => ({ slug: article.slug }))
+  // Include hardcoded slugs
+  const params = NEWS_ARTICLES.map(article => ({ slug: article.slug }))
+
+  // Also include CMS slugs
+  try {
+    const cmsPosts = await getAllCmsPosts()
+    for (const post of cmsPosts) {
+      if (!params.find(p => p.slug === post.slug)) {
+        params.push({ slug: post.slug })
+      }
+    }
+  } catch {
+    // ignore — hardcoded slugs are always included
+  }
+
+  return params
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -103,8 +147,9 @@ export default async function NewsDetailPage({ params }: Props) {
   const article = await getArticle(slug)
   if (!article) notFound()
 
-  // Related articles: try CMS first, fallback hardcoded
-  const related = NEWS_ARTICLES
+  // Related articles: from both CMS and hardcoded
+  const allArticles = await getAllArticles()
+  const related = allArticles
     .filter(a => a.category === article.category && a.slug !== article.slug)
     .slice(0, 3)
 
@@ -121,9 +166,9 @@ export default async function NewsDetailPage({ params }: Props) {
             <div className="news-detail-header">
               <span
                 className="news-detail-category"
-                style={{ background: CATEGORY_COLORS[article.category] }}
+                style={{ background: CATEGORY_COLORS[article.category] || '#43a047' }}
               >
-                {CATEGORY_LABELS[article.category]}
+                {CATEGORY_LABELS[article.category] || article.category}
               </span>
               <h1 className="news-detail-title">{article.title}</h1>
               <span className="news-detail-date">{article.date ? formatDate(article.date) : ''}</span>
@@ -178,3 +223,4 @@ export default async function NewsDetailPage({ params }: Props) {
     </>
   )
 }
+

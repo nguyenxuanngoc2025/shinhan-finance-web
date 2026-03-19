@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+
+const LOGO = '/uploads/2026-03/images-1773893841492.png'
 
 const NAV_ITEMS = [
   {
@@ -62,7 +63,13 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="header-logo" aria-label="Shinhan Finance">
-            <Image src="/images/logo/SVFC_LOGO.png" alt="Shinhan Finance" className="header-logo-img" width={160} height={44} priority />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={LOGO}
+              alt="Shinhan Finance"
+              className="header-logo-img"
+              style={{width:160,height:'auto',maxHeight:44}}
+            />
           </Link>
 
           {/* Cụm phải: Nav + Actions */}

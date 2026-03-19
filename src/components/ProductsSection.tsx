@@ -60,29 +60,46 @@ export default function ProductsSection() {
 
   const router = useRouter()
 
-  // Fetch from Supabase API
+  // Format amount with proper unit (triệu/tỷ)
+  function formatAmount(amount: number): string {
+    if (amount >= 1e9) {
+      const ty = amount / 1e9
+      return ty === Math.floor(ty) ? `${ty} tỷ` : `${ty.toFixed(1)} tỷ`
+    }
+    if (amount >= 1e6) {
+      const trieu = amount / 1e6
+      return trieu === Math.floor(trieu) ? `${trieu} triệu` : `${trieu.toFixed(1)} triệu`
+    }
+    return amount.toLocaleString('vi-VN')
+  }
+
+  // Fetch dynamic rates from settings API (priority) and products from CMS
   useEffect(() => {
-    fetch('/api/cms/products')
+    // First: fetch settings for dynamic rates
+    fetch('/api/cms/settings?key=loan_products')
       .then(r => r.json())
       .then(res => {
-        if (res.data && res.data.length > 0) {
-          const SHORT_NAMES: Record<string, string> = {
-            'vay-tin-chap': 'Vay tín chấp',
-            'the-tin-dung': 'Thẻ Tín Dụng',
+        if (!res.data) return
+        const cfg = res.data
+        setProducts(prev => prev.map(p => {
+          if (p.id === 'loan' && cfg.vay_tin_chap) {
+            const c = cfg.vay_tin_chap
+            return { ...p, features: [
+              `Lãi suất thấp từ ${c.min_rate}%/năm`,
+              `Hạn mức vay đến ${formatAmount(c.max_amount)}`,
+              `Tùy chọn thanh toán đến ${c.max_term_months} tháng`,
+            ]}
           }
-          const mapped = res.data.map((p: any) => ({
-            id: p.slug || p.id,
-            icon: p.icon || 'fas fa-box',
-            name: SHORT_NAMES[p.slug] || p.name,
-            title: p.description || p.name,
-            image: p.content?.image || '/images/products/loan.png',
-            features: p.content?.features || [],
-            cta: p.slug === 'the-tin-dung' ? 'Mở thẻ ngay' : 'Vay ngay',
-            ctaLink: p.slug === 'the-tin-dung' ? '/san-pham/the-tin-dung' : '/dang-ky-vay',
-            more: `/san-pham/${p.slug}`,
-          }))
-          if (mapped.length > 0) setProducts(mapped)
-        }
+          if ((p.id === 'card' || p.name === 'Thẻ Tín Dụng') && cfg.the_tin_dung) {
+            const c = cfg.the_tin_dung
+            return { ...p, features: [
+              `Rút tiền mặt đến ${c.cash_advance_pct}% hạn mức thẻ`,
+              `Miễn lãi suất lên đến ${c.interest_free_days} ngày`,
+              `${c.reward_points_pct}% điểm thưởng tích lũy không giới hạn`,
+            ]}
+          }
+          return p
+        }))
       })
       .catch(() => { /* keep fallback */ })
   }, [])

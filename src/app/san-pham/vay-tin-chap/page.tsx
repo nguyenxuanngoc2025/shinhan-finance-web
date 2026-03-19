@@ -45,6 +45,18 @@ function formatVND(n: number) {
   return n.toLocaleString('vi-VN')
 }
 
+function formatAmount(amount: number): string {
+  if (amount >= 1e9) {
+    const ty = amount / 1e9
+    return ty === Math.floor(ty) ? `${ty} tỷ` : `${ty.toFixed(1)} tỷ`
+  }
+  if (amount >= 1e6) {
+    const trieu = amount / 1e6
+    return trieu === Math.floor(trieu) ? `${trieu} triệu` : `${trieu.toFixed(1)} triệu`
+  }
+  return amount.toLocaleString('vi-VN')
+}
+
 function calcMonthly(amount: number, termMonths: number, annualRatePct: number) {
   const r = annualRatePct / 100 / 12
   const n = termMonths
@@ -141,7 +153,7 @@ export default function VayTinChapPage() {
                 </div>
                 <div className="vtc-hl-item">
                   <span className="vtc-hl-check"><i className="fas fa-check-circle"></i></span>
-                  <span>Hạn mức vay đến {config.max_amount >= 1e6 ? `${config.max_amount / 1e6} triệu` : formatVND(config.max_amount)}</span>
+                  <span>Hạn mức vay đến {formatAmount(config.max_amount)}</span>
                 </div>
                 <div className="vtc-hl-item">
                   <span className="vtc-hl-check"><i className="fas fa-check-circle"></i></span>
@@ -251,7 +263,7 @@ export default function VayTinChapPage() {
             <h2 className="vtc-section-title">Đặc điểm</h2>
             <ul className="vtc-plain-list">
               <li>Lãi suất tối thiểu từ <strong>{config.min_rate}%/năm</strong> đến tối đa <strong>{config.max_rate}%/năm</strong> tính trên dư nợ giảm dần (phụ thuộc kết quả thẩm định).</li>
-              <li>Khoản vay lên đến <strong>{config.max_salary_multiplier} lần thu nhập</strong> hàng tháng và tối đa <strong>{config.max_amount >= 1e6 ? `${config.max_amount / 1e6} triệu` : formatVND(config.max_amount)} đồng</strong>, cho mục đích tiêu dùng, phục vụ đời sống.</li>
+              <li>Khoản vay lên đến <strong>{config.max_salary_multiplier} lần thu nhập</strong> hàng tháng và tối đa <strong>{formatAmount(config.max_amount)} đồng</strong>, cho mục đích tiêu dùng, phục vụ đời sống.</li>
               <li>Thời hạn vay từ tối thiểu <strong>{config.min_term_months} tháng</strong> đến tối đa <strong>{config.max_term_months} tháng</strong>.</li>
               <li>Giải ngân trong vòng <strong>{config.disbursement_hours} giờ</strong> sau khi đăng ký hồ sơ.</li>
             </ul>

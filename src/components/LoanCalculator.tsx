@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -81,11 +81,28 @@ function formatVND(val: number): string {
 }
 
 export default function LoanCalculator({ needType, onClose }: Props) {
-  const config = NEED_CONFIGS[needType] || NEED_CONFIGS.motorbike
+  const defaultConfig = NEED_CONFIGS[needType] || NEED_CONFIGS.motorbike
+  const [config, setConfig] = useState(defaultConfig)
 
   const [income, setIncome] = useState<number>(0)
   const [loanAmount, setLoanAmount] = useState<number>(config.minLoan)
   const [months, setMonths] = useState<number>(config.minMonths)
+
+  // Fetch dynamic interest rate from settings
+  useEffect(() => {
+    fetch('/api/cms/settings?key=loan_products.vay_tin_chap')
+      .then(r => r.json())
+      .then(res => {
+        if (res.data?.min_rate) {
+          setConfig(prev => ({
+            ...prev,
+            interestRate: res.data.min_rate,
+            maxLoan: res.data.max_amount || prev.maxLoan,
+          }))
+        }
+      })
+      .catch(() => { /* keep defaults */ })
+  }, [])
 
   const maxLoanAvailable = useMemo(() => {
     if (income <= 0) return config.maxLoan
@@ -255,3 +272,4 @@ export default function LoanCalculator({ needType, onClose }: Props) {
     </div>
   )
 }
+

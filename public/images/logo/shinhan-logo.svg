@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 48" fill="none">
+  <!-- Circle emblem -->
+  <circle cx="24" cy="24" r="22" fill="#0046A6"/>
+  <!-- S-wave design inside circle -->
+  <path d="M24 6C16 6 10 10 10 16c0 4 3 7 8 8 6 1.5 10 3 10 7 0 3-3 5-8 5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M24 42c8 0 14-4 14-10 0-4-3-7-8-8-6-1.5-10-3-10-7 0-3 3-5 8-5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Small leaf/bird shapes -->
+  <path d="M18 14c-2 1-3 3-2 5 1-1 3-3 2-5z" fill="#fff" opacity="0.7"/>
+  <path d="M30 29c2-1 3-3 2-5-1 1-3 3-2 5z" fill="#fff" opacity="0.7"/>
+  <!-- Text: Shinhan Finance -->
+  <text x="56" y="20" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-weight="700" font-size="16" fill="#0046A6" letter-spacing="0.5">Shinhan</text>
+  <text x="56" y="38" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-weight="400" font-size="14" fill="#0046A6" letter-spacing="0.3">Finance</text>
+</svg>

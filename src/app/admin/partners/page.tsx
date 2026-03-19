@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import ImagePicker from '../components/ImagePicker'
 
 type Partner = { id: string; name: string; logo: string; url: string; order_index: number; visible: boolean }
 
@@ -33,7 +34,7 @@ export default function PartnersPage() {
             <div className="form-group"><label>Tên</label><input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required /></div>
             <div className="form-group"><label>URL website</label><input type="text" value={form.url} onChange={e => setForm({...form, url: e.target.value})} /></div>
           </div>
-          <div className="form-group"><label>URL logo</label><input type="text" value={form.logo} onChange={e => setForm({...form, logo: e.target.value})} placeholder="/images/partners/logo.png" /></div>
+          <div className="form-group"><label>Logo</label><ImagePicker value={form.logo} onChange={v => setForm({...form, logo: v})} label="Logo đối tác" aspect="logo" /></div>
           <div className="form-actions">
             <button type="submit" className="btn-primary">{editId ? 'Cập nhật' : 'Thêm'}</button>
             <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Hủy</button>

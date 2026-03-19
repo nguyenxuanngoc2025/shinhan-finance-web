@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import ImagePicker from '../../components/ImagePicker'
 
 type SeoSettings = {
   default_title: string
@@ -91,7 +92,7 @@ export default function SeoSettingsPage() {
           </div>
           <div className="form-group">
             <label>OG Image mặc định</label>
-            <input type="text" value={settings.default_og_image} onChange={e => update('default_og_image', e.target.value)} placeholder="/images/og-default.jpg" />
+            <ImagePicker value={settings.default_og_image} onChange={v => update('default_og_image', v)} label="OG Image" aspect="wide" />
           </div>
         </div>
 

@@ -291,7 +291,7 @@ export default function AdminLoginPage() {
         {/* Left — Branding */}
         <div className="login-left">
           <div className="login-brand">
-            <img src="/images/logo/SVFC_LOGO.png" alt="Shinhan Finance" />
+            <img src="/uploads/2026-03/images-1773893841492.png" alt="Shinhan Finance" />
             <p className="login-brand-name">Admin Center</p>
           </div>
           <div className="login-quote">

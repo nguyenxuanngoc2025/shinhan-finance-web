@@ -1,73 +1,4 @@
 {
-  "loan_products": {
-    "vay_tin_chap": {
-      "name": "Vay tín chấp cá nhân",
-      "min_rate": 18,
-      "max_rate": 49,
-      "max_amount": 300000000,
-      "min_amount": 10000000,
-      "max_term_months": 48,
-      "min_term_months": 12,
-      "term_options": [
-        12,
-        18,
-        24,
-        36,
-        48
-      ],
-      "max_salary_multiplier": 12,
-      "min_salary": 6000000,
-      "disbursement_hours": 48,
-      "early_termination_fee_pct": 2,
-      "features": [
-        "Lãi suất thấp từ 17%/năm",
-        "Hạn mức vay đến 300 triệu",
-        "Tùy chọn thanh toán đến 48 tháng",
-        "Không cần tài sản thế chấp"
-      ],
-      "age_range_female": "21-55",
-      "age_range_male": "21-58"
-    },
-    "vay_tra_gop": {
-      "name": "Vay trả góp",
-      "min_rate": 0,
-      "max_rate": 36,
-      "max_amount": 50000000,
-      "min_amount": 2000000,
-      "min_down_payment_pct": 20,
-      "max_term_months": 24,
-      "min_term_months": 6,
-      "term_options": [
-        6,
-        9,
-        12,
-        18,
-        24
-      ],
-      "early_termination_fee_pct": 2,
-      "features": [
-        "Lãi suất ưu đãi từ {min_rate}%/năm",
-        "Trả trước chỉ từ {min_down_payment_pct}% giá trị",
-        "Kỳ hạn linh hoạt đến {max_term_months} tháng",
-        "Thủ tục đơn giản, duyệt nhanh"
-      ]
-    },
-    "the_tin_dung": {
-      "name": "Thẻ tín dụng THE FIRST",
-      "cash_advance_pct": 100,
-      "interest_free_days": 45,
-      "installment_rate": 0,
-      "reward_points_pct": 0.5,
-      "annual_fee_first_year": 0,
-      "cash_withdrawal_fee_pct": 2,
-      "features": [
-        "Rút tiền mặt đến {cash_advance_pct}% hạn mức thẻ",
-        "Miễn lãi suất lên đến {interest_free_days} ngày",
-        "{reward_points_pct}% điểm thưởng tích lũy không giới hạn",
-        "Miễn phí thường niên năm đầu"
-      ]
-    }
-  },
   "company_info": {
     "hotline": "0969 930 328",
     "email": "cskh@shinhanfinance.com.vn",
@@ -123,13 +54,14 @@
   "general": {
     "site_name": "Shinhan Finance",
     "site_description": "Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam",
-    "logo": "/images/logo/SVFC_LOGO.png",
+    "logo": "/uploads/2026-03/images-1773893841492.png",
     "favicon": "",
     "contact_phone": "0969 930 328",
-    "contact_email": "cskh@shinhanfinance.com.vn",
+    "contact_email": "cskh@tuvanvienshinhan.com",
     "zalo_number": "0969930328",
     "facebook_url": "",
-    "address": ""
+    "address": "",
+    "footer_logo": "/uploads/2026-03/shinhan_logo_2-1773900518115.svg"
   },
   "seo": {
     "default_title": "Shinhan Finance | Công ty tài chính đến từ Hàn Quốc",

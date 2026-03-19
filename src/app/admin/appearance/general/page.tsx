@@ -1,10 +1,12 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import ImagePicker from '../../components/ImagePicker'
 
 type GeneralSettings = {
   site_name: string
   site_description: string
   logo: string
+  footer_logo: string
   favicon: string
   contact_phone: string
   contact_email: string
@@ -17,6 +19,7 @@ const DEFAULTS: GeneralSettings = {
   site_name: 'Shinhan Finance',
   site_description: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam',
   logo: '/images/logo/SVFC_LOGO.png',
+  footer_logo: '/images/logo/SVFC_LOGO.png',
   favicon: '',
   contact_phone: '0969 930 328',
   contact_email: 'cskh@shinhanfinance.com.vn',
@@ -85,13 +88,19 @@ export default function AppearanceGeneralPage() {
           <label>Mô tả website</label>
           <textarea value={settings.site_description} onChange={e => update('site_description', e.target.value)} rows={2} />
         </div>
-        <div className="form-group">
-          <label>Logo URL</label>
-          <input type="text" value={settings.logo} onChange={e => update('logo', e.target.value)} />
-        </div>
-        <div className="form-group">
-          <label>Favicon URL</label>
-          <input type="text" value={settings.favicon} onChange={e => update('favicon', e.target.value)} />
+        <div className="form-row" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'1rem'}}>
+          <div className="form-group">
+            <label>Logo Header</label>
+            <ImagePicker value={settings.logo} onChange={v => update('logo', v)} label="Logo website" aspect="logo" />
+          </div>
+          <div className="form-group">
+            <label>Logo Footer <span style={{fontSize:12,color:'#888'}}>(nền trong suốt, màu trắng)</span></label>
+            <ImagePicker value={settings.footer_logo} onChange={v => update('footer_logo', v)} label="Logo footer" aspect="logo" />
+          </div>
+          <div className="form-group">
+            <label>Favicon</label>
+            <ImagePicker value={settings.favicon} onChange={v => update('favicon', v)} label="Favicon" aspect="square" compact />
+          </div>
         </div>
         <div className="form-row" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
           <div className="form-group"><label>Hotline</label><input type="text" value={settings.contact_phone} onChange={e => update('contact_phone', e.target.value)} /></div>

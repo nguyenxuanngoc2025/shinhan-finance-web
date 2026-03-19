@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect, Suspense } from 'react'
+import { useState, useRef, useEffect, Suspense, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -17,8 +17,22 @@ const STEPS = [
   { icon: 'fas fa-check-square', label: 'Kiểm tra lại' },
 ]
 
-/* ── Products ──────────────── */
-const PRODUCTS = [
+/* ── Product type ──────────────────── */
+type ProductConfig = {
+  id: string
+  name: string
+  image: string
+  features: string[]
+  cta: string
+  detail: string
+  minAmount: number
+  maxAmount: number
+  step: number
+  rate: number // decimal (e.g. 0.18)
+}
+
+/* ── Default products (fallback khi API chưa trả về) ──────────────── */
+const DEFAULT_PRODUCTS: ProductConfig[] = [
   {
     id: 'vay-tin-chap',
     name: 'Vay tín chấp cá nhân',
@@ -100,12 +114,74 @@ function DangKyVayInner() {
   const calcRef = useRef<HTMLDivElement>(null)
   const [salary, setSalary] = useState(0)
 
+  // Dynamic products from API settings
+  const [products, setProducts] = useState<ProductConfig[]>(DEFAULT_PRODUCTS)
+
   // step only changes for steps 1,2,3 (form flow). Step 0 = landing page with all sections
   const [step, setStep] = useState(0)
-  const [selectedProduct, setSelectedProduct] = useState<typeof PRODUCTS[0] | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<ProductConfig | null>(null)
   const [loanAmount, setLoanAmount] = useState(10_000_000)
   const [loanTerm, setLoanTerm] = useState(12)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+
+  // Fetch dynamic loan product settings từ Admin
+  const fetchProductSettings = useCallback(() => {
+    fetch('/api/cms/settings?key=loan_products')
+      .then(r => r.json())
+      .then(res => {
+        if (!res.data) return
+        const raw = res.data as Record<string, {
+          name?: string
+          min_rate?: number
+          max_rate?: number
+          min_amount?: number
+          max_amount?: number
+          max_term_months?: number
+          min_down_payment_pct?: number
+          cash_advance_pct?: number
+          interest_free_days?: number
+          reward_points_pct?: number
+          features?: string[]
+        }>
+        setProducts(prev => prev.map(p => {
+          const key = p.id.replace(/-/g, '_') // 'vay-tin-chap' → 'vay_tin_chap'
+          const cfg = raw[key]
+          if (!cfg) return p
+          const updated = { ...p }
+          if (cfg.name) updated.name = cfg.name
+          if (cfg.min_amount) updated.minAmount = cfg.min_amount
+          if (cfg.max_amount) updated.maxAmount = cfg.max_amount
+          if (cfg.min_rate !== undefined) updated.rate = cfg.min_rate / 100
+          // Rebuild features for vay-tin-chap and vay-tra-gop
+          if (p.id === 'vay-tin-chap' && cfg.min_rate !== undefined) {
+            updated.features = [
+              `Lãi suất thấp từ ${cfg.min_rate}%/năm`,
+              `Hạn mức vay đến ${cfg.max_amount && cfg.max_amount >= 1e9 ? `${cfg.max_amount / 1e9} tỷ` : cfg.max_amount && cfg.max_amount >= 1e6 ? `${cfg.max_amount / 1e6} triệu` : p.maxAmount / 1e6 + ' triệu'}`,
+              `Tùy chọn thanh toán đến ${cfg.max_term_months ?? 48} tháng`,
+            ]
+          }
+          if (p.id === 'vay-tra-gop' && cfg.min_rate !== undefined) {
+            updated.features = [
+              `Lãi suất từ ${cfg.min_rate}%/năm`,
+              `Trả trước chỉ từ ${cfg.min_down_payment_pct ?? 20}%`,
+              'Xét duyệt 15 phút tại cửa hàng',
+            ]
+          }
+          if (p.id === 'the-tin-dung') {
+            updated.features = [
+              `Rút tiền mặt đến ${cfg.cash_advance_pct ?? 100}% hạn mức thẻ`,
+              `Miễn lãi suất lên đến ${cfg.interest_free_days ?? 45} ngày`,
+              'Trả góp với ưu đãi 0% lãi suất',
+              `${cfg.reward_points_pct ?? 0.5}% điểm thưởng tích lũy không giới hạn`,
+            ]
+          }
+          return updated
+        }))
+      })
+      .catch(() => { /* keep defaults on error */ })
+  }, [])
+
+  useEffect(() => { fetchProductSettings() }, [fetchProductSettings])
 
   // Đọc query params từ trang sản phẩm (vay-tin-chap, v.v.) → pre-fill và nhảy thẳng step 1
   useEffect(() => {
@@ -115,7 +191,7 @@ function DangKyVayInner() {
     const salaryVal = searchParams.get('salary')
     if (!productId) return
 
-    const found = PRODUCTS.find(p => p.id === productId)
+    const found = products.find(p => p.id === productId)
     if (found) {
       setSelectedProduct(found)
       if (amount)    setLoanAmount(Number(amount))
@@ -125,7 +201,7 @@ function DangKyVayInner() {
       setStep(1)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [products])
   const [formData, setFormData] = useState({
     purpose: '', fullName: '', phone: '', province: '',
     occupation: '', company: '',
@@ -146,11 +222,11 @@ function DangKyVayInner() {
     return ''
   }
 
-  const calcProduct = selectedProduct || PRODUCTS[0]
+  const calcProduct = selectedProduct || products[0]
   const monthly = calcMonthly(loanAmount, loanTerm, calcProduct.rate)
 
   // When a product is selected, scroll to calculator
-  const handleSelectProduct = (p: typeof PRODUCTS[0]) => {
+  const handleSelectProduct = (p: ProductConfig) => {
     if (p.id === 'the-tin-dung') {
       router.push('/mo-the')
       return
@@ -227,7 +303,7 @@ function DangKyVayInner() {
             <section className="lf-cards-section">
               <div className="lf-container">
                 <div className={`lf-products-grid${selectedProduct ? ' has-selection' : ''}`}>
-                  {PRODUCTS.map(p => (
+                  {products.map(p => (
                     <div
                       className={`lf-product-card${selectedProduct?.id === p.id ? ' selected' : ''}`}
                       key={p.id}
