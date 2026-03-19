@@ -19,7 +19,7 @@ const DEFAULTS: GeneralSettings = {
   site_name: 'Shinhan Finance',
   site_description: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam',
   logo: '/images/logo/SVFC_LOGO.png',
-  footer_logo: '/images/logo/SVFC_LOGO.png',
+  footer_logo: '/images/logo/logo-white.png',
   favicon: '',
   contact_phone: '0969 930 328',
   contact_email: 'cskh@shinhanfinance.com.vn',

@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 
-const LOGO = '/uploads/2026-03/images-1773893841492.png'
+const LOGO = '/images/logo/SVFC_LOGO.png'
 
 const NAV_ITEMS = [
   {

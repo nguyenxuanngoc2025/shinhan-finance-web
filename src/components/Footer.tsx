@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
-const DEFAULT_FOOTER_LOGO = '/images/logo/SVFC_LOGO.png'
+const DEFAULT_FOOTER_LOGO = '/images/logo/logo-white.png'
 
 export default function Footer() {
   const [footerLogo, setFooterLogo] = useState(DEFAULT_FOOTER_LOGO)

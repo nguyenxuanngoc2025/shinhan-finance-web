@@ -32,6 +32,9 @@ export default function MediaPage() {
   const [dragOver, setDragOver] = useState(false)
   const [altEdit, setAltEdit] = useState('')
   const [copied, setCopied] = useState(false)
+  const [multiSelect, setMultiSelect] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [deleting, setDeleting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const fetchMedia = useCallback(() => {
@@ -82,6 +85,44 @@ export default function MediaPage() {
     fetchMedia()
   }
 
+  async function handleBulkDelete() {
+    if (selectedIds.size === 0) return
+    if (!confirm(`Xóa ${selectedIds.size} ảnh đã chọn khỏi thư viện?`)) return
+
+    setDeleting(true)
+    try {
+      const promises = Array.from(selectedIds).map(id =>
+        fetch(`/api/cms/media?id=${id}`, { method: 'DELETE' })
+      )
+      await Promise.all(promises)
+      setSelectedIds(new Set())
+      setSelected(null)
+      setMultiSelect(false)
+      fetchMedia()
+    } catch {
+      alert('Xóa thất bại, vui lòng thử lại')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  function toggleSelectId(id: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function selectAll() {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(filtered.map(f => f.id)))
+    }
+  }
+
   async function handleAltSave(id: string) {
     await fetch('/api/cms/media', {
       method: 'PATCH',
@@ -95,6 +136,11 @@ export default function MediaPage() {
     navigator.clipboard.writeText(url)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  function exitMultiSelect() {
+    setMultiSelect(false)
+    setSelectedIds(new Set())
   }
 
   const filtered = search
@@ -115,6 +161,21 @@ export default function MediaPage() {
         .upload-btn:hover { background: #006cc0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,120,212,0.3); }
         .upload-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
 
+        .btn-multi-select { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .btn-multi-select:hover { background: #e5e7eb; }
+        .btn-multi-select.active { background: #0078D4; color: #fff; border-color: #0078D4; }
+
+        .bulk-bar { display: flex; align-items: center; gap: 12px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; animation: slideDown 0.2s ease; }
+        .bulk-bar-count { font-size: 14px; font-weight: 600; color: #9a3412; }
+        .btn-select-all { background: none; border: 1px solid #d1d5db; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; color: #374151; font-weight: 500; }
+        .btn-select-all:hover { background: #f3f4f6; }
+        .btn-bulk-delete { background: #dc2626; color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-bulk-delete:hover { background: #b91c1c; }
+        .btn-bulk-delete:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-bulk-cancel { background: none; border: 1px solid #d1d5db; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; color: #6b7280; margin-left: auto; }
+        .btn-bulk-cancel:hover { background: #f3f4f6; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
         .drop-zone { border: 2px dashed #d1d5db; border-radius: 12px; padding: 40px; text-align: center; transition: all 0.2s; margin-bottom: 20px; }
         .drop-zone.active { border-color: #0078D4; background: rgba(0,120,212,0.04); }
         .drop-zone-icon { font-size: 42px; margin-bottom: 8px; opacity: 0.5; }
@@ -125,10 +186,14 @@ export default function MediaPage() {
         .media-item { position: relative; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .media-item:hover { border-color: #93c5fd; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
         .media-item.selected { border-color: #0078D4; box-shadow: 0 0 0 2px rgba(0,120,212,0.2); }
+        .media-item.multi-selected { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249,115,22,0.3); }
         .media-item img { width: 100%; height: 120px; object-fit: cover; display: block; }
         .media-item-name { padding: 6px 8px; font-size: 11px; color: #4b5563; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .media-item-check { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%; background: #0078D4; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0; transition: opacity 0.15s; }
         .media-item.selected .media-item-check { opacity: 1; }
+
+        .media-item-checkbox { position: absolute; top: 6px; left: 6px; width: 22px; height: 22px; border-radius: 4px; border: 2px solid #d1d5db; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; z-index: 2; }
+        .media-item.multi-selected .media-item-checkbox { background: #f97316; border-color: #f97316; color: #fff; }
 
         .sidebar-preview { width: 100%; aspect-ratio: 4/3; object-fit: contain; border-radius: 8px; background: #f3f4f6; margin-bottom: 16px; }
         .sidebar-title { font-size: 15px; font-weight: 600; color: #1a1a2e; word-break: break-word; margin-bottom: 12px; }
@@ -171,6 +236,12 @@ export default function MediaPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+        <button
+          className={`btn-multi-select${multiSelect ? ' active' : ''}`}
+          onClick={() => { multiSelect ? exitMultiSelect() : setMultiSelect(true) }}
+        >
+          {multiSelect ? '✓ Chế độ chọn' : '☐ Chọn nhiều'}
+        </button>
         <button className="upload-btn" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
@@ -193,6 +264,28 @@ export default function MediaPage() {
             <div className="upload-progress">
               <div className="upload-spinner" />
               {uploadProgress}
+            </div>
+          )}
+
+          {/* Bulk action bar */}
+          {multiSelect && (
+            <div className="bulk-bar">
+              <span className="bulk-bar-count">
+                {selectedIds.size > 0 ? `Đã chọn ${selectedIds.size} ảnh` : 'Chọn ảnh để xóa'}
+              </span>
+              <button className="btn-select-all" onClick={selectAll}>
+                {selectedIds.size === filtered.length ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
+              </button>
+              {selectedIds.size > 0 && (
+                <button className="btn-bulk-delete" onClick={handleBulkDelete} disabled={deleting}>
+                  {deleting ? (
+                    <><div className="upload-spinner" style={{ width: 14, height: 14, borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} /> Đang xóa...</>
+                  ) : (
+                    <>🗑 Xóa {selectedIds.size} ảnh</>
+                  )}
+                </button>
+              )}
+              <button className="btn-bulk-cancel" onClick={exitMultiSelect}>Hủy</button>
             </div>
           )}
 
@@ -221,12 +314,24 @@ export default function MediaPage() {
               {filtered.map(f => (
                 <div
                   key={f.id}
-                  className={`media-item${selected?.id === f.id ? ' selected' : ''}`}
-                  onClick={() => { setSelected(f); setAltEdit(f.alt_text || '') }}
+                  className={`media-item${!multiSelect && selected?.id === f.id ? ' selected' : ''}${multiSelect && selectedIds.has(f.id) ? ' multi-selected' : ''}`}
+                  onClick={() => {
+                    if (multiSelect) {
+                      toggleSelectId(f.id)
+                    } else {
+                      setSelected(f)
+                      setAltEdit(f.alt_text || '')
+                    }
+                  }}
                 >
+                  {multiSelect && (
+                    <div className="media-item-checkbox">
+                      {selectedIds.has(f.id) ? '✓' : ''}
+                    </div>
+                  )}
                   <img src={f.url} alt={f.alt_text || f.filename} loading="lazy" />
                   <div className="media-item-name">{f.filename}</div>
-                  <div className="media-item-check">✓</div>
+                  {!multiSelect && <div className="media-item-check">✓</div>}
                 </div>
               ))}
             </div>
@@ -234,7 +339,7 @@ export default function MediaPage() {
         </div>
 
         {/* Detail sidebar */}
-        {selected && (
+        {selected && !multiSelect && (
           <div className="media-sidebar">
             <img src={selected.url} alt={selected.alt_text} className="sidebar-preview" />
             <div className="sidebar-title">{selected.filename}</div>
