@@ -50,12 +50,14 @@
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
+  background: #e8f3fb;
+  border-radius: 16px 16px 0 0;
 }
 .sp-card-visual img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover;
-  object-position: center 20%;
+  object-fit: cover !important;
+  object-position: center top !important;
   transition: transform 0.5s ease;
   display: block;
   position: absolute !important;

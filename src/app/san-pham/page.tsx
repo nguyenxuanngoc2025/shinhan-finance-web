@@ -120,7 +120,7 @@ export default function ProductsPage() {
               {products.map(prod => (
                 <div key={prod.id} className="sp-product-card">
                   <div className="sp-card-visual">
-                    <Image src={prod.image} alt={prod.title} fill sizes="(max-width:768px) 100vw, 50vw" style={{objectFit:'contain'}} />
+                    <Image src={prod.image} alt={prod.title} fill sizes="(max-width:768px) 100vw, 50vw" style={{objectFit:'cover', objectPosition:'center top'}} />
                   </div>
                   <div className="sp-card-content">
                     <div className="sp-card-icon" style={{ background: prod.accent }}>
