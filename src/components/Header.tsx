@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 
-const LOGO = '/images/logo/SVFC_LOGO.png'
+const DEFAULT_LOGO = '/images/logo/SVFC_LOGO.png'
 
 const NAV_ITEMS = [
   {
@@ -37,10 +37,35 @@ const MOBILE_LINKS = [
 ]
 
 export default function Header() {
+  // Load logo from CMS settings (same pattern as Footer)
+  const [logo, setLogo] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem('site_settings')
+        if (cached) {
+          const parsed = JSON.parse(cached)
+          if (parsed.logo) return parsed.logo
+        }
+      } catch { /* ignore */ }
+    }
+    return DEFAULT_LOGO
+  })
   const [scrolled, setScrolled]   = useState(false)
   const [menuOpen, setMenuOpen]   = useState(false)
   const [activeNav, setActiveNav] = useState<string | null>(null)
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    fetch('/api/cms/settings?key=general')
+      .then(r => r.json())
+      .then(res => {
+        if (res.data?.logo) {
+          setLogo(res.data.logo)
+          try { localStorage.setItem('site_settings', JSON.stringify(res.data)) } catch { /* ignore */ }
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -65,7 +90,7 @@ export default function Header() {
           <Link href="/" className="header-logo" aria-label="Shinhan Finance">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={LOGO}
+              src={logo}
               alt="Shinhan Finance"
               className="header-logo-img"
               style={{width:160,height:'auto',maxHeight:44}}
