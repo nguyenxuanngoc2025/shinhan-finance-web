@@ -19,10 +19,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // ── Tin tức ──
     { url: `${base}/tin-tuc`,                 lastModified: now, changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${base}/blog`,                    lastModified: now, changeFrequency: 'daily',   priority: 0.8 },
     { url: `${base}/tin-tuc?tab=khuyen-mai`,  lastModified: now, changeFrequency: 'daily',   priority: 0.7 },
     { url: `${base}/tin-tuc?tab=su-kien`,     lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${base}/tin-tuc?tab=thong-bao`,   lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
-    { url: `${base}/tin-tuc?tab=blog`,        lastModified: now, changeFrequency: 'weekly',  priority: 0.65 },
 
     // ── Chính sách / Pháp lý ──
     { url: `${base}/chinh-sach-bao-mat`,      lastModified: now, changeFrequency: 'yearly',  priority: 0.4 },
