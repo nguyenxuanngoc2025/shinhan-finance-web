@@ -135,6 +135,8 @@ function DangKyVayInner() {
   const [purposeTouched, setPurposeTouched] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [refCode, setRefCode] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   // Validate Vietnamese phone number
   const validatePhone = (v: string) => {
@@ -215,185 +217,8 @@ function DangKyVayInner() {
           </div>
         </div>
 
-        {/* ======== STEP 0: ONE PAGE — tất cả sections ======== */}
-        {step === 0 && (
-          <>
-            {/* Product Cards */}
-            <section className="lf-cards-section">
-              <div className="lf-container">
-                <div className={`lf-products-grid${selectedProduct ? ' has-selection' : ''}`}>
-                  {PRODUCTS.map(p => (
-                    <div
-                      className={`lf-product-card${selectedProduct?.id === p.id ? ' selected' : ''}`}
-                      key={p.id}
-                    >
-                      <div className="lf-prod-img-wrap">
-                        <Image src={p.image} alt={p.name} className="lf-prod-img" fill sizes="(max-width:768px) 100vw, 33vw" style={{objectFit:'cover'}} />
-                      </div>
-                      <div className="lf-prod-body">
-                        <h2 className="lf-prod-name">{p.name}</h2>
-                        <ul className="lf-prod-features">
-                          {p.features.map((f, i) => (
-                            <li key={i}><i className="fas fa-check-circle"></i>{f}</li>
-                          ))}
-                        </ul>
-                        <button className="lf-btn-select" onClick={() => handleSelectProduct(p)}>
-                          {p.cta}
-                        </button>
-                        <Link href={p.detail} className="lf-btn-detail">Chi tiết</Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* ======== Ước tính khoản vay — chỉ hiện khi đã chọn sản phẩm ======== */}
-            {selectedProduct && selectedProduct.id !== 'the-tin-dung' && (
-              <section className="lf-estimate-section" ref={calcRef}>
-                <div className="lf-container">
-                  <div className="lf-est-widget">
-                    {/* X close */}
-                    <button className="lf-est-close" onClick={() => setSelectedProduct(null)} aria-label="Đóng">
-                      <i className="fas fa-times"></i>
-                    </button>
-
-                    <h2 className="lf-section-head">Ước tính khoản vay</h2>
-
-                    {/* Salary row */}
-                    <div className="lf-est-salary-row">
-                      <div className="lf-est-salary-block">
-                        <label>Thu nhập hàng tháng (VNĐ) *</label>
-                        <input
-                          type="text" className="lf-est-salary-input"
-                          placeholder="0"
-                          value={salary ? formatVND(salary) : ''}
-                          onChange={e => setSalary(Number(e.target.value.replace(/\D/g, '')))}
-                        />
-                      </div>
-                      <div className="lf-est-salary-arrow"><i className="fas fa-exchange-alt"></i></div>
-                      <div className="lf-est-salary-block">
-                        <label>Có thể vay tối đa* (VNĐ)</label>
-                        <div className="lf-est-max-value">{formatVND(salary > 0 ? Math.min(salary * 12, selectedProduct.maxAmount) : selectedProduct.maxAmount)}</div>
-                      </div>
-                    </div>
-
-                    <div className="lf-est-layout">
-                      {/* Left: controls */}
-                      <div className="lf-est-left">
-                        <div className="lf-est-amount-box">{formatVND(loanAmount)}</div>
-                        <div className="lf-est-slider-row">
-                          <span className="lf-est-slider-label">Bạn cần vay<br/>(VNĐ)</span>
-                          <div className="lf-est-slider-col">
-                            <input
-                              type="range" className="lf-slider"
-                              min={selectedProduct.minAmount}
-                              max={salary > 0 ? Math.min(salary * 12, selectedProduct.maxAmount) : selectedProduct.maxAmount}
-                              step={selectedProduct.step} value={loanAmount}
-                              onChange={e => setLoanAmount(Number(e.target.value))}
-                            />
-                            <div className="lf-range-labels">
-                              <span>{formatVND(selectedProduct.minAmount)}</span>
-                              <span>{formatVND(salary > 0 ? Math.min(salary * 12, selectedProduct.maxAmount) : selectedProduct.maxAmount)}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <select className="lf-est-term-select" value={loanTerm} onChange={e => setLoanTerm(Number(e.target.value))}>
-                          {TERM_OPTIONS.map(t => <option key={t} value={t}>{t} tháng</option>)}
-                        </select>
-
-                        <div className="lf-est-slider-row">
-                          <span className="lf-est-slider-label">Trong thời<br/>gian</span>
-                          <div className="lf-est-slider-col">
-                            <input
-                              type="range" className="lf-slider"
-                              min={0} max={TERM_OPTIONS.length - 1} step={1}
-                              value={TERM_OPTIONS.indexOf(loanTerm) >= 0 ? TERM_OPTIONS.indexOf(loanTerm) : 0}
-                              onChange={e => setLoanTerm(TERM_OPTIONS[Number(e.target.value)])}
-                            />
-                            <div className="lf-range-labels"><span>{TERM_OPTIONS[0]}</span><span>{TERM_OPTIONS[TERM_OPTIONS.length - 1]}</span></div>
-                          </div>
-                        </div>
-
-                        <div className="lf-est-rate">
-                          <span>Lãi suất minh họa tối thiểu (%/năm)*</span>
-                          <strong>{(selectedProduct.rate * 100).toFixed(0)}%</strong>
-                        </div>
-                      </div>
-
-                      {/* Right: result */}
-                      <div className="lf-est-right">
-                        <div className="lf-result-card">
-                          <div className="lf-result-label">Ước tính khoản thanh toán hàng kỳ (VNĐ)</div>
-                          <div className="lf-result-amount">
-                            <i className="fas fa-tag"></i>
-                            {formatVND(Math.round(monthly))}*
-                          </div>
-                          <button className="lf-result-cta" onClick={handleGoToForm}>
-                            &gt;&gt; Vay
-                          </button>
-                          <p className="lf-result-note">
-                            * Thông tin và kết quả chỉ mang tính tham khảo. Khoản vay được xét duyệt sẽ tùy thuộc vào điều kiện và hồ sơ cụ thể của từng trường hợp.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="lf-est-see-all">
-                    <Link href="/san-pham" className="lf-link-all">Xem tất cả</Link>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* FAQ */}
-            <section className="lf-section lf-faq-section">
-              <div className="lf-container">
-                <div className="lf-faq-header">
-                  <h2>Một số câu hỏi thường gặp</h2>
-                  <Link href="#" className="lf-link-all">Xem tất cả FAQs</Link>
-                </div>
-                <div className="lf-faq-list">
-                  {FAQS.map((faq, i) => (
-                    <div key={i} className={`lf-faq-item${openFaq === i ? ' open' : ''}`}>
-                      <button
-                        className="lf-faq-q"
-                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      >
-                        <span>{faq.q}</span>
-                        <i className={`fas ${openFaq === i ? 'fa-minus' : 'fa-plus'}`}></i>
-                      </button>
-                      <div className="lf-faq-a">
-                        <p>{faq.a}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* Lý do bạn nên vay */}
-            <section className="lf-section lf-reasons">
-              <div className="lf-container">
-                <div className="lf-reasons-layout">
-                  <h2 className="lf-reasons-title">Lý do bạn nên vay tại<br />Shinhan Finance</h2>
-                  <div className="lf-reasons-grid">
-                    {REASONS.map((r, i) => (
-                      <div className="lf-reason-card" key={i}>
-                        <div className="lf-reason-icon"><i className={r.icon}></i></div>
-                        <span>{r.text}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-          </>
-        )}
-
         {/* ======== TOP SECTION — changes by step ======== */}
+
 
         {/* STEP 0: Product Cards + Calculator */}
         {step === 0 && (
@@ -839,14 +664,56 @@ function DangKyVayInner() {
                   </button>
                   <button
                     type="button" className="lf-sf-submit"
-                    onClick={() => {
-                      setRefCode(Date.now().toString().slice(-6))
-                      setShowSuccessModal(true)
+                    disabled={submitting}
+                    onClick={async () => {
+                      setSubmitting(true)
+                      setSubmitError('')
+                      try {
+                        const res = await fetch('/api/cms/leads/submit', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            form_type: 'loan',
+                            full_name: formData.fullName,
+                            phone: formData.phone,
+                            loan_amount: String(loanAmount),
+                            loan_term: String(loanTerm),
+                            product_name: selectedProduct?.name || '',
+                            province: formData.province,
+                            income: String(salary),
+                            purpose: formData.purpose,
+                            occupation: formData.occupation,
+                            company: formData.company,
+                            income_source: formData.incomeSource,
+                          }),
+                        })
+                        const result = await res.json()
+                        if (result.success) {
+                          setRefCode(result.data?.id?.slice(-6) || Date.now().toString().slice(-6))
+                          setShowSuccessModal(true)
+                        } else {
+                          setSubmitError(result.error || 'Có lỗi xảy ra')
+                        }
+                      } catch {
+                        setSubmitError('Không thể gửi đăng ký. Vui lòng thử lại.')
+                      } finally {
+                        setSubmitting(false)
+                      }
                     }}
                   >
-                    <i className="fas fa-paper-plane"></i> Xác nhận & Gửi đăng ký
+                    {submitting ? (
+                      <><i className="fas fa-spinner fa-spin"></i> Đang gửi...</>
+                    ) : (
+                      <><i className="fas fa-paper-plane"></i> Xác nhận & Gửi đăng ký</>
+                    )}
                   </button>
                 </div>
+
+                {submitError && (
+                  <p style={{ fontSize: '13px', color: '#c62828', marginTop: '8px', textAlign: 'center' }}>
+                    ⚠️ {submitError}
+                  </p>
+                )}
 
                 <p style={{ fontSize: '11px', color: '#999', marginTop: '12px', textAlign: 'right' }}>
                   * Kết quả ước tính, khoản vay thực tế phụ thuộc vào hồ sơ được duyệt.

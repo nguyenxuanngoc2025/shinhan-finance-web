@@ -23,9 +23,52 @@ export const metadata: Metadata = {
   },
 }
 
+// FinancialProduct structured data for loan products
+const productsSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FinancialProduct',
+    name: 'Vay tín chấp cá nhân Shinhan Finance',
+    description: 'Vay tín chấp không cần tài sản thế chấp, hạn mức đến 300 triệu, kỳ hạn linh hoạt đến 48 tháng.',
+    provider: {
+      '@type': 'FinancialService',
+      name: 'Shinhan Finance Việt Nam',
+    },
+    interestRate: {
+      '@type': 'QuantitativeValue',
+      minValue: 18,
+      maxValue: 49,
+      unitText: 'PERCENT_PER_YEAR',
+    },
+    amount: {
+      '@type': 'MonetaryAmount',
+      currency: 'VND',
+      minValue: 10000000,
+      maxValue: 300000000,
+    },
+    url: 'https://shinhanfinance-clone.ngocnguyenxuan.com/san-pham/vay-tin-chap',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FinancialProduct',
+    name: 'Thẻ tín dụng THE FIRST Shinhan Finance',
+    description: 'Thẻ tín dụng THE FIRST với ưu đãi rút tiền mặt 100% hạn mức, miễn lãi đến 45 ngày, hoàn tiền 0.5%.',
+    provider: {
+      '@type': 'FinancialService',
+      name: 'Shinhan Finance Việt Nam',
+    },
+    url: 'https://shinhanfinance-clone.ngocnguyenxuan.com/san-pham/the-tin-dung',
+  },
+]
+
 export default function HomePage() {
   return (
     <>
+      {/* FinancialProduct Schema.org */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productsSchema) }}
+      />
       {/* <PopupModal /> */}{/* TODO: bật lại sau khi bổ sung nội dung chuyển đổi */}
       <Header />
       <main>

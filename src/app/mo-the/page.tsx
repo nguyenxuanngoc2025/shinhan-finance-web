@@ -67,6 +67,8 @@ export default function MoThePage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [phoneError, setPhoneError] = useState('')
   const [refCode, setRefCode] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   const [formData, setFormData] = useState({
     fullName: '', phone: '', province: '', income: '',
@@ -100,9 +102,35 @@ export default function MoThePage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleConfirm = () => {
-    setShowSuccessModal(true)
-    setRefCode(Date.now().toString().slice(-6))
+  const handleConfirm = async () => {
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      const res = await fetch('/api/cms/leads/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          form_type: 'card',
+          full_name: formData.fullName,
+          phone: formData.phone,
+          province: formData.province,
+          income: formData.income,
+          product_name: 'Thẻ tín dụng THE FIRST',
+          card_type: 'THE FIRST',
+        }),
+      })
+      const result = await res.json()
+      if (result.success) {
+        setRefCode(result.data?.id?.slice(-6) || Date.now().toString().slice(-6))
+        setShowSuccessModal(true)
+      } else {
+        setSubmitError(result.error || 'Có lỗi xảy ra, vui lòng thử lại')
+      }
+    } catch {
+      setSubmitError('Không thể gửi đăng ký. Vui lòng thử lại.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handleCloseModal = () => {
@@ -245,10 +273,17 @@ export default function MoThePage() {
                   <button type="button" className="lf-sf-submit-outline" onClick={() => setStep(1)}>
                     <i className="fas fa-arrow-left"></i> Chỉnh sửa
                   </button>
-                  <button type="button" className="lf-sf-submit" onClick={handleConfirm}>
-                    <i className="fas fa-paper-plane"></i> Xác nhận & Gửi
+                  <button type="button" className="lf-sf-submit" disabled={submitting} onClick={handleConfirm}>
+                    {submitting ? (
+                      <><i className="fas fa-spinner fa-spin"></i> Đang gửi...</>
+                    ) : (
+                      <><i className="fas fa-paper-plane"></i> Xác nhận &amp; Gửi</>
+                    )}
                   </button>
                 </div>
+                {submitError && (
+                  <p style={{ fontSize: '13px', color: '#c62828', marginTop: '8px', textAlign: 'center' }}>⚠️ {submitError}</p>
+                )}
               </div>
             )}
           </div>

@@ -32,6 +32,44 @@ img { max-width: 100%; height: auto; display: block; }
 ul { list-style: none; }
 .container { max-width: var(--container-width); margin: 0 auto; padding: 0 60px; }
 
+/* ===== ACCESSIBILITY: Skip to Content ===== */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--shinhan-blue);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 10001;
+  transition: top 0.2s ease;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+  outline: none;
+}
+
+/* ===== ACCESSIBILITY: Focus Visible ===== */
+*:focus-visible {
+  outline: 2px solid var(--shinhan-blue);
+  outline-offset: 2px;
+}
+
+/* ===== ACCESSIBILITY: Prefers Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
 /* ===== POPUP ===== */
 .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 .popup-overlay.active { opacity: 1; pointer-events: all; }
@@ -1154,6 +1192,7 @@ ul { list-style: none; }
 
 /* ===== FLOATING CHAT & SCROLL TOP ===== */
 .floating-zalo { position: fixed; bottom: 30px; left: 24px; z-index: 999; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+@media (max-width: 768px) { .floating-zalo { display: none !important; } }
 .zalo-icon { width: 56px; height: 56px; border-radius: 50%; background: #0068FF; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; box-shadow: 0 4px 16px rgba(0,104,255,0.4); transition: transform 0.2s; }
 .floating-zalo:hover .zalo-icon { transform: scale(1.1); }
 .zalo-pulse { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: rgba(0,104,255,0.35); z-index: 1; animation: zalo-wave 2s ease-out infinite; }

@@ -27,6 +27,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Fix missing native bindings for Payload CMS sqlite
+RUN npm i @libsql/linux-x64-musl
+
 # Copy settings data (will be overridden by volume mount)
 COPY --from=builder /app/src/data ./src/data
 

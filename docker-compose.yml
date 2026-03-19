@@ -10,8 +10,8 @@ services:
       - shinhan-data:/app/src/data
     environment:
       - NODE_ENV=production
-      - ADMIN_EMAIL=admin@shinhan.com
-      - ADMIN_PASSWORD=shinhan2026
+      - ADMIN_EMAIL=admin
+      - ADMIN_PASSWORD=1234!4321
       - ADMIN_TOKEN=shinhan-cms-2026
     networks:
       - caddy-network

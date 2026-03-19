@@ -314,11 +314,11 @@ export default function AdminLoginPage() {
 
           <form className="login-form" onSubmit={handleLogin}>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Tài khoản</label>
               <input
                 id="email"
-                type="email"
-                placeholder="admin@shinhan.com"
+                type="text"
+                placeholder="admin"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required

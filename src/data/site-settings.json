@@ -138,5 +138,9 @@
     "default_og_image": "",
     "robots_follow": true,
     "robots_index": true
+  },
+  "telegram": {
+    "bot_token": "8304141572:AAEDnGsn2Gxec-oK9lKy9rlW-9vfVzEgIKo",
+    "chat_id": "-5134966772"
   }
 }

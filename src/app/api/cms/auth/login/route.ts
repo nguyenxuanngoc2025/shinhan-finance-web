@@ -4,8 +4,8 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'shinhan-cms-2026'
 
 // Simple admin credentials — replace with proper DB-backed auth in production
 const ADMIN_CREDENTIALS = {
-  email: process.env.ADMIN_EMAIL || 'admin@shinhan.com',
-  password: process.env.ADMIN_PASSWORD || 'shinhan2026',
+  email: process.env.ADMIN_EMAIL || 'admin',
+  password: process.env.ADMIN_PASSWORD || '1234!4321',
 }
 
 export async function POST(request: Request) {

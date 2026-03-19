@@ -70,11 +70,8 @@ const menuGroups: MenuGroup[] = [
     id: 'customers',
     label: 'Khách hàng',
     icon: 'lead',
-    collapsible: true,
-    items: [
-      { label: 'Đăng ký vay', href: '/admin/leads?type=loan', icon: 'lead' },
-      { label: 'Đăng ký mở thẻ', href: '/admin/leads?type=card', icon: 'card' },
-    ],
+    collapsible: false,
+    items: [{ label: 'Khách hàng', href: '/admin/leads', icon: 'lead' }],
   },
   {
     id: 'brand',
@@ -179,6 +176,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const isItemActive = (href: string) => {
     const itemPath = href.split('?')[0]
+    const itemQuery = href.includes('?') ? href.split('?')[1] : ''
+    const currentQuery = typeof window !== 'undefined' ? window.location.search.replace('?', '') : ''
+    
+    // If item has query params, match both path and query
+    if (itemQuery) {
+      return pathname === itemPath && currentQuery === itemQuery
+    }
+    // Otherwise match path only
     return pathname === itemPath || (itemPath !== '/admin' && pathname.startsWith(itemPath))
   }
 

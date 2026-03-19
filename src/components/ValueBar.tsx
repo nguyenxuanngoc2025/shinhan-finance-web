@@ -3,7 +3,7 @@ const VALUE_ITEMS = [
   { icon: 'fas fa-heart', text: 'Tài chính nhân văn' },
   { icon: 'fas fa-star', text: 'Giá trị & Trải nghiệm' },
   { icon: 'fas fa-shield-alt', text: 'An toàn & Bảo mật' },
-  { icon: 'fas fa-headset', text: 'Hỗ trợ 24/7: 0969 930 328' },
+  { icon: 'fas fa-headset', text: 'Hỗ trợ 24/7: 0969\u00A0930\u00A0328' },
 ]
 
 export default function ValueBar() {

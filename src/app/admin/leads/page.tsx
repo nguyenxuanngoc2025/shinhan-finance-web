@@ -121,7 +121,34 @@ export default function LeadsPage() {
               {selectedLead.loan_amount && <div><strong>Số tiền vay:</strong> {selectedLead.loan_amount}</div>}
               {selectedLead.card_type && <div><strong>Loại thẻ:</strong> {selectedLead.card_type}</div>}
               <div><strong>Loại form:</strong> {selectedLead.form_type === 'loan' ? 'Đăng ký vay' : 'Mở thẻ'}</div>
-              <div><strong>Trạng thái:</strong> {STATUS_MAP[selectedLead.status]?.label || selectedLead.status}</div>
+              <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                <strong>Trạng thái:</strong>
+                <select 
+                  value={selectedLead.status}
+                  onChange={async (e) => {
+                    const newStatus = e.target.value
+                    setSelectedLead({ ...selectedLead, status: newStatus })
+                    setLeads(leads.map(l => l.id === selectedLead.id ? { ...l, status: newStatus } : l))
+                    await fetch(`/api/cms/leads/${selectedLead.id}/status`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ status: newStatus })
+                    })
+                  }}
+                  style={{
+                    padding: '6px',
+                    borderRadius: '6px',
+                    border: '1px solid #ccc',
+                    background: STATUS_MAP[selectedLead.status]?.bg || '#fff',
+                    color: STATUS_MAP[selectedLead.status]?.color || '#000',
+                    fontWeight: 600
+                  }}
+                >
+                  {Object.entries(STATUS_MAP).map(([k, v]) => (
+                    <option key={k} value={k}>{v.label}</option>
+                  ))}
+                </select>
+              </div>
               {selectedLead.source_page && <div><strong>Trang nguồn:</strong> {selectedLead.source_page}</div>}
               <div><strong>Ngày gửi:</strong> {formatDate(selectedLead.created_at)}</div>
               {selectedLead.notes && <div><strong>Ghi chú:</strong> {selectedLead.notes}</div>}

@@ -126,7 +126,11 @@ export default function HeroSlider({ slides: propSlides }: HeroSliderProps) {
             <div className="slide-content">
               <div className="slide-text">
                 {slide.tag && <p className="slide-tag">{slide.tag}</p>}
-                <h1 className="slide-title">{slide.title}</h1>
+                {cur === i ? (
+                  <h1 className="slide-title">{slide.title}</h1>
+                ) : (
+                  <h2 className="slide-title" aria-hidden="true">{slide.title}</h2>
+                )}
                 <p className="slide-sub">{slide.description}</p>
                 <Link href={slide.cta_link} className="btn-slide">{slide.cta_text}</Link>
               </div>
