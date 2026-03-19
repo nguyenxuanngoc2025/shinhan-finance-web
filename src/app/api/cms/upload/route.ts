@@ -4,7 +4,15 @@ import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']
 const MAX_SIZE = 5 * 1024 * 1024 // 5MB
+
+// Normalize MIME type — browsers sometimes send SVG as text/xml or application/xml
+function normalizeMimeType(file: File): string {
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+  if (ext === 'svg') return 'image/svg+xml'
+  return file.type
+}
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +23,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Không có file nào được chọn' }, { status: 400 })
     }
 
-    const results: any[] = []
+    const results: { id: string; filename: string; url: string; mime_type: string; size: number }[] = []
     const errors: string[] = []
 
     // Create upload directory: /public/uploads/YYYY-MM/
@@ -25,8 +33,12 @@ export async function POST(request: Request) {
     await mkdir(uploadDir, { recursive: true })
 
     for (const file of files) {
-      // Validate type
-      if (!ALLOWED_TYPES.includes(file.type)) {
+      // Normalize MIME type (SVG fix)
+      const mimeType = normalizeMimeType(file)
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
+
+      // Validate type by MIME or extension
+      if (!ALLOWED_TYPES.includes(mimeType) && !ALLOWED_EXTENSIONS.includes(ext)) {
         errors.push(`${file.name}: Định dạng không hỗ trợ (${file.type})`)
         continue
       }
@@ -37,7 +49,6 @@ export async function POST(request: Request) {
       }
 
       // Generate unique filename
-      const ext = file.name.split('.').pop() || 'jpg'
       const baseName = file.name
         .replace(/\.[^.]+$/, '')
         .replace(/[^a-zA-Z0-9_\-\u00C0-\u024F\u1E00-\u1EFF]/g, '-')
@@ -58,7 +69,7 @@ export async function POST(request: Request) {
           filename: file.name,
           url: publicUrl,
           alt_text: baseName.replace(/-/g, ' '),
-          mime_type: file.type,
+          mime_type: mimeType, // use normalized mime type
           size: file.size,
         })
         .select()
@@ -77,9 +88,9 @@ export async function POST(request: Request) {
       uploaded: results.length,
       total: files.length,
     }, { status: 201 })
-  } catch (err: any) {
+  } catch (err: unknown) {
     return NextResponse.json(
-      { error: `Upload failed: ${err.message}` },
+      { error: `Upload failed: ${(err as Error).message}` },
       { status: 500 }
     )
   }

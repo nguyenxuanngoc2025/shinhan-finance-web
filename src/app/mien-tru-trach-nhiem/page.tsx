@@ -1,13 +1,9 @@
+'use client'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import '../chinh-sach-bao-mat/policy.css'
-
-export const metadata = {
-  title: 'Miễn trừ trách nhiệm | Shinhan Finance',
-  description: 'Điều khoản miễn trừ trách nhiệm của Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam.',
-}
 
 export default function MienTruTrachNhiemPage() {
   return (

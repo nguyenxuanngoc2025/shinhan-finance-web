@@ -78,9 +78,10 @@ function NewsPageInner() {
       .then(r => r.json())
       .then(res => {
         if (res.data && res.data.length > 0) {
-          const published = res.data
-            .filter((p: any) => p.status === 'published')
-            .map((p: any) => ({
+          type RawPost = { slug: string; title: string; excerpt?: string; category?: string; published_at?: string; created_at?: string; cover_image?: string; status: string }
+          const published = (res.data as RawPost[])
+            .filter(p => p.status === 'published')
+            .map(p => ({
               slug: p.slug,
               title: p.title,
               excerpt: p.excerpt || '',

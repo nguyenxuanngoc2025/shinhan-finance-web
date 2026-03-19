@@ -1,11 +1,6 @@
-import type { Metadata } from 'next'
+'use client'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-
-export const metadata: Metadata = {
-  title: 'Trách nhiệm Xã hội | Shinhan Finance',
-  description: 'Hoạt động trách nhiệm xã hội và phát triển bền vững của Shinhan Finance Việt Nam.',
-}
 
 export default function TrachNhiemXaHoiPage() {
   return (

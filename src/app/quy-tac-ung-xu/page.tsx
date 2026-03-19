@@ -1,11 +1,6 @@
-import type { Metadata } from 'next'
+'use client'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-
-export const metadata: Metadata = {
-  title: 'Quy tắc ứng xử & đạo đức | Shinhan Finance',
-  description: 'Quy tắc ứng xử và chuẩn mực đạo đức kinh doanh của Shinhan Finance Việt Nam.',
-}
 
 export default function QuyTacUngXuPage() {
   return (

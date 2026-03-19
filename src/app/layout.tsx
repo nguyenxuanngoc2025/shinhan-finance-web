@@ -40,7 +40,7 @@ const organizationSchema = {
   name: 'Shinhan Finance Việt Nam',
   alternateName: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam',
   url: SITE_URL,
-  logo: `${SITE_URL}/images/logo/SVFC_LOGO.png`,
+  logo: `${SITE_URL}/images/logo/logo-header.svg`,
   description: 'Shinhan Finance – Giải pháp tài chính toàn diện: vay tín chấp, thẻ tín dụng, vay trả góp.',
   telephone: '+84969930328',
   email: 'cskh@shinhanfinance.com.vn',

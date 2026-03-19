@@ -252,7 +252,7 @@ export default function MediaPage() {
           ref={fileInputRef}
           type="file"
           multiple
-          accept="image/*"
+          accept="image/*,.svg"
           style={{ display: 'none' }}
           onChange={e => { if (e.target.files) handleUpload(e.target.files); e.target.value = '' }}
         />

@@ -1,11 +1,6 @@
-import type { Metadata } from 'next'
+'use client'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-
-export const metadata: Metadata = {
-  title: 'Hướng dẫn thanh toán | Shinhan Finance',
-  description: 'Hướng dẫn các phương thức thanh toán khoản vay Shinhan Finance Việt Nam.',
-}
 
 const METHODS = [
   {

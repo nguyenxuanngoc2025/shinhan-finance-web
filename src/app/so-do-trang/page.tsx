@@ -1,12 +1,7 @@
+'use client'
 import Link from 'next/link'
-import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-
-export const metadata: Metadata = {
-  title: 'Sơ đồ trang | Shinhan Finance',
-  description: 'Sơ đồ trang web Shinhan Finance Việt Nam — tìm nhanh mọi trang bạn cần.',
-}
 
 const SITEMAP = [
   {

@@ -1,13 +1,9 @@
+'use client'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import './policy.css'
-
-export const metadata = {
-  title: 'Chính sách bảo mật | Shinhan Finance',
-  description: 'Chính sách bảo mật của Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam.',
-}
 
 export default function ChinhSachBaoMatPage() {
   return (
