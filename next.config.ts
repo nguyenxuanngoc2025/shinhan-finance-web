@@ -9,8 +9,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { hostname: 'images.unsplash.com' },
+      { hostname: 'source.unsplash.com' },
       { hostname: 'i.pravatar.cc' },
       { hostname: 'shinhanfinance.com.vn' },
+      { hostname: 'plus.unsplash.com' },
     ],
   },
   // Security headers
