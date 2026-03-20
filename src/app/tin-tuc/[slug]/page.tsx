@@ -40,14 +40,19 @@ type ArticleData = {
   image: string
 }
 
-// Fetch all posts from CMS API (server-side)
+// Fetch all published posts directly from Supabase (no dependency on internal API)
 async function getAllCmsPosts() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3005'
-    const res = await fetch(`${baseUrl}/api/cms/posts`, { next: { revalidate: 60 } })
+    const url = 'https://studio.ngocnguyenxuan.com/rest/v1/posts?status=eq.published&order=published_at.desc'
+    const res = await fetch(url, {
+      headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzcyMTI1MjAwLCJleHAiOjE5Mjk4OTE2MDB9.t3KJySUYE2wo5x4lkyAdAue3u2or2Nk0aYp7De4t_3I',
+        'Accept-Profile': 'site_shinhan',
+      },
+      next: { revalidate: 60 }
+    })
     if (!res.ok) return []
-    const { data } = await res.json()
-    return (data || []).filter((p: any) => p.status === 'published')
+    return await res.json()
   } catch {
     return []
   }
