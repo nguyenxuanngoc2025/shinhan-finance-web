@@ -8,6 +8,10 @@ import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import { NEWS_ARTICLES, type NewsCategory } from '../news-data'
 
+// Allow slugs not in generateStaticParams to be rendered on-demand (SSR)
+export const dynamicParams = true
+export const dynamic = 'force-dynamic'
+
 const CATEGORY_LABELS: Record<NewsCategory, string> = {
   'khuyen-mai': 'Khuyến mại',
   'su-kien': 'Sự kiện',
