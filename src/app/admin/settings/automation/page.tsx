@@ -102,20 +102,63 @@ export default function AutomationDashboard() {
   const [expandedModule, setExpandedModule] = useState<string | null>(null)
   const [fbPageId, setFbPageId] = useState('')
   const [fbToken, setFbToken] = useState('')
+  const [healthData, setHealthData] = useState<{
+    modules: { key: string; name: string; status: string; message: string; n8n_active?: boolean }[];
+    content: { published: number; scheduled: number; nextPublish: string | null; warning: string | null };
+  } | null>(null)
 
   const fetchModules = useCallback(() => {
-    fetch('/api/cms/automation')
-      .then(r => r.json())
-      .then(res => {
-        if (res.data) {
-          setModules(res.data)
-          // Auto-load saved FB config
-          const fb = res.data.find((m: AutomationModule) => m.module_key === 'auto_fanpage')
-          if (fb?.config?.page_id) setFbPageId(fb.config.page_id as string)
-          if (fb?.config?.access_token) setFbToken(fb.config.access_token as string)
+    Promise.all([
+      fetch('/api/cms/automation').then(r => r.json()).catch(() => ({ data: [] })),
+      fetch('/api/cms/automation-health?secret=shinhan2026').then(r => r.json()).catch(() => null),
+    ]).then(([automationRes, healthRes]) => {
+      let mods: AutomationModule[] = automationRes.data || []
+
+      // Merge health API real status into automation modules
+      if (healthRes?.modules) {
+        setHealthData(healthRes)
+        const healthMap = new Map(healthRes.modules.map((h: { key: string; status: string; message: string; n8n_active?: boolean }) => [h.key, h]))
+
+        // Ensure all health modules exist in mods
+        for (const hm of healthRes.modules) {
+          if (!mods.find((m: AutomationModule) => m.module_key === hm.key)) {
+            mods.push({
+              id: hm.key,
+              module_key: hm.key,
+              module_name: hm.name,
+              enabled: hm.n8n_active || false,
+              config: {},
+              status: hm.n8n_active ? 'active' : 'inactive',
+              last_run_at: null,
+              last_error: null,
+              stats: {},
+            })
+          }
         }
-      })
-      .finally(() => setLoading(false))
+
+        // Update each mod with real health status
+        mods = mods.map((m: AutomationModule) => {
+          const h = healthMap.get(m.module_key) as { status: string; message: string; n8n_active?: boolean } | undefined
+          if (h) {
+            return {
+              ...m,
+              enabled: h.n8n_active || m.enabled,
+              status: h.n8n_active ? 'active' : (m.status === 'needs_config' ? 'needs_config' : 'inactive'),
+              last_error: h.status === 'error' ? h.message : m.last_error,
+            }
+          }
+          return m
+        })
+      }
+
+      // Auto-load saved FB config
+      const fb = mods.find((m: AutomationModule) => m.module_key === 'auto_fanpage')
+      if (fb?.config?.page_id) setFbPageId(fb.config.page_id as string)
+      if (fb?.config?.access_token) setFbToken(fb.config.access_token as string)
+
+      setModules(mods)
+      setLoading(false)
+    })
   }, [])
 
   useEffect(() => { fetchModules() }, [fetchModules])
@@ -426,6 +469,55 @@ export default function AutomationDashboard() {
             </div>
           )
         })}
+
+        {/* Content status from health API */}
+        {healthData?.content && (
+          <div style={{
+            background: 'linear-gradient(135deg, #f0fdf4, #ecfdf5)', border: '1px solid #bbf7d0', borderRadius: 14,
+            padding: '20px 24px', marginBottom: 16
+          }}>
+            <h4 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 700, color: '#166534' }}>
+              📊 Báo cáo nội dung
+            </h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
+              <div style={{ background: '#fff', borderRadius: 10, padding: 14, textAlign: 'center' }}>
+                <div style={{ fontSize: 28, fontWeight: 700, color: '#16a34a' }}>{healthData.content.published}</div>
+                <div style={{ fontSize: 12, color: '#6b7280' }}>Đã đăng</div>
+              </div>
+              <div style={{ background: '#fff', borderRadius: 10, padding: 14, textAlign: 'center' }}>
+                <div style={{ fontSize: 28, fontWeight: 700, color: '#2563eb' }}>{healthData.content.scheduled}</div>
+                <div style={{ fontSize: 12, color: '#6b7280' }}>Chờ đăng</div>
+              </div>
+              <div style={{ background: '#fff', borderRadius: 10, padding: 14, textAlign: 'center' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginTop: 4 }}>
+                  {healthData.content.nextPublish ? new Date(healthData.content.nextPublish).toLocaleDateString('vi-VN') : '—'}
+                </div>
+                <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>Bài tiếp theo</div>
+              </div>
+            </div>
+            {healthData.content.warning && (
+              <div style={{ marginTop: 12, padding: '10px 14px', background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: 8, fontSize: 13, color: '#92400e' }}>
+                ⚠️ {healthData.content.warning}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Monitoring info */}
+        <div style={{
+          background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12,
+          padding: '18px 22px', marginBottom: 16
+        }}>
+          <h4 style={{ margin: '0 0 8px', fontSize: 14, fontWeight: 600, color: '#1e40af' }}>
+            🔔 Giám sát tự động
+          </h4>
+          <div style={{ fontSize: 13, color: '#3b82f6', lineHeight: 1.8 }}>
+            <p style={{ margin: '4px 0' }}>• Hệ thống gửi <strong>báo cáo trạng thái</strong> về Telegram mỗi 6 giờ</p>
+            <p style={{ margin: '4px 0' }}>• Nếu có lỗi xảy ra → thông báo ngay lập tức</p>
+            <p style={{ margin: '4px 0' }}>• Cảnh báo khi bài scheduled còn dưới 7 bài</p>
+            <p style={{ margin: '4px 0' }}>• Tự động kiểm tra n8n workflows có đang active không</p>
+          </div>
+        </div>
 
         {/* Help section */}
         <div style={{

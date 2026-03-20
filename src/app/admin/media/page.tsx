@@ -24,6 +24,7 @@ function formatDate(d: string) {
 
 export default function MediaPage() {
   const [files, setFiles] = useState<MediaItem[]>([])
+  const [postImages, setPostImages] = useState<MediaItem[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState('')
@@ -35,7 +36,11 @@ export default function MediaPage() {
   const [multiSelect, setMultiSelect] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [deleting, setDeleting] = useState(false)
+  const [activeTab, setActiveTab] = useState<'upload' | 'posts'>('upload')
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const SB_URL = 'https://studio.ngocnguyenxuan.com'
+  const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzcyMTI1MjAwLCJleHAiOjE5Mjk4OTE2MDB9.t3KJySUYE2wo5x4lkyAdAue3u2or2Nk0aYp7De4t_3I'
 
   const fetchMedia = useCallback(() => {
     setLoading(true)
@@ -45,7 +50,36 @@ export default function MediaPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  useEffect(() => { fetchMedia() }, [fetchMedia])
+  const fetchPostImages = useCallback(() => {
+    fetch(`${SB_URL}/rest/v1/posts?select=id,title,cover_image,slug&cover_image=not.is.null&cover_image=neq.&order=created_at.desc`, {
+      headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${SB_ANON}`, 'Accept-Profile': 'site_shinhan' }
+    })
+      .then(r => r.json())
+      .then((posts: { id: string; title: string; cover_image: string; slug: string }[]) => {
+        if (Array.isArray(posts)) {
+          const seen = new Set<string>()
+          const imgs: MediaItem[] = []
+          for (const p of posts) {
+            if (p.cover_image && !seen.has(p.cover_image)) {
+              seen.add(p.cover_image)
+              imgs.push({
+                id: p.id,
+                filename: p.title || p.slug || 'Ảnh bài viết',
+                url: p.cover_image,
+                alt_text: p.title || '',
+                mime_type: 'image/jpeg',
+                size: 0,
+                created_at: new Date().toISOString(),
+              })
+            }
+          }
+          setPostImages(imgs)
+        }
+      })
+      .catch(() => {})
+  }, [SB_URL, SB_ANON])
+
+  useEffect(() => { fetchMedia(); fetchPostImages() }, [fetchMedia, fetchPostImages])
 
   async function handleUpload(fileList: FileList | File[]) {
     const arr = Array.from(fileList)
@@ -143,9 +177,10 @@ export default function MediaPage() {
     setSelectedIds(new Set())
   }
 
+  const sourceList = activeTab === 'upload' ? files : postImages
   const filtered = search
-    ? files.filter(f => f.filename.toLowerCase().includes(search.toLowerCase()) || f.alt_text?.toLowerCase().includes(search.toLowerCase()))
-    : files
+    ? sourceList.filter(f => f.filename.toLowerCase().includes(search.toLowerCase()) || f.alt_text?.toLowerCase().includes(search.toLowerCase()))
+    : sourceList
 
   return (
     <>
@@ -228,6 +263,30 @@ export default function MediaPage() {
 
       <div className="media-topbar">
         <h1>Thư viện ảnh</h1>
+        <div style={{ display: 'flex', gap: 0, marginLeft: 16 }}>
+          <button
+            onClick={() => setActiveTab('upload')}
+            style={{
+              padding: '6px 16px', fontSize: 13, fontWeight: activeTab === 'upload' ? 600 : 400,
+              background: activeTab === 'upload' ? '#0078D4' : '#f3f4f6',
+              color: activeTab === 'upload' ? '#fff' : '#6b7280',
+              border: '1px solid #d1d5db', borderRadius: '8px 0 0 8px', cursor: 'pointer',
+            }}
+          >
+            Upload ({files.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('posts')}
+            style={{
+              padding: '6px 16px', fontSize: 13, fontWeight: activeTab === 'posts' ? 600 : 400,
+              background: activeTab === 'posts' ? '#0078D4' : '#f3f4f6',
+              color: activeTab === 'posts' ? '#fff' : '#6b7280',
+              border: '1px solid #d1d5db', borderLeft: 'none', borderRadius: '0 8px 8px 0', cursor: 'pointer',
+            }}
+          >
+            Ảnh bài viết ({postImages.length})
+          </button>
+        </div>
         <div style={{ flex: 1 }} />
         <input
           type="text"

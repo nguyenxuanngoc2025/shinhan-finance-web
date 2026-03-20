@@ -7,7 +7,7 @@ type DashboardStats = {
   leads: number
   posts: number
   products: number
-  sliders: number
+  scheduled: number
 }
 
 type Lead = {
@@ -19,6 +19,20 @@ type Lead = {
   source_page: string
   status: string
   created_at: string
+}
+
+type AutoModule = {
+  key: string
+  name: string
+  status: 'ok' | 'warning' | 'error'
+  message: string
+  n8n_active?: boolean
+}
+
+type AutoHealth = {
+  overall: string
+  modules: AutoModule[]
+  content: { published: number; scheduled: number; nextPublish: string | null; warning: string | null }
 }
 
 const STATUS_MAP: Record<string, { label: string; bg: string; color: string }> = {
@@ -44,8 +58,9 @@ function timeAgo(d: string) {
 }
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats>({ leads: 0, posts: 0, products: 0, sliders: 0 })
+  const [stats, setStats] = useState<DashboardStats>({ leads: 0, posts: 0, products: 0, scheduled: 0 })
   const [recentLeads, setRecentLeads] = useState<Lead[]>([])
+  const [autoHealth, setAutoHealth] = useState<AutoHealth | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -55,14 +70,22 @@ export default function DashboardPage() {
         setRecentLeads(leads.slice(0, 5))
         return leads.length
       }).catch(() => 0),
-      fetch('/api/cms/posts').then(r => r.json()).then(d => d.data?.length || 0).catch(() => 0),
+      fetch('/api/cms/posts').then(r => r.json()).then(d => {
+        const all = d.data || []
+        const scheduled = all.filter((p: { status: string }) => p.status === 'scheduled').length
+        return { total: all.length, scheduled }
+      }).catch(() => ({ total: 0, scheduled: 0 })),
       fetch('/api/cms/products').then(r => r.json()).then(d => d.data?.length || 0).catch(() => 0),
-      fetch('/api/cms/sliders?all=true').then(r => r.json()).then(d => d.data?.length || 0).catch(() => 0),
-    ]).then(([leads, posts, products, sliders]) => {
-      setStats({ leads: leads as number, posts, products, sliders })
+      fetch('/api/cms/automation-health?secret=shinhan2026').then(r => r.json()).catch(() => null),
+    ]).then(([leads, postData, products, health]) => {
+      const pd = postData as { total: number; scheduled: number }
+      setStats({ leads: leads as number, posts: pd.total, products, scheduled: pd.scheduled })
+      if (health?.modules) setAutoHealth(health)
       setLoading(false)
     })
   }, [])
+
+  const statusEmoji = (s: string) => s === 'ok' ? '🟢' : s === 'warning' ? '🟡' : '🔴'
 
   return (
     <>
@@ -85,12 +108,38 @@ export default function DashboardPage() {
           <div className="stat-card-value">{loading ? '...' : stats.products}</div>
           <div className="stat-card-change">{stats.products > 0 ? `${stats.products} sản phẩm` : 'Chưa thêm sản phẩm'}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-card-label">Slider / Banner</div>
-          <div className="stat-card-value">{loading ? '...' : stats.sliders}</div>
-          <div className="stat-card-change">{stats.sliders > 0 ? `${stats.sliders} slider` : 'Chưa thêm slider'}</div>
+        <div className="stat-card" style={{ borderLeft: '3px solid #16a34a' }}>
+          <div className="stat-card-label">📅 Bài lên lịch</div>
+          <div className="stat-card-value">{loading ? '...' : stats.scheduled}</div>
+          <div className="stat-card-change" style={{ color: '#16a34a' }}>Tự đăng khi đến hạn</div>
         </div>
       </div>
+
+      {/* Automation Status */}
+      {autoHealth && (
+        <>
+          <div className="section-header">
+            <h2 className="section-title">🤖 Tự động hóa</h2>
+            <Link href="/admin/settings/automation" className="section-link">Quản lý →</Link>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12, marginBottom: 28 }}>
+            {autoHealth.modules.map(m => (
+              <div key={m.key} style={{
+                background: '#fff',
+                border: `1px solid ${m.status === 'ok' ? '#d1fae5' : m.status === 'warning' ? '#fef3c7' : '#fecaca'}`,
+                borderRadius: 10,
+                padding: '14px 16px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                  <span>{statusEmoji(m.status)}</span>
+                  <strong style={{ fontSize: 13, color: '#1f2937' }}>{m.name}</strong>
+                </div>
+                <div style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.5 }}>{m.message}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Quick actions */}
       <div className="section-header">
@@ -192,3 +241,4 @@ export default function DashboardPage() {
     </>
   )
 }
+

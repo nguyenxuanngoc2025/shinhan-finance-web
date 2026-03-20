@@ -90,17 +90,7 @@ const menuGroups: MenuGroup[] = [
     collapsible: false,
     items: [{ label: 'Hình ảnh', href: '/admin/media', icon: 'media' }],
   },
-  {
-    id: 'tools',
-    label: 'Công cụ',
-    icon: 'calculator',
-    collapsible: true,
-    items: [
-      { label: 'Tính lãi suất', href: '/admin/calculators/interest_rate', icon: 'calculator' },
-      { label: 'Tính khoản vay', href: '/admin/calculators/loan_payment', icon: 'calculator' },
-      { label: 'Phí & Lệ phí', href: '/admin/calculators/fees', icon: 'calculator' },
-    ],
-  },
+
   {
     id: 'appearance',
     label: 'Giao diện',
