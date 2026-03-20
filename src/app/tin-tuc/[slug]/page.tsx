@@ -135,13 +135,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const article = await getArticle(slug)
   if (!article) return { title: 'Không tìm thấy bài viết' }
+  const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://tuvanvienshinhan.com'
   return {
     title: `${article.title} | Shinhan Finance`,
     description: article.excerpt,
+    alternates: { canonical: `${siteUrl}/tin-tuc/${slug}` },
     openGraph: {
       title: article.title,
       description: article.excerpt,
-      images: [article.image],
+      images: [{ url: article.image, width: 1200, height: 630, alt: article.title }],
+      type: 'article',
+      publishedTime: article.date,
+      locale: 'vi_VN',
+      siteName: 'Shinhan Finance Việt Nam',
     },
   }
 }
@@ -156,6 +162,34 @@ export default async function NewsDetailPage({ params }: Props) {
   const article = await getArticle(slug)
   if (!article) notFound()
 
+  const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://tuvanvienshinhan.com'
+
+  // Schema.org: BreadcrumbList + Article
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Trang chủ', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: 'Tin tức', item: `${siteUrl}/tin-tuc` },
+      { '@type': 'ListItem', position: 3, name: article.title, item: `${siteUrl}/tin-tuc/${slug}` },
+    ],
+  }
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.excerpt,
+    image: article.image,
+    datePublished: article.date,
+    dateModified: article.date,
+    author: { '@type': 'Organization', name: 'Shinhan Finance Việt Nam' },
+    publisher: {
+      '@type': 'Organization', name: 'Shinhan Finance Việt Nam',
+      logo: { '@type': 'ImageObject', url: `${siteUrl}/images/logo/logo-header.svg` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}/tin-tuc/${slug}` },
+  }
+
   // Related articles: from both CMS and hardcoded
   const allArticles = await getAllArticles()
   const related = allArticles
@@ -164,10 +198,21 @@ export default async function NewsDetailPage({ params }: Props) {
 
   return (
     <>
+      {/* Schema JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <Header />
       <main className="news-page">
         <section className="news-detail">
           <div className="container">
+            {/* Breadcrumb nav visible */}
+            <nav aria-label="Breadcrumb" style={{ marginBottom: 12, fontSize: 13, color: '#6b7280', display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+              <Link href="/" style={{ color: '#007BC3', textDecoration: 'none' }}>Trang chủ</Link>
+              <span>›</span>
+              <Link href="/tin-tuc" style={{ color: '#007BC3', textDecoration: 'none' }}>Tin tức</Link>
+              <span>›</span>
+              <span style={{ color: '#374151' }}>{article.title.length > 50 ? article.title.substring(0, 50) + '...' : article.title}</span>
+            </nav>
             <Link href="/tin-tuc" className="news-detail-back">
               <i className="fas fa-arrow-left"></i> Quay lại Bản tin
             </Link>

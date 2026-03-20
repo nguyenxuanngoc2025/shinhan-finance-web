@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import TrackingScripts from '@/components/TrackingScripts'
 
-const SITE_URL = 'https://shinhanfinance-clone.ngocnguyenxuan.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://tuvanvienshinhan.com'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
