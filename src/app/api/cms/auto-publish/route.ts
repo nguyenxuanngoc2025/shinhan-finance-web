@@ -1,15 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { db: { schema: 'site_shinhan' } }
-)
-
 // GET /api/cms/auto-publish?secret=xxx
 // Called by cron every hour to publish scheduled posts whose time has come
 export async function GET(req: Request) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { db: { schema: 'site_shinhan' } }
+  )
   const { searchParams } = new URL(req.url)
   const secret = searchParams.get('secret')
 
