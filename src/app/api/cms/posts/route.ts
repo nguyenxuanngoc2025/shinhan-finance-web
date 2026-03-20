@@ -22,8 +22,8 @@ export async function GET(request: Request) {
   if (priority) query = query.eq('priority', priority)
   if (excludePriority) query = query.neq('priority', excludePriority)
   if (category) query = query.eq('category', category)
-  if (status) query = query.eq('status', status)
-  else query = query.eq('status', 'published') // default: only published
+  if (status && status !== 'all') query = query.eq('status', status)
+  else if (!status) query = query.eq('status', 'published') // default: only published
 
   // Pagination
   const from = (page - 1) * limit
