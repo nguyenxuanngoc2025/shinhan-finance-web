@@ -32,15 +32,17 @@ export default function BlogPage() {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalPosts, setTotalPosts] = useState(0)
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/cms/posts?status=published&page=${page}&limit=12`)
+    fetch(`/api/cms/posts?status=published&category=blog&page=${page}&limit=12`)
       .then(r => r.json())
       .then(res => {
         if (res.data) {
           setPosts(res.data)
           setTotalPages(res.pagination?.totalPages || 1)
+          setTotalPosts(res.pagination?.total || 0)
         }
       })
       .catch(() => {})
@@ -56,6 +58,18 @@ export default function BlogPage() {
           <div className="container">
             <h1>Blog Tài chính</h1>
             <p>Tin tức, kiến thức tài chính cá nhân và cập nhật thị trường mỗi ngày</p>
+            {totalPosts > 0 && (
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '16px',
+                marginTop: '12px', padding: '8px 20px',
+                background: 'rgba(255,255,255,0.15)', borderRadius: '20px',
+                fontSize: '0.85rem', color: 'rgba(255,255,255,0.9)'
+              }}>
+                <span><strong>{totalPosts}</strong> bài viết</span>
+                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#4ade80' }} />
+                <span>Cập nhật tự động mỗi ngày</span>
+              </div>
+            )}
           </div>
         </section>
 
