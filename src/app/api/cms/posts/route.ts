@@ -12,10 +12,12 @@ export async function GET(request: Request) {
   const page = parseInt(searchParams.get('page') || '1')
   const excludePriority = searchParams.get('exclude_priority')
 
+  const sortBy = searchParams.get('sort_by') || 'published_at'
+
   let query = supabaseAdmin
     .from('posts')
     .select('*', { count: 'exact' })
-    .order('created_at', { ascending: false })
+    .order(sortBy, { ascending: false })
 
   // Apply filters
   if (source) query = query.eq('source', source)

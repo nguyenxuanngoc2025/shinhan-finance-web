@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
       { hostname: 'i.pravatar.cc' },
       { hostname: 'shinhanfinance.com.vn' },
       { hostname: 'plus.unsplash.com' },
+      { hostname: 'studio.ngocnguyenxuan.com' },
     ],
   },
   // Security headers

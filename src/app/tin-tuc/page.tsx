@@ -72,15 +72,15 @@ function NewsPageInner() {
   )
   const [articles, setArticles] = useState<ArticleItem[]>(hardcodedToItems())
 
-  // Fetch from CMS API — override hardcoded if available
+  // Fetch from CMS API — sorted by published_at DESC (newest first)
   useEffect(() => {
-    fetch('/api/cms/posts')
+    fetch('/api/cms/posts?limit=100&sort_by=published_at')
       .then(r => r.json())
       .then(res => {
         if (res.data && res.data.length > 0) {
           type RawPost = { slug: string; title: string; excerpt?: string; category?: string; published_at?: string; created_at?: string; cover_image?: string; status: string }
           const published = (res.data as RawPost[])
-            .filter(p => p.status === 'published')
+            .filter(p => p.status === 'published' && p.cover_image) // ONLY posts with images
             .map(p => ({
               slug: p.slug,
               title: p.title,

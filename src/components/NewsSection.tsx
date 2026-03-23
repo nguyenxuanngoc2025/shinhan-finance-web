@@ -40,20 +40,36 @@ export default function NewsSection() {
     NEWS_ARTICLES.slice(0, 4).map(a => ({ ...a, cover_image: a.image }))
   )
 
-  // Fetch from Supabase API — override hardcode if available
+  // Fetch from Supabase API — priority order for homepage
   useEffect(() => {
-    // Only fetch high-priority posts (Shinhan official) for homepage
-    fetch('/api/cms/posts?priority=high&limit=4')
-      .then(r => r.json())
-      .then(res => {
-        if (res.data && res.data.length > 0) {
-          const published = res.data.slice(0, 4)
-          if (published.length > 0) {
-            setArticles(published)
-          }
+    async function fetchNews() {
+      try {
+        // Priority 1: Shinhan official high-priority posts (khuyến mại, sự kiện gần đây)
+        let res = await fetch('/api/cms/posts?priority=high&source=shinhan_official&limit=4').then(r => r.json())
+        let posts = (res.data || []).filter((p: NewsItem) => p.cover_image)
+        
+        // Priority 2: Fallback to any Shinhan official posts (newest)
+        if (posts.length < 4) {
+          res = await fetch('/api/cms/posts?source=shinhan_official&limit=8').then(r => r.json())
+          const morePosts = (res.data || []).filter((p: NewsItem) => p.cover_image && !posts.find((e: NewsItem) => e.slug === p.slug))
+          posts = [...posts, ...morePosts].slice(0, 4)
         }
-      })
-      .catch(() => { /* keep fallback */ })
+
+        // Priority 3: Fill remaining with any published post that has image
+        if (posts.length < 4) {
+          res = await fetch('/api/cms/posts?limit=8').then(r => r.json())
+          const anyPosts = (res.data || []).filter((p: NewsItem) => p.cover_image && !posts.find((e: NewsItem) => e.slug === p.slug))
+          posts = [...posts, ...anyPosts].slice(0, 4)
+        }
+
+        if (posts.length > 0) {
+          setArticles(posts.slice(0, 4))
+        }
+      } catch {
+        /* keep fallback hardcoded data */
+      }
+    }
+    fetchNews()
   }, [])
 
   if (articles.length === 0) return null
