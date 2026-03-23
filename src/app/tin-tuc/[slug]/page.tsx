@@ -62,7 +62,11 @@ async function getAllCmsPosts() {
 function cmsToArticle(cmsPost: any, hardcoded?: any): ArticleData {
   let content = ''
   if (typeof cmsPost.content === 'string') {
+    // Raw HTML string (shinhan_official, ai_generated cũ)
     content = cmsPost.content
+  } else if (cmsPost.content && typeof cmsPost.content === 'object' && !Array.isArray(cmsPost.content)) {
+    // Object format: {html: "...", type: "html"} — scraper mới (shinhan.com.vn, shinhanfinance.com.vn)
+    content = cmsPost.content.html || cmsPost.content.text || cmsPost.content.body || ''
   } else if (Array.isArray(cmsPost.content)) {
     content = cmsPost.content.map((c: any) => c.text || c.html || '').join('')
   }
