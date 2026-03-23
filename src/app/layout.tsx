@@ -32,7 +32,11 @@ export const metadata: Metadata = {
     google: 'D-PCLRjOIKd7HwURyi3st3SW5iHwdGsGKp__9T-1Vtc',
   },
   icons: {
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23007BC3'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E",
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/favicon.svg',
+    shortcut: '/favicon.svg',
   },
 }
 

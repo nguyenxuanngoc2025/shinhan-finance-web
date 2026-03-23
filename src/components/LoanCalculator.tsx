@@ -47,7 +47,7 @@ const NEED_CONFIGS: Record<string, NeedConfig> = {
     title: 'Tôi muốn mua nội thất',
     description:
       'Nâng cấp không gian sống với khoản vay ưu đãi từ Shinhan Finance. Thủ tục đơn giản, giải ngân nhanh chóng.',
-    image: 'https://shinhanfinance.com.vn/-/1080x/nginx-cms/assets/homepage/home-furnishing.png',
+    image: '/images/products/home-furnishing.png',
     maxLoan: 300_000_000,
     minLoan: 1_000_000,
     minMonths: 6,

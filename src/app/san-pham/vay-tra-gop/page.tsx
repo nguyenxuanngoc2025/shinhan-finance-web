@@ -105,7 +105,7 @@ export default function VayTraGopPage() {
         <div className="vtc-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://shinhanfinance.com.vn/-/1600x/nginx-cms/assets/products/Banner-Product-5.png"
+            src="/images/products/banner-vay-tra-gop-hero.jpg"
             alt="Vay trả góp mua laptop điện thoại Shinhan Finance"
             className="vtc-hero-img"
           />
@@ -289,7 +289,7 @@ export default function VayTraGopPage() {
             <div className="vtc-dk-right">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://shinhanfinance.com.vn/-/714x/nginx-cms/assets/products/Eligibility.png"
+                src="/images/products/eligibility-tra-gop.png"
                 alt="Điều kiện vay trả góp Shinhan Finance"
                 className="vtc-dk-img"
               />

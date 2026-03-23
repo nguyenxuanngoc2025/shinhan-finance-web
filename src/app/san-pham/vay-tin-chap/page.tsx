@@ -131,7 +131,7 @@ export default function VayTinChapPage() {
         <div className="vtc-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://shinhanfinance.com.vn/-/1600x/nginx-cms/assets/products/Banner-Product-1_2023-04-11-104057.png"
+            src="/images/products/banner-vay-tin-chap-hero.jpg"
             alt="Vay tín chấp cá nhân Shinhan Finance"
             className="vtc-hero-img"
           />
@@ -288,7 +288,7 @@ export default function VayTinChapPage() {
             <div className="vtc-dk-right">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://shinhanfinance.com.vn/-/714x/nginx-cms/assets/products/Eligibility.png"
+                src="/images/products/eligibility-tin-chap.png"
                 alt="Điều kiện vay tín chấp"
                 className="vtc-dk-img"
               />
@@ -322,7 +322,7 @@ export default function VayTinChapPage() {
         <div className="vtc-bottom-banner">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://shinhanfinance.com.vn/-/2140x/nginx-cms/assets/products/Personal-Loan-Vay-t%C3%ADn-ch%E1%BA%A5p-test.jpg"
+            src="/images/products/personal-loan-banner.jpg"
             alt="Vay tín chấp Shinhan Finance"
             className="vtc-bottom-banner-img"
           />
