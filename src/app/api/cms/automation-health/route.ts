@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 
+// NOTE: This is a pure data API. Telegram notification is handled by n8n.
+// n8n workflow "[Shinhan] Daily Health Report" calls this endpoint, formats and sends to Telegram.
+
 const N8N_BASE = 'https://n8n.ngocnguyenxuan.com/api/v1'
 const N8N_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NTU2YjE4Ni02NWIyLTQ5ODMtYWVkZS1lY2Y1MDNlYTQyN2YiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiMDJhZmIwOGItMDg2Ny00ZTMxLTk4ZmItMmNhN2JkY2YxYjQ5IiwiaWF0IjoxNzcyNzA2NjUyfQ._sBDirp58Nd2PonXfbVwlbfKBhGb7h9GogEZ7KQvjSI'
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://studio.ngocnguyenxuan.com'
 const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-const TELEGRAM_BOT = '8304141572:AAEDnGsn2Gxec-oK9lKy9rlW-9vfVzEgIKo'
-const TELEGRAM_GROUP = '-5185351978'
 
 type WorkflowInfo = {
   id: string
@@ -68,31 +69,12 @@ async function getPostStats() {
   }
 }
 
-async function sendTelegramAlert(message: string) {
-  try {
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_GROUP,
-        text: message,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true,
-      }),
-    })
-  } catch (err) {
-    console.error('Telegram alert failed:', err)
-  }
-}
-
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const secret = url.searchParams.get('secret')
   if (secret !== 'shinhan2026') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-
-  const sendAlert = url.searchParams.get('alert') === 'true'
 
   // Parallel fetch
   const [workflows, postStats] = await Promise.all([
@@ -173,31 +155,6 @@ export async function GET(req: Request) {
       warning: contentWarning,
     },
     workflows_total: workflows.length,
-  }
-
-  // Send Telegram report if requested
-  if (sendAlert) {
-    const statusEmoji = (s: string) => s === 'ok' ? '🟢' : s === 'warning' ? '🟡' : '🔴'
-    let msg = `<b>🤖 Báo cáo Tự động hóa — Shinhan Finance</b>\n`
-    msg += `📅 ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}\n\n`
-
-    for (const m of modules) {
-      msg += `${statusEmoji(m.status)} <b>${m.name}</b>\n   ${m.message}\n`
-    }
-
-    msg += `\n📊 <b>Nội dung:</b>\n`
-    msg += `   • Published: ${postStats.published} bài\n`
-    msg += `   • Scheduled: ${postStats.scheduled} bài\n`
-    if (postStats.nextPublish) {
-      msg += `   • Bài tiếp theo: ${new Date(postStats.nextPublish).toLocaleDateString('vi-VN')}\n`
-    }
-    if (contentWarning) {
-      msg += `\n⚠️ ${contentWarning}\n`
-    }
-
-    msg += `\n${statusEmoji(overall)} <b>Tổng quan: ${overall === 'ok' ? 'Hệ thống hoạt động tốt' : overall === 'warning' ? 'Có cảnh báo cần xem xét' : 'Có lỗi cần xử lý ngay'}</b>`
-
-    await sendTelegramAlert(msg)
   }
 
   return NextResponse.json(result)
