@@ -55,23 +55,28 @@ async function sendTelegramNotification(lead: Record<string, string>) {
   const config = getTelegramConfig()
   if (!config.bot_token || !config.chat_id) return
 
-  const formLabel = lead.form_type === 'loan' ? 'DANG KY VAY' : 'MO THE TIN DUNG'
+  const formLabel = lead.form_type === 'loan' ? 'ĐĂNG KÝ VAY' : 'MỞ THẺ TÍN DỤNG'
 
   const lines = [
-    `[SHINHAN LEAD] ${formLabel}`,
+    `Kính gửi Quý Anh/Chị,`,
     ``,
-    `* Ho ten : ${lead.full_name}`,
-    `* SDT    : ${lead.phone}`,
-    ...(lead.email       ? [`* Email  : ${lead.email}`]                                             : []),
-    ...(lead.loan_amount ? [`* So tien: ${Number(lead.loan_amount).toLocaleString('vi-VN')} dong`]  : []),
-    ...(lead.loan_term   ? [`* Ky han : ${lead.loan_term} thang`]                                   : []),
-    ...(lead.product_name? [`* San pham: ${lead.product_name}`]                                     : []),
-    ...(lead.province    ? [`* Tinh/TP: ${lead.province}`]                                          : []),
-    ...(lead.income      ? [`* Thu nhap: ${Number(lead.income).toLocaleString('vi-VN')} d/thang`]   : []),
-    ...(lead.purpose     ? [`* Muc dich: ${lead.purpose}`]                                          : []),
+    `Hệ thống website Shinhan Finance vừa ghi nhận thêm một yêu cầu **${formLabel}** mới từ khách hàng. Dưới đây là thông tin chi tiết:`,
     ``,
-    `- Thoi gian: ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}`,
-    `- Nguon    : tuvanvienshinhan.com`,
+    `* Họ và tên: ${lead.full_name}`,
+    `* Số điện thoại: ${lead.phone}`,
+    ...(lead.email       ? [`* Email: ${lead.email}`]                                             : []),
+    ...(lead.loan_amount ? [`* Số tiền mong muốn: ${Number(lead.loan_amount).toLocaleString('vi-VN')} VNĐ`]  : []),
+    ...(lead.loan_term   ? [`* Kỳ hạn dự kiến: ${lead.loan_term} tháng`]                                   : []),
+    ...(lead.product_name? [`* Sản phẩm quan tâm: ${lead.product_name}`]                                     : []),
+    ...(lead.province    ? [`* Tỉnh/Thành phố: ${lead.province}`]                                          : []),
+    ...(lead.income      ? [`* Mức thu nhập: ${Number(lead.income).toLocaleString('vi-VN')} VNĐ/tháng`]   : []),
+    ...(lead.purpose     ? [`* Mục đích vay: ${lead.purpose}`]                                          : []),
+    ``,
+    `- Thời gian ghi nhận: ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}`,
+    `- Nguồn truy cập: tuvanvienshinhan.com`,
+    ``,
+    `Trân trọng,`,
+    `Hệ thống Tự động hóa Shinhan Web`
   ]
 
   const message = lines.join('\n')
