@@ -9,10 +9,10 @@ export default function Footer() {
   // Social links: dùng CMS nếu có, fallback về hardcode
   const socials = [
     {
-      href: youtube_url || 'https://www.youtube.com/@ShinhanFinanceVietnam',
+      href: youtube_url || '#',
       label: 'YouTube',
       icon: '/images/social/ic-youtube.svg',
-      show: true,
+      show: !!youtube_url,
     },
     {
       href: zalo_number ? `https://zalo.me/${zalo_number}` : 'https://zalo.me/0969930328',
@@ -22,19 +22,19 @@ export default function Footer() {
       show: true,
     },
     {
-      href: instagram_url || 'https://www.instagram.com/shinhanfinancevietnam',
+      href: instagram_url || '#',
       label: 'Instagram',
       icon: '/images/social/ic-instagram.svg',
-      show: true,
+      show: !!instagram_url,
     },
     {
-      href: linkedin_url || 'https://www.linkedin.com/company/shinhan-finance',
+      href: linkedin_url || '#',
       label: 'LinkedIn',
       icon: '/images/social/ic-linkedin.svg',
-      show: true,
+      show: !!linkedin_url,
     },
     {
-      href: facebook_url || 'https://www.facebook.com/ShinhanFinanceVietnam',
+      href: facebook_url || 'https://www.facebook.com/Nhanvientuvanshinhankbank',
       label: 'Facebook',
       icon: '/images/social/ic-facebook.svg',
       show: true,
