@@ -35,7 +35,7 @@ const DEFAULTS: SiteSettings = {
 }
 
 // Cache version: bump this to force-clear stale localStorage cache
-const CACHE_VERSION = 'v5'
+const CACHE_VERSION = 'v6'
 const CACHE_KEY = `site_settings_${CACHE_VERSION}`
 
 const SiteSettingsContext = createContext<SiteSettings>(DEFAULTS)
