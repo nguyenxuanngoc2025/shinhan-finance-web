@@ -1,4 +1,4 @@
-﻿{
+{
   "company_info": {
     "hotline": "0969 930 328",
     "email": "cskh@shinhanfinance.com.vn",
@@ -71,7 +71,10 @@
     "contact_phone": "0969 930 328",
     "contact_email": "cskh@tuvanvienshinhan.com",
     "zalo_number": "0969930328",
-    "facebook_url": "",
+    "facebook_url": "https://www.facebook.com/Nhanvientuvanshinhankbank",
+    "instagram_url": "",
+    "youtube_url": "",
+    "linkedin_url": "",
     "address": "",
     "footer_logo": "/images/logo/logo-footer.svg"
   },

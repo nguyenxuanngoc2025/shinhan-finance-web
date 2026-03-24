@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
@@ -12,6 +12,9 @@ type SiteSettings = {
   contact_email: string
   zalo_number: string
   facebook_url: string
+  instagram_url: string
+  youtube_url: string
+  linkedin_url: string
   address: string
 }
 
@@ -25,6 +28,9 @@ const DEFAULTS: SiteSettings = {
   contact_email: 'cskh@shinhanfinance.com.vn',
   zalo_number: '0969930328',
   facebook_url: '',
+  instagram_url: '',
+  youtube_url: '',
+  linkedin_url: '',
   address: '',
 }
 

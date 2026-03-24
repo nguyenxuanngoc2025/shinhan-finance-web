@@ -1,10 +1,45 @@
-﻿'use client'
+'use client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSiteSettings } from './SiteSettingsContext'
 
 export default function Footer() {
-  const { footer_logo } = useSiteSettings()
+  const { footer_logo, facebook_url, zalo_number, youtube_url, instagram_url, linkedin_url } = useSiteSettings()
+
+  // Social links: dùng CMS nếu có, fallback về hardcode
+  const socials = [
+    {
+      href: youtube_url || 'https://www.youtube.com/@ShinhanFinanceVietnam',
+      label: 'YouTube',
+      icon: '/images/social/ic-youtube.svg',
+      show: true,
+    },
+    {
+      href: zalo_number ? `https://zalo.me/${zalo_number}` : 'https://zalo.me/0969930328',
+      label: 'Zalo',
+      icon: '/images/social/ic-zalo.svg',
+      className: 'social-icon--zalo',
+      show: true,
+    },
+    {
+      href: instagram_url || 'https://www.instagram.com/shinhanfinancevietnam',
+      label: 'Instagram',
+      icon: '/images/social/ic-instagram.svg',
+      show: true,
+    },
+    {
+      href: linkedin_url || 'https://www.linkedin.com/company/shinhan-finance',
+      label: 'LinkedIn',
+      icon: '/images/social/ic-linkedin.svg',
+      show: true,
+    },
+    {
+      href: facebook_url || 'https://www.facebook.com/ShinhanFinanceVietnam',
+      label: 'Facebook',
+      icon: '/images/social/ic-facebook.svg',
+      show: true,
+    },
+  ]
 
   return (
     <footer className="footer" id="footer">
@@ -70,23 +105,14 @@ export default function Footer() {
             </p>
             <p><strong>Email:</strong> <a href="mailto:dvkh@shinhanfinance.com.vn">dvkh@shinhanfinance.com.vn</a></p>
 
-            {/* Social Icons */}
+            {/* Social Icons — từ CMS settings */}
             <div className="footer-social">
-              <a href="https://www.youtube.com/@ShinhanFinanceVietnam" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="social-icon">
-                <Image src="/images/social/ic-youtube.svg" alt="YouTube" width={36} height={36} unoptimized />
-              </a>
-              <a href="https://zalo.me/0969930328" target="_blank" rel="noopener noreferrer" aria-label="Zalo" className="social-icon social-icon--zalo">
-                <Image src="/images/social/ic-zalo.svg" alt="Zalo" width={36} height={36} unoptimized />
-              </a>
-              <a href="https://www.instagram.com/shinhanfinancevietnam" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="social-icon">
-                <Image src="/images/social/ic-instagram.svg" alt="Instagram" width={36} height={36} unoptimized />
-              </a>
-              <a href="https://www.linkedin.com/company/shinhan-finance" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="social-icon">
-                <Image src="/images/social/ic-linkedin.svg" alt="LinkedIn" width={36} height={36} unoptimized />
-              </a>
-              <a href="https://www.facebook.com/ShinhanFinanceVietnam" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="social-icon">
-                <Image src="/images/social/ic-facebook.svg" alt="Facebook" width={36} height={36} unoptimized />
-              </a>
+              {socials.filter(s => s.show).map(s => (
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
+                  className={`social-icon${s.className ? ' ' + s.className : ''}`}>
+                  <Image src={s.icon} alt={s.label} width={36} height={36} unoptimized />
+                </a>
+              ))}
             </div>
 
             {/* App Buttons */}

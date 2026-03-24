@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useState, useEffect, useCallback } from 'react'
 import ImagePicker from '../../components/ImagePicker'
 
@@ -12,6 +12,9 @@ type GeneralSettings = {
   contact_email: string
   zalo_number: string
   facebook_url: string
+  instagram_url: string
+  youtube_url: string
+  linkedin_url: string
   address: string
 }
 
@@ -25,6 +28,9 @@ const DEFAULTS: GeneralSettings = {
   contact_email: 'cskh@shinhanfinance.com.vn',
   zalo_number: '0969930328',
   facebook_url: '',
+  instagram_url: '',
+  youtube_url: '',
+  linkedin_url: '',
   address: '',
 }
 
@@ -109,6 +115,11 @@ export default function AppearanceGeneralPage() {
         <div className="form-row" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
           <div className="form-group"><label>Số Zalo</label><input type="text" value={settings.zalo_number} onChange={e => update('zalo_number', e.target.value)} placeholder="0969930328" /></div>
           <div className="form-group"><label>Facebook URL</label><input type="text" value={settings.facebook_url} onChange={e => update('facebook_url', e.target.value)} placeholder="https://facebook.com/..." /></div>
+        </div>
+        <div className="form-row" style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'1rem'}}>
+          <div className="form-group"><label>YouTube URL</label><input type="text" value={settings.youtube_url} onChange={e => update('youtube_url', e.target.value)} placeholder="https://youtube.com/@..." /></div>
+          <div className="form-group"><label>Instagram URL</label><input type="text" value={settings.instagram_url} onChange={e => update('instagram_url', e.target.value)} placeholder="https://instagram.com/..." /></div>
+          <div className="form-group"><label>LinkedIn URL</label><input type="text" value={settings.linkedin_url} onChange={e => update('linkedin_url', e.target.value)} placeholder="https://linkedin.com/company/..." /></div>
         </div>
         <div className="form-group">
           <label>Địa chỉ</label>
