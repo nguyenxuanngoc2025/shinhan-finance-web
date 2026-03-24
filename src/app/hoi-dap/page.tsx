@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -8,7 +8,7 @@ const FAQS = [
     category: 'Vay tín chấp',
     items: [
       { q: 'Vay tín chấp là gì?', a: 'Vay tín chấp là hình thức vay tiền không cần tài sản thế chấp, chỉ cần CMND/CCCD và chứng minh thu nhập.' },
-      { q: 'Hạn mức vay tối đa là bao nhiêu?', a: 'Hạn mức vay tín chấp tại Shinhan Finance lên đến 300 triệu đồng, tùy thuộc vào thu nhập và lịch sử tín dụng.' },
+      { q: 'Hạn mức vay tối đa là bao nhiêu?', a: 'Hạn mức vay tín chấp tại Shinhan Bank lên đến 300 triệu đồng, tùy thuộc vào thu nhập và lịch sử tín dụng.' },
       { q: 'Thời gian xét duyệt mất bao lâu?', a: 'Thời gian xét duyệt từ 15 phút đến 24 giờ làm việc sau khi nhận đầy đủ hồ sơ.' },
       { q: 'Cần những giấy tờ gì?', a: 'CMND/CCCD, bảng lương hoặc giấy xác nhận thu nhập, sổ hộ khẩu hoặc giấy tạm trú.' },
     ],
@@ -62,7 +62,7 @@ export default function HoiDapPage() {
         <section className="container" style={{ padding: '48px 60px 80px', maxWidth: 880 }}>
           <h1 className="section-title">Câu hỏi thường gặp</h1>
           <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 16, marginBottom: 48 }}>
-            Những thắc mắc phổ biến từ khách hàng Shinhan Finance
+            Những thắc mắc phổ biến từ khách hàng Shinhan Bank
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>

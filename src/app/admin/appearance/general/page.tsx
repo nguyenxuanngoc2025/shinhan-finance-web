@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback } from 'react'
 import ImagePicker from '../../components/ImagePicker'
 
@@ -16,7 +16,7 @@ type GeneralSettings = {
 }
 
 const DEFAULTS: GeneralSettings = {
-  site_name: 'Shinhan Finance',
+  site_name: 'Shinhan Bank',
   site_description: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam',
   logo: '/images/logo/logo-header.svg',
   footer_logo: '/images/logo/logo-footer.svg',

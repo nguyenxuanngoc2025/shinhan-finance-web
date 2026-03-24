@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -29,23 +29,23 @@ const HIGHLIGHTS = [
 const CONDITIONS = [
   { icon: 'fas fa-user',           text: 'Khách hàng nữ: Độ tuổi từ 21 đến 55, khách hàng nam: Độ tuổi từ 21 đến 58' },
   { icon: 'fas fa-money-bill-wave',text: 'Thu nhập tối thiểu: 4.0 triệu đồng/tháng' },
-  { icon: 'fas fa-map-marker-alt', text: 'Nơi sinh sống: TP. HCM, Hà Nội, Đà Nẵng và các tỉnh thành/khu vực có hỗ trợ của Shinhan Finance' },
+  { icon: 'fas fa-map-marker-alt', text: 'Nơi sinh sống: TP. HCM, Hà Nội, Đà Nẵng và các tỉnh thành/khu vực có hỗ trợ của Shinhan Bank' },
   { icon: 'fas fa-briefcase',      text: 'Công việc: đi làm hưởng lương' },
 ]
 
 const FAQS = [
-  { q: 'Hạn mức và thời hạn sử dụng của thẻ tín dụng Shinhan Finance THE FIRST?', a: 'Hạn mức thẻ tín dụng tùy thuộc vào thu nhập và hồ sơ tín dụng của bạn. Thời hạn sử dụng thẻ là 3 năm kể từ ngày phát hành.' },
+  { q: 'Hạn mức và thời hạn sử dụng của thẻ tín dụng Shinhan Bank THE FIRST?', a: 'Hạn mức thẻ tín dụng tùy thuộc vào thu nhập và hồ sơ tín dụng của bạn. Thời hạn sử dụng thẻ là 3 năm kể từ ngày phát hành.' },
   { q: 'Ngày thanh toán dư nợ thẻ tín dụng là ngày nào?', a: 'Ngày đến hạn thanh toán được ghi trên sao kê hàng tháng, thường là 15 ngày sau ngày chốt sao kê.' },
   { q: 'Tôi có thể kích hoạt thẻ tín dụng bằng phương thức nào?', a: 'Bạn có thể kích hoạt thẻ qua ứng dụng iShinhan hoặc gọi đến Hotline 0969 930 328.' },
   { q: 'Tôi có thể tạo ePin bằng phương thức nào?', a: 'Bạn có thể tạo ePin qua ứng dụng iShinhan theo hướng dẫn trong mục Dịch vụ thẻ online.' },
-  { q: 'Làm thế nào để tôi thanh toán dư nợ thẻ tín dụng?', a: 'Bạn có thể thanh toán qua iShinhan, chuyển khoản ngân hàng, hoặc tại các điểm giao dịch Shinhan Finance.' },
+  { q: 'Làm thế nào để tôi thanh toán dư nợ thẻ tín dụng?', a: 'Bạn có thể thanh toán qua iShinhan, chuyển khoản ngân hàng, hoặc tại các điểm giao dịch Shinhan Bank.' },
   { q: 'Những lưu ý giúp quý khách sử dụng thẻ tín dụng an toàn?', a: 'Không chia sẻ thông tin thẻ, kiểm tra sao kê thường xuyên, thiết lập giới hạn giao dịch trên iShinhan.' },
   { q: 'Tôi sẽ thanh toán bằng thẻ tín dụng ra sao tại các địa điểm mua sắm?', a: 'Quẹt thẻ tại máy POS hoặc sử dụng tính năng contactless (chạm thanh toán) tại các cửa hàng có hỗ trợ Visa/Mastercard.' },
   { q: 'Làm thế nào để rút tiền mặt tại máy ATM?', a: 'Đưa thẻ vào máy ATM, nhập mã PIN (ePin), chọn số tiền cần rút. Phí rút tiền là 2% trên số tiền giao dịch.' },
   { q: 'Tôi muốn mua hàng và thanh toán trực tuyến bằng thẻ tín dụng', a: 'Nhập thông tin thẻ (số thẻ, ngày hết hạn, CVV) tại trang thanh toán của website/ứng dụng mua sắm trực tuyến.' },
-  { q: 'Phí Rút Tiền Mặt Thẻ Tín Dụng Shinhan Finance', a: 'Phí rút tiền mặt là 2% trên số tiền giao dịch. Bạn có thể rút tiền mặt tại ATM lên đến 100% hạn mức thẻ.' },
-  { q: 'Cách Đăng Ký Mở Thẻ Tín Dụng Online Shinhan Finance', a: 'Đăng ký trực tuyến trên website Shinhan Finance hoặc ứng dụng iShinhan. Chuẩn bị CCCD và giấy tờ chứng minh thu nhập.' },
-  { q: 'Cách Thanh Toán Dư Nợ Thẻ Tín Dụng', a: 'Thanh toán qua ứng dụng iShinhan, chuyển khoản ngân hàng đến tài khoản Shinhan Finance, hoặc tại các điểm giao dịch.' },
+  { q: 'Phí Rút Tiền Mặt Thẻ Tín Dụng Shinhan Bank', a: 'Phí rút tiền mặt là 2% trên số tiền giao dịch. Bạn có thể rút tiền mặt tại ATM lên đến 100% hạn mức thẻ.' },
+  { q: 'Cách Đăng Ký Mở Thẻ Tín Dụng Online Shinhan Bank', a: 'Đăng ký trực tuyến trên website Shinhan Bank hoặc ứng dụng iShinhan. Chuẩn bị CCCD và giấy tờ chứng minh thu nhập.' },
+  { q: 'Cách Thanh Toán Dư Nợ Thẻ Tín Dụng', a: 'Thanh toán qua ứng dụng iShinhan, chuyển khoản ngân hàng đến tài khoản Shinhan Bank, hoặc tại các điểm giao dịch.' },
 ]
 
 const PROVINCES = [
@@ -176,7 +176,7 @@ export default function MoThePage() {
             </h2>
             <p className="lf-form-disclaimer">
               Bằng việc cung cấp thông tin cá nhân, bạn cam kết đã đọc, hiểu rõ và đồng ý các nội dung của Thông báo{' '}
-              <a href="#">xử lý dữ liệu cá nhân</a> và <a href="#">chính sách bảo mật</a> của Shinhan Finance.
+              <a href="#">xử lý dữ liệu cá nhân</a> và <a href="#">chính sách bảo mật</a> của Shinhan Bank.
             </p>
 
             {step === 1 && (
@@ -374,7 +374,7 @@ export default function MoThePage() {
             )}
             <p className="lf-modal-msg">
               Cảm ơn bạn đã đăng ký thẻ tín dụng <strong>THE FIRST</strong>.<br />
-              Chuyên viên Shinhan Finance sẽ liên hệ trong vòng <strong>24 giờ</strong> làm việc.
+              Chuyên viên Shinhan Bank sẽ liên hệ trong vòng <strong>24 giờ</strong> làm việc.
             </p>
 
             <div className="lf-modal-info">

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
@@ -19,7 +19,7 @@ const DEFAULTS: SiteSettings = {
   logo: '/images/logo/logo-header.svg',
   footer_logo: '/images/logo/logo-footer.svg',
   favicon: '',
-  site_name: 'Shinhan Finance',
+  site_name: 'Shinhan Bank',
   site_description: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam',
   contact_phone: '0969 930 328',
   contact_email: 'cskh@shinhanfinance.com.vn',

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 export default function AppearanceThemePage() {
@@ -59,7 +59,7 @@ export default function AppearanceThemePage() {
               <div style={{width:60,height:60,borderRadius:8,background:settings.primary_color || '#0078D4'}}></div>
               <div style={{width:60,height:60,borderRadius:8,background:settings.secondary_color || '#0056A6'}}></div>
             </div>
-            <p style={{fontFamily:settings.font_family || 'Inter',fontSize:16}}>Đây là font <strong>{settings.font_family || 'Inter'}</strong> — Shinhan Finance</p>
+            <p style={{fontFamily:settings.font_family || 'Inter',fontSize:16}}>Đây là font <strong>{settings.font_family || 'Inter'}</strong> — Shinhan Bank</p>
           </div>
         </div>
       </div>

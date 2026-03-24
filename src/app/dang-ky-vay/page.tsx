@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useRef, useEffect, Suspense, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -68,20 +68,20 @@ const DEFAULT_PRODUCTS: ProductConfig[] = [
 ]
 
 const FAQS = [
-  { q: '1. Làm thế nào để Quý khách đăng ký khoản vay tín chấp với Shinhan Finance?', a: 'Quý khách có thể đăng ký trực tuyến trên website, qua ứng dụng iShinhan, hoặc đến trực tiếp các điểm giao dịch của Shinhan Finance trên toàn quốc.' },
-  { q: '2. Cách tính tiền lãi vay tín chấp của Shinhan Finance?', a: 'Lãi suất được tính trên dư nợ giảm dần, từ 18%/năm đến tối đa 49%/năm tùy hồ sơ thẩm định. Công thức: Lãi hàng tháng = Dư nợ hiện tại × (Lãi suất năm / 12).' },
-  { q: '3. Làm thế nào để Quý khách biết được Shinhan Finance đã nhận được khoản thanh toán?', a: 'Quý khách sẽ nhận được SMS xác nhận ngay sau khi giao dịch thanh toán được ghi nhận, hoặc kiểm tra trên ứng dụng iShinhan.' },
-  { q: '4. Làm thế nào để Quý khách có tài khoản truy cập thông tin trên website của Shinhan Finance?', a: 'Quý khách đăng ký tài khoản iShinhan bằng số điện thoại đã đăng ký khoản vay. Hệ thống sẽ gửi mã OTP để xác thực.' },
-  { q: '5. Làm thế nào để Quý khách đăng nhập vào tài khoản truy cập thông tin trên website của Shinhan Finance?', a: 'Truy cập trang web hoặc ứng dụng iShinhan, nhập số điện thoại và mật khẩu đã đăng ký để đăng nhập.' },
-  { q: '6. Quý khách cần lưu ý gì khi đăng nhập vào tài khoản truy cập thông tin trên website của Shinhan Finance?', a: 'Không chia sẻ mật khẩu với người khác. Đăng xuất sau khi sử dụng trên thiết bị công cộng. Đổi mật khẩu định kỳ.' },
-  { q: '7. Làm thế nào để quý khách cập nhật thay đổi thông tin cá nhân cho Shinhan Finance?', a: 'Quý khách liên hệ hotline 0969 930 328 hoặc đến trực tiếp các điểm giao dịch để yêu cầu cập nhật thông tin.' },
-  { q: '8. Làm thế nào để đăng ký vay thêm với Shinhan Finance?', a: 'Quý khách có thể đăng ký vay thêm sau khi đã thanh toán ít nhất 6 kỳ hạn và không có nợ quá hạn.' },
+  { q: '1. Làm thế nào để Quý khách đăng ký khoản vay tín chấp với Shinhan Bank?', a: 'Quý khách có thể đăng ký trực tuyến trên website, qua ứng dụng iShinhan, hoặc đến trực tiếp các điểm giao dịch của Shinhan Bank trên toàn quốc.' },
+  { q: '2. Cách tính tiền lãi vay tín chấp của Shinhan Bank?', a: 'Lãi suất được tính trên dư nợ giảm dần, từ 18%/năm đến tối đa 49%/năm tùy hồ sơ thẩm định. Công thức: Lãi hàng tháng = Dư nợ hiện tại × (Lãi suất năm / 12).' },
+  { q: '3. Làm thế nào để Quý khách biết được Shinhan Bank đã nhận được khoản thanh toán?', a: 'Quý khách sẽ nhận được SMS xác nhận ngay sau khi giao dịch thanh toán được ghi nhận, hoặc kiểm tra trên ứng dụng iShinhan.' },
+  { q: '4. Làm thế nào để Quý khách có tài khoản truy cập thông tin trên website của Shinhan Bank?', a: 'Quý khách đăng ký tài khoản iShinhan bằng số điện thoại đã đăng ký khoản vay. Hệ thống sẽ gửi mã OTP để xác thực.' },
+  { q: '5. Làm thế nào để Quý khách đăng nhập vào tài khoản truy cập thông tin trên website của Shinhan Bank?', a: 'Truy cập trang web hoặc ứng dụng iShinhan, nhập số điện thoại và mật khẩu đã đăng ký để đăng nhập.' },
+  { q: '6. Quý khách cần lưu ý gì khi đăng nhập vào tài khoản truy cập thông tin trên website của Shinhan Bank?', a: 'Không chia sẻ mật khẩu với người khác. Đăng xuất sau khi sử dụng trên thiết bị công cộng. Đổi mật khẩu định kỳ.' },
+  { q: '7. Làm thế nào để quý khách cập nhật thay đổi thông tin cá nhân cho Shinhan Bank?', a: 'Quý khách liên hệ hotline 0969 930 328 hoặc đến trực tiếp các điểm giao dịch để yêu cầu cập nhật thông tin.' },
+  { q: '8. Làm thế nào để đăng ký vay thêm với Shinhan Bank?', a: 'Quý khách có thể đăng ký vay thêm sau khi đã thanh toán ít nhất 6 kỳ hạn và không có nợ quá hạn.' },
   { q: '9. Bất lợi khi thanh toán trễ hạn hoặc thanh toán thiếu?', a: 'Sẽ bị tính phí phạt trả chậm và ảnh hưởng đến lịch sử tín dụng (CIC), gây khó khăn khi vay vốn trong tương lai.' },
-  { q: '10. Phí dịch vụ đang áp dụng tại Shinhan Finance?', a: 'Bao gồm phí giải ngân, phí trả nợ trước hạn (2% trên số tiền trả trước), phí phạt trả chậm. Xem Biểu phí chi tiết tại website.' },
+  { q: '10. Phí dịch vụ đang áp dụng tại Shinhan Bank?', a: 'Bao gồm phí giải ngân, phí trả nợ trước hạn (2% trên số tiền trả trước), phí phạt trả chậm. Xem Biểu phí chi tiết tại website.' },
   { q: '11. Thủ tục tất toán khoản vay trước hạn', a: 'Liên hệ hotline 0969 930 328 hoặc đến Trung tâm dịch vụ khách hàng. Phí tất toán trước hạn là 2% trên số tiền tất toán.' },
-  { q: '12. Tham khảo Biểu phí, Biểu mẫu, Hợp đồng tại Shinhan Finance', a: 'Quý khách có thể tải xuống tại mục Biểu phí trên website shinhanfinance.com.vn hoặc liên hệ hotline để được hỗ trợ.' },
-  { q: '13. Tham khảo Điều Khoản Cơ Bản của Hợp Đồng Cho Vay với Shinhan Finance?', a: 'Tham khảo tại mục Điều khoản trên website hoặc yêu cầu nhân viên tư vấn gửi bản copy qua email.' },
-  { q: '15. Lãi suất cho vay bình quân đang áp dụng tại Shinhan Finance là bao nhiêu?', a: 'Lãi suất bình quân dao động từ 18%/năm đến 49%/năm tính trên dư nợ giảm dần, tùy thuộc vào kết quả thẩm định hồ sơ.' },
+  { q: '12. Tham khảo Biểu phí, Biểu mẫu, Hợp đồng tại Shinhan Bank', a: 'Quý khách có thể tải xuống tại mục Biểu phí trên website shinhanfinance.com.vn hoặc liên hệ hotline để được hỗ trợ.' },
+  { q: '13. Tham khảo Điều Khoản Cơ Bản của Hợp Đồng Cho Vay với Shinhan Bank?', a: 'Tham khảo tại mục Điều khoản trên website hoặc yêu cầu nhân viên tư vấn gửi bản copy qua email.' },
+  { q: '15. Lãi suất cho vay bình quân đang áp dụng tại Shinhan Bank là bao nhiêu?', a: 'Lãi suất bình quân dao động từ 18%/năm đến 49%/năm tính trên dư nợ giảm dần, tùy thuộc vào kết quả thẩm định hồ sơ.' },
 ]
 
 const REASONS = [
@@ -424,8 +424,8 @@ function DangKyVayInner() {
               <h2 className="lf-form-hero-title">Chào bạn, vui lòng điền thông tin dưới đây</h2>
               <p className="lf-form-disclaimer">
                 Bằng việc cung cấp thông tin cá nhân, bạn cam kết đã đọc, hiểu rõ và và đồng ý các nội dung của Thông báo{' '}
-                <a href="#">xử lý dữ liệu cá nhân</a> và <a href="#">chính sách bảo mật</a> của Shinhan Finance.
-                Bạn đồng ý cho Shinhan Finance tư vấn thêm các sản phẩm phù hợp với nhu cầu và thực trạng hồ sơ hiện tại của mình.
+                <a href="#">xử lý dữ liệu cá nhân</a> và <a href="#">chính sách bảo mật</a> của Shinhan Bank.
+                Bạn đồng ý cho Shinhan Bank tư vấn thêm các sản phẩm phù hợp với nhu cầu và thực trạng hồ sơ hiện tại của mình.
               </p>
 
               <form className="lf-shinhan-form" onSubmit={(e) => { e.preventDefault(); setStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
@@ -827,7 +827,7 @@ function DangKyVayInner() {
         <section className="lf-section lf-reasons">
           <div className="lf-container">
             <div className="lf-reasons-layout">
-              <h2 className="lf-reasons-title">Lý do bạn nên vay tại<br />Shinhan Finance</h2>
+              <h2 className="lf-reasons-title">Lý do bạn nên vay tại<br />Shinhan Bank</h2>
               <div className="lf-reasons-grid">
                 {REASONS.map((r, i) => (
                   <div className="lf-reason-card" key={i}>
@@ -860,7 +860,7 @@ function DangKyVayInner() {
               <p className="lf-modal-name">Xin chào, <strong>{formData.fullName}</strong></p>
             )}
             <p className="lf-modal-msg">
-              Cảm ơn bạn đã tin tưởng <strong>Shinhan Finance</strong>.<br />
+              Cảm ơn bạn đã tin tưởng <strong>Shinhan Bank</strong>.<br />
               Chuyên viên của chúng tôi sẽ liên hệ với bạn trong vòng <strong>24 giờ</strong> làm việc.
             </p>
 

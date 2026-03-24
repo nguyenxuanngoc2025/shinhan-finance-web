@@ -1,4 +1,4 @@
-// Logo đối tác thật từ Shinhan Finance (đã tải về /public/images/partners/)
+﻿// Logo đối tác thật từ Shinhan Bank (đã tải về /public/images/partners/)
 const PARTNERS = [
   { img: '/images/partners/nguyen-kim.png',      name: 'Nguyễn Kim' },
   { img: '/images/partners/cho-lon.png',          name: 'Siêu thị Chợ Lớn' },

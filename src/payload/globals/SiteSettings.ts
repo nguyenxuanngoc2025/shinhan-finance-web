@@ -1,4 +1,4 @@
-import type { GlobalConfig } from 'payload'
+﻿import type { GlobalConfig } from 'payload'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -14,7 +14,7 @@ export const SiteSettings: GlobalConfig = {
         {
           label: 'Thương hiệu',
           fields: [
-            { name: 'siteName', type: 'text', required: true, label: 'Tên website', defaultValue: 'Shinhan Finance' },
+            { name: 'siteName', type: 'text', required: true, label: 'Tên website', defaultValue: 'Shinhan Bank' },
             { name: 'siteTagline', type: 'text', label: 'Slogan', defaultValue: 'Đồng hành tài chính cùng bạn' },
             { name: 'logo', type: 'upload', relationTo: 'media', label: 'Logo chính (header)' },
             { name: 'logoWhite', type: 'upload', relationTo: 'media', label: 'Logo trắng (footer)' },
@@ -49,8 +49,8 @@ export const SiteSettings: GlobalConfig = {
         {
           label: 'SEO mặc định',
           fields: [
-            { name: 'metaTitle', type: 'text', label: 'Meta Title mặc định', defaultValue: 'Shinhan Finance | Vay tín chấp & Thẻ tín dụng' },
-            { name: 'metaDescription', type: 'textarea', label: 'Meta Description mặc định', defaultValue: 'Shinhan Finance - Công ty tài chính hàng đầu Việt Nam. Vay tín chấp, thẻ tín dụng THE FIRST, lãi suất cạnh tranh.' },
+            { name: 'metaTitle', type: 'text', label: 'Meta Title mặc định', defaultValue: 'Shinhan Bank | Vay tín chấp & Thẻ tín dụng' },
+            { name: 'metaDescription', type: 'textarea', label: 'Meta Description mặc định', defaultValue: 'Shinhan Bank - Công ty tài chính hàng đầu Việt Nam. Vay tín chấp, thẻ tín dụng THE FIRST, lãi suất cạnh tranh.' },
             { name: 'ogImage', type: 'upload', relationTo: 'media', label: 'OG Image (ảnh share mạng xã hội)' },
             { name: 'googleAnalyticsId', type: 'text', label: 'Google Analytics ID' },
           ],

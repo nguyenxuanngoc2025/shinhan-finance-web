@@ -1,34 +1,34 @@
-'use client'
+﻿'use client'
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 
 const TESTIMONIALS = [
   {
-    text: 'Khi trải nghiệm các dịch vụ tại Shinhan Finance, tôi bất ngờ và thật sự hài lòng vì sự tận tâm trong quá trình phục vụ khách hàng của nhân viên tại đây.',
+    text: 'Khi trải nghiệm các dịch vụ tại Shinhan Bank, tôi bất ngờ và thật sự hài lòng vì sự tận tâm trong quá trình phục vụ khách hàng của nhân viên tại đây.',
     name: 'Nguyễn Thị Thùy An',
     title: 'Nhân viên văn phòng',
     avatar: 'https://i.pravatar.cc/80?img=1',
   },
   {
-    text: 'Lãi suất vay tại Shinhan Finance rất hấp dẫn nên tôi lựa chọn sản phẩm vay tại đây để giải quyết các nhu cầu chi tiêu cá nhân.',
+    text: 'Lãi suất vay tại Shinhan Bank rất hấp dẫn nên tôi lựa chọn sản phẩm vay tại đây để giải quyết các nhu cầu chi tiêu cá nhân.',
     name: 'Lê Thị Ngọc Huệ',
     title: 'Marketing Thẩm mỹ',
     avatar: 'https://i.pravatar.cc/80?img=5',
   },
   {
-    text: 'Chúng tôi tin rằng việc MoMo cùng Shinhan Finance luôn đồng hành và hợp tác lâu dài sẽ mang đến những giá trị thiết thực dành cho khách hàng.',
+    text: 'Chúng tôi tin rằng việc MoMo cùng Shinhan Bank luôn đồng hành và hợp tác lâu dài sẽ mang đến những giá trị thiết thực dành cho khách hàng.',
     name: 'Mr. Bùi Nhất Sang',
     title: 'Đại diện đối tác MoMo',
     avatar: 'https://i.pravatar.cc/80?img=11',
   },
   {
-    text: 'Tôi chọn Shinhan Finance vì uy tín công ty trên thị trường, đặc biệt an tâm khi thông tin cá nhân luôn được bảo mật.',
+    text: 'Tôi chọn Shinhan Bank vì uy tín công ty trên thị trường, đặc biệt an tâm khi thông tin cá nhân luôn được bảo mật.',
     name: 'Lê Võ Thanh Hà',
     title: 'Nhân viên văn phòng',
     avatar: 'https://i.pravatar.cc/80?img=9',
   },
   {
-    text: 'VNPAY tự hào khi được đồng hành và sát cánh cùng Shinhan Finance trong suốt thời gian qua và cả hành trình hợp tác sắp tới.',
+    text: 'VNPAY tự hào khi được đồng hành và sát cánh cùng Shinhan Bank trong suốt thời gian qua và cả hành trình hợp tác sắp tới.',
     name: 'Ms. Võ Thị Cẩm Nhung',
     title: 'Đại diện đối tác VNPAY',
     avatar: 'https://i.pravatar.cc/80?img=16',
@@ -45,7 +45,7 @@ export default function TestimonialsSection() {
   return (
     <section className="testimonials-section" id="testimonials">
       <div className="container">
-        <h2 className="section-title white">Đồng hành và trải nghiệm cùng Shinhan Finance</h2>
+        <h2 className="section-title white">Đồng hành và trải nghiệm cùng Shinhan Bank</h2>
         <div className="testimonials-carousel" id="testimonialsCarousel">
           <div
             className="testimonials-track"

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSiteSettings } from './SiteSettingsContext'
@@ -59,7 +59,7 @@ export default function Footer() {
           <div className="footer-col footer-contact-col">
             <p className="footer-contact-label">Liên hệ</p>
             <p>
-              <strong>Chi nhánh Shinhan Finance:</strong> Tòa nhà Pico Plaza,
+              <strong>Chi nhánh Shinhan Bank:</strong> Tòa nhà Pico Plaza,
               20 Cộng Hòa, Phường Bảy Hiền, (Quận Tân Bình) TP.HCM
             </p>
             <p>
@@ -110,12 +110,12 @@ export default function Footer() {
           <div className="footer-bottom-inner">
             {/* Logo — from CMS via SiteSettingsContext */}
             <div className="footer-logo-wrap">
-              <Link href="/" aria-label="Shinhan Finance - Trang chủ">
+              <Link href="/" aria-label="Shinhan Bank - Trang chủ">
                 {footer_logo ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={footer_logo}
-                    alt="Shinhan Finance"
+                    alt="Shinhan Bank"
                     style={{height: 22, width: 'auto'}}
                   />
                 ) : null}

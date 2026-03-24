@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -26,12 +26,12 @@ export default function ChinhSachBaoMatPage() {
           <div className="container">
             <div className="policy-content">
               <p className="policy-intro">
-                Chính sách bảo mật này được áp dụng đối với tất cả người dùng khi truy cập website và sử dụng các dịch vụ do Shinhan Finance cung cấp. Chúng tôi cam kết bảo vệ quyền lợi của bạn và tuân thủ các quy định về bảo vệ thông tin cá nhân theo pháp luật Việt Nam. Việc bạn sử dụng website và các dịch vụ của chúng tôi đồng nghĩa với việc bạn đã đọc, hiểu và đồng ý với các điều khoản trong chính sách bảo mật này.
+                Chính sách bảo mật này được áp dụng đối với tất cả người dùng khi truy cập website và sử dụng các dịch vụ do Shinhan Bank cung cấp. Chúng tôi cam kết bảo vệ quyền lợi của bạn và tuân thủ các quy định về bảo vệ thông tin cá nhân theo pháp luật Việt Nam. Việc bạn sử dụng website và các dịch vụ của chúng tôi đồng nghĩa với việc bạn đã đọc, hiểu và đồng ý với các điều khoản trong chính sách bảo mật này.
               </p>
 
               <h2>1. Thông tin thu thập</h2>
               <h3>1.1. Các loại thông tin thu thập</h3>
-              <p>Chúng tôi thu thập và xử lý các loại thông tin sau từ người dùng khi sử dụng dịch vụ của Shinhan Finance:</p>
+              <p>Chúng tôi thu thập và xử lý các loại thông tin sau từ người dùng khi sử dụng dịch vụ của Shinhan Bank:</p>
               <ul>
                 <li><strong>Thông tin cá nhân:</strong> Họ tên, giới tính, ngày tháng năm sinh, số điện thoại, email, số chứng minh nhân dân (CMND), căn cước công dân (CCCD), địa chỉ nhà, nghề nghiệp, quốc tịch, thông tin tài khoản ngân hàng, thông tin thẻ tín dụng.</li>
                 <li><strong>Thông tin giao dịch:</strong> Lịch sử giao dịch, các dịch vụ bạn đã yêu cầu, thông tin thanh toán và giao dịch.</li>

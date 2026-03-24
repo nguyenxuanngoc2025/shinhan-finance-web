@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback } from 'react'
 import ImagePicker from '../../components/ImagePicker'
 
@@ -12,7 +12,7 @@ type SeoSettings = {
 }
 
 const DEFAULTS: SeoSettings = {
-  default_title: 'Shinhan Finance | Công ty tài chính đến từ Hàn Quốc',
+  default_title: 'Shinhan Bank | Công ty tài chính đến từ Hàn Quốc',
   default_description: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam, thành viên của Shinhan Card (Hàn Quốc)',
   title_separator: '|',
   default_og_image: '',
@@ -75,7 +75,7 @@ export default function SeoSettingsPage() {
       <div className="card form-layout">
         <div className="form-group">
           <label>Tiêu đề mặc định (Title Tag)</label>
-          <input type="text" value={settings.default_title} onChange={e => update('default_title', e.target.value)} placeholder="Shinhan Finance — Giải pháp tài chính toàn diện" />
+          <input type="text" value={settings.default_title} onChange={e => update('default_title', e.target.value)} placeholder="Shinhan Bank — Giải pháp tài chính toàn diện" />
           <small style={{color:'#888',fontSize:12}}>Hiển thị trên tab trình duyệt khi không có title riêng cho từng trang</small>
         </div>
 

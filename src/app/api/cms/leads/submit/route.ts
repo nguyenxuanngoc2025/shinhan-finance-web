@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import fs from 'fs'
 import path from 'path'
@@ -60,7 +60,7 @@ async function sendTelegramNotification(lead: Record<string, string>) {
   const lines = [
     `Kính gửi Quý Anh/Chị,`,
     ``,
-    `Hệ thống website Shinhan Finance vừa ghi nhận thêm một yêu cầu **${formLabel}** mới từ khách hàng. Dưới đây là thông tin chi tiết:`,
+    `Hệ thống website Shinhan Bank vừa ghi nhận thêm một yêu cầu **${formLabel}** mới từ khách hàng. Dưới đây là thông tin chi tiết:`,
     ``,
     `* Họ và tên: ${lead.full_name}`,
     `* Số điện thoại: ${lead.phone}`,

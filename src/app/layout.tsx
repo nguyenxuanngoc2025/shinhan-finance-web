@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import './globals.css'
 import TrackingScripts from '@/components/TrackingScripts'
 
@@ -7,23 +7,23 @@ const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://tuvanvienshinhan
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Shinhan Finance | Vay tín chấp & Thẻ tín dụng THE FIRST',
-    template: '%s | Shinhan Finance',
+    default: 'Shinhan Bank | Vay tín chấp & Thẻ tín dụng THE FIRST',
+    template: '%s | Shinhan Bank',
   },
-  description: 'Shinhan Finance – Giải pháp tài chính toàn diện: vay tín chấp nhanh không thế chấp, thẻ tín dụng THE FIRST ưu đãi 0% lãi suất, trả góp linh hoạt. Hotline: 0969 930 328.',
-  keywords: 'vay tín chấp, thẻ tín dụng, Shinhan Finance, vay tiêu dùng, mở thẻ tín dụng THE FIRST, vay nhanh, lãi suất thấp, vay trả góp, vay không thế chấp',
+  description: 'Shinhan Bank – Giải pháp tài chính toàn diện: vay tín chấp nhanh không thế chấp, thẻ tín dụng THE FIRST ưu đãi 0% lãi suất, trả góp linh hoạt. Hotline: 0969 930 328.',
+  keywords: 'vay tín chấp, thẻ tín dụng, Shinhan Bank, vay tiêu dùng, mở thẻ tín dụng THE FIRST, vay nhanh, lãi suất thấp, vay trả góp, vay không thế chấp',
   openGraph: {
-    siteName: 'Shinhan Finance Việt Nam',
+    siteName: 'Shinhan Bank Việt Nam',
     locale: 'vi_VN',
     type: 'website',
-    title: 'Shinhan Finance | Vay tín chấp & Thẻ tín dụng THE FIRST',
-    description: 'Giải pháp tài chính toàn diện từ Shinhan Finance Việt Nam. Vay tín chấp nhanh, thẻ tín dụng ưu đãi vượt trội.',
+    title: 'Shinhan Bank | Vay tín chấp & Thẻ tín dụng THE FIRST',
+    description: 'Giải pháp tài chính toàn diện từ Shinhan Bank Việt Nam. Vay tín chấp nhanh, thẻ tín dụng ưu đãi vượt trội.',
     url: SITE_URL,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Shinhan Finance | Vay tín chấp & Thẻ tín dụng THE FIRST',
-    description: 'Giải pháp tài chính toàn diện từ Shinhan Finance Việt Nam.',
+    title: 'Shinhan Bank | Vay tín chấp & Thẻ tín dụng THE FIRST',
+    description: 'Giải pháp tài chính toàn diện từ Shinhan Bank Việt Nam.',
   },
   alternates: {
     canonical: SITE_URL,
@@ -44,11 +44,11 @@ export const metadata: Metadata = {
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'FinancialService',
-  name: 'Shinhan Finance Việt Nam',
+  name: 'Shinhan Bank Việt Nam',
   alternateName: 'Công ty Tài chính TNHH Một thành viên Shinhan Việt Nam',
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo/logo-header.svg`,
-  description: 'Shinhan Finance – Giải pháp tài chính toàn diện: vay tín chấp, thẻ tín dụng, vay trả góp.',
+  description: 'Shinhan Bank – Giải pháp tài chính toàn diện: vay tín chấp, thẻ tín dụng, vay trả góp.',
   telephone: '+84969930328',
   email: 'cskh@shinhanfinance.com.vn',
   address: {
@@ -74,7 +74,7 @@ const organizationSchema = {
 const webSiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Shinhan Finance',
+  name: 'Shinhan Bank',
   url: SITE_URL,
   potentialAction: {
     '@type': 'SearchAction',

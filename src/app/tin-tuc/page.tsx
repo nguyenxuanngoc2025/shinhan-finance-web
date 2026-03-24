@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
@@ -116,7 +116,7 @@ function NewsPageInner() {
       <section className="news-hero">
         <div className="container">
           <h1>Bản tin</h1>
-          <p>Tin tức, khuyến mại và sự kiện mới nhất từ Shinhan Finance</p>
+          <p>Tin tức, khuyến mại và sự kiện mới nhất từ Shinhan Bank</p>
         </div>
       </section>
 

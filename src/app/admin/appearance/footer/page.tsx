@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 export default function AppearanceFooterPage() {
   return (
     <div>
@@ -8,7 +8,7 @@ export default function AppearanceFooterPage() {
         <div className="form-group"><label>Số cột footer</label><select defaultValue="4"><option value="3">3 cột</option><option value="4">4 cột</option></select></div>
         <div className="form-group">
           <label>Copyright text</label>
-          <input type="text" defaultValue="© 2026 Shinhan Finance. Mọi quyền được bảo lưu." />
+          <input type="text" defaultValue="© 2026 Shinhan Bank. Mọi quyền được bảo lưu." />
         </div>
         <div className="form-group">
           <label>Mạng xã hội</label>

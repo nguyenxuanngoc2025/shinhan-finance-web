@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import HeroSlider from '@/components/HeroSlider'
@@ -12,12 +12,12 @@ import NewsSection from '@/components/NewsSection'
 import FloatingButtons from '@/components/FloatingButtons'
 
 export const metadata: Metadata = {
-  title: 'Shinhan Finance | Vay tín chấp & Thẻ tín dụng THE FIRST',
-  description: 'Shinhan Finance – Giải pháp tài chính toàn diện: vay tín chấp nhanh không thế chấp, thẻ tín dụng THE FIRST ưu đãi 0% lãi suất, trả góp linh hoạt. Hotline: 0969 930 328.',
-  keywords: 'vay tín chấp, thẻ tín dụng, Shinhan Finance, vay tiêu dùng, mở thẻ tín dụng THE FIRST, vay nhanh, lãi suất thấp',
+  title: 'Shinhan Bank | Vay tín chấp & Thẻ tín dụng THE FIRST',
+  description: 'Shinhan Bank – Giải pháp tài chính toàn diện: vay tín chấp nhanh không thế chấp, thẻ tín dụng THE FIRST ưu đãi 0% lãi suất, trả góp linh hoạt. Hotline: 0969 930 328.',
+  keywords: 'vay tín chấp, thẻ tín dụng, Shinhan Bank, vay tiêu dùng, mở thẻ tín dụng THE FIRST, vay nhanh, lãi suất thấp',
   openGraph: {
-    title: 'Shinhan Finance | Vay tín chấp & Thẻ tín dụng THE FIRST',
-    description: 'Giải pháp tài chính toàn diện từ Shinhan Finance Việt Nam. Vay tín chấp nhanh, thẻ tín dụng ưu đãi vượt trội.',
+    title: 'Shinhan Bank | Vay tín chấp & Thẻ tín dụng THE FIRST',
+    description: 'Giải pháp tài chính toàn diện từ Shinhan Bank Việt Nam. Vay tín chấp nhanh, thẻ tín dụng ưu đãi vượt trội.',
     type: 'website',
     locale: 'vi_VN',
   },
@@ -28,11 +28,11 @@ const productsSchema = [
   {
     '@context': 'https://schema.org',
     '@type': 'FinancialProduct',
-    name: 'Vay tín chấp cá nhân Shinhan Finance',
+    name: 'Vay tín chấp cá nhân Shinhan Bank',
     description: 'Vay tín chấp không cần tài sản thế chấp, hạn mức đến 300 triệu, kỳ hạn linh hoạt đến 48 tháng.',
     provider: {
       '@type': 'FinancialService',
-      name: 'Shinhan Finance Việt Nam',
+      name: 'Shinhan Bank Việt Nam',
     },
     interestRate: {
       '@type': 'QuantitativeValue',
@@ -51,11 +51,11 @@ const productsSchema = [
   {
     '@context': 'https://schema.org',
     '@type': 'FinancialProduct',
-    name: 'Thẻ tín dụng THE FIRST Shinhan Finance',
+    name: 'Thẻ tín dụng THE FIRST Shinhan Bank',
     description: 'Thẻ tín dụng THE FIRST với ưu đãi rút tiền mặt 100% hạn mức, miễn lãi đến 45 ngày, hoàn tiền 0.5%.',
     provider: {
       '@type': 'FinancialService',
-      name: 'Shinhan Finance Việt Nam',
+      name: 'Shinhan Bank Việt Nam',
     },
     url: 'https://shinhanfinance-clone.ngocnguyenxuan.com/san-pham/the-tin-dung',
   },

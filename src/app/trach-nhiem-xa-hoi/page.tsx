@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -12,7 +12,7 @@ export default function TrachNhiemXaHoiPage() {
 
           <div style={{ lineHeight: 1.8, color: 'var(--text-secondary)', fontSize: 15 }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>Cam kết phát triển bền vững</h2>
-            <p>Shinhan Finance Việt Nam luôn đặt trách nhiệm xã hội là một trong những giá trị cốt lõi, hướng tới phát triển bền vững và đóng góp tích cực cho cộng đồng Việt Nam.</p>
+            <p>Shinhan Bank Việt Nam luôn đặt trách nhiệm xã hội là một trong những giá trị cốt lõi, hướng tới phát triển bền vững và đóng góp tích cực cho cộng đồng Việt Nam.</p>
 
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>Các hoạt động nổi bật</h2>
             <ul style={{ paddingLeft: 20 }}>
@@ -23,7 +23,7 @@ export default function TrachNhiemXaHoiPage() {
             </ul>
 
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>Tầm nhìn</h2>
-            <p>Shinhan Finance hướng tới trở thành công ty tài chính hàng đầu Việt Nam không chỉ về hiệu quả kinh doanh mà còn về đóng góp cho cộng đồng và phát triển bền vững.</p>
+            <p>Shinhan Bank hướng tới trở thành công ty tài chính hàng đầu Việt Nam không chỉ về hiệu quả kinh doanh mà còn về đóng góp cho cộng đồng và phát triển bền vững.</p>
           </div>
         </section>
       </main>

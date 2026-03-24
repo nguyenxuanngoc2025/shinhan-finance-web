@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import '../../dang-ky-vay/dang-ky-vay.css'
@@ -10,12 +10,12 @@ import FloatingButtons from '@/components/FloatingButtons'
 const TERM_OPTIONS = [6, 9, 12, 18, 24]
 
 const FAQS = [
-  { q: '1. Vay trả góp mua laptop/điện thoại của Shinhan Finance là gì?', a: 'Đây là sản phẩm cho vay tiêu dùng trả góp dành cho khách hàng muốn mua laptop, điện thoại, thiết bị điện tử tại các cửa hàng đối tác của Shinhan Finance. Khách hàng chỉ cần trả trước một phần, phần còn lại trả góp hàng tháng.' },
+  { q: '1. Vay trả góp mua laptop/điện thoại của Shinhan Bank là gì?', a: 'Đây là sản phẩm cho vay tiêu dùng trả góp dành cho khách hàng muốn mua laptop, điện thoại, thiết bị điện tử tại các cửa hàng đối tác của Shinhan Bank. Khách hàng chỉ cần trả trước một phần, phần còn lại trả góp hàng tháng.' },
   { q: '2. Lãi suất vay trả góp laptop/điện thoại là bao nhiêu?', a: 'Lãi suất từ 0% đến tối đa 36%/năm tính trên dư nợ giảm dần, tùy thuộc vào chương trình khuyến mại của từng đối tác và kết quả thẩm định hồ sơ.' },
-  { q: '3. Tôi cần trả trước bao nhiêu khi mua trả góp qua Shinhan Finance?', a: 'Tỷ lệ trả trước tối thiểu từ 20% giá trị sản phẩm, tùy chương trình và cửa hàng đối tác cụ thể.' },
+  { q: '3. Tôi cần trả trước bao nhiêu khi mua trả góp qua Shinhan Bank?', a: 'Tỷ lệ trả trước tối thiểu từ 20% giá trị sản phẩm, tùy chương trình và cửa hàng đối tác cụ thể.' },
   { q: '4. Thời gian xét duyệt hồ sơ vay trả góp mất bao lâu?', a: 'Hồ sơ được xét duyệt nhanh chóng ngay tại cửa hàng, thường chỉ trong vòng 15–30 phút sau khi nộp đủ giấy tờ.' },
   { q: '5. Tôi cần chuẩn bị giấy tờ gì để vay trả góp?', a: 'Chỉ cần CMND/CCCD còn hiệu lực. Một số trường hợp có thể cần thêm hợp đồng lao động hoặc sao kê lương tháng gần nhất.' },
-  { q: '6. Có thể mua sản phẩm nào qua hình thức vay trả góp Shinhan Finance?', a: 'Laptop, máy tính bảng, điện thoại smartphone, các thiết bị điện tử — tại hơn 5.000 cửa hàng đối tác toàn quốc.' },
+  { q: '6. Có thể mua sản phẩm nào qua hình thức vay trả góp Shinhan Bank?', a: 'Laptop, máy tính bảng, điện thoại smartphone, các thiết bị điện tử — tại hơn 5.000 cửa hàng đối tác toàn quốc.' },
   { q: '7. Tôi có thể trả nợ trước hạn không?', a: 'Có, quý khách có thể tất toán trước hạn bất cứ lúc nào. Phí tất toán trước hạn là 2% trên số tiền tất toán còn lại.' },
   { q: '8. Nếu trả chậm có bị phạt không?', a: 'Có. Khoản thanh toán chậm hạn sẽ bị tính phí phạt và ảnh hưởng đến lịch sử tín dụng CIC của khách hàng.' },
 ]
@@ -106,7 +106,7 @@ export default function VayTraGopPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/products/banner-vay-tra-gop-hero.jpg"
-            alt="Vay trả góp mua laptop điện thoại Shinhan Finance"
+            alt="Vay trả góp mua laptop điện thoại Shinhan Bank"
             className="vtc-hero-img"
           />
           <div className="vtc-hero-content">
@@ -290,7 +290,7 @@ export default function VayTraGopPage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/products/eligibility-tra-gop.png"
-                alt="Điều kiện vay trả góp Shinhan Finance"
+                alt="Điều kiện vay trả góp Shinhan Bank"
                 className="vtc-dk-img"
               />
             </div>

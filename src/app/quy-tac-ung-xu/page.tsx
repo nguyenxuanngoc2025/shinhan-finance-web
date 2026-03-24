@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -12,7 +12,7 @@ export default function QuyTacUngXuPage() {
 
           <div style={{ lineHeight: 1.8, color: 'var(--text-secondary)', fontSize: 15 }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>1. Mục đích</h2>
-            <p>Bộ Quy tắc ứng xử và đạo đức kinh doanh này nhằm thiết lập các tiêu chuẩn hành vi cho toàn bộ nhân viên, cán bộ quản lý và đối tác của Shinhan Finance Việt Nam, đảm bảo hoạt động kinh doanh luôn tuân thủ pháp luật và các chuẩn mực đạo đức cao nhất.</p>
+            <p>Bộ Quy tắc ứng xử và đạo đức kinh doanh này nhằm thiết lập các tiêu chuẩn hành vi cho toàn bộ nhân viên, cán bộ quản lý và đối tác của Shinhan Bank Việt Nam, đảm bảo hoạt động kinh doanh luôn tuân thủ pháp luật và các chuẩn mực đạo đức cao nhất.</p>
 
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>2. Nguyên tắc cốt lõi</h2>
             <ul style={{ paddingLeft: 20 }}>
@@ -24,10 +24,10 @@ export default function QuyTacUngXuPage() {
             </ul>
 
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>3. Phạm vi áp dụng</h2>
-            <p>Áp dụng cho tất cả nhân viên, cộng tác viên, đối tác kinh doanh và nhà cung cấp của Shinhan Finance tại Việt Nam.</p>
+            <p>Áp dụng cho tất cả nhân viên, cộng tác viên, đối tác kinh doanh và nhà cung cấp của Shinhan Bank tại Việt Nam.</p>
 
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>4. Cam kết với khách hàng</h2>
-            <p>Shinhan Finance cam kết cung cấp dịch vụ tài chính chất lượng cao, đảm bảo lãi suất và phí minh bạch, hỗ trợ khách hàng 24/7 và giải quyết khiếu nại trong thời gian sớm nhất.</p>
+            <p>Shinhan Bank cam kết cung cấp dịch vụ tài chính chất lượng cao, đảm bảo lãi suất và phí minh bạch, hỗ trợ khách hàng 24/7 và giải quyết khiếu nại trong thời gian sớm nhất.</p>
 
             <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: '32px 0 16px' }}>5. Liên hệ</h2>
             <p>Mọi thắc mắc về Bộ Quy tắc, vui lòng liên hệ:</p>

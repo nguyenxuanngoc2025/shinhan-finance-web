@@ -141,7 +141,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!article) return { title: 'Không tìm thấy bài viết' }
   const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://tuvanvienshinhan.com'
   return {
-    title: `${article.title} | Shinhan Finance`,
+    title: `${article.title} | Shinhan Bank`,
     description: article.excerpt,
     alternates: { canonical: `${siteUrl}/tin-tuc/${slug}` },
     openGraph: {
@@ -151,7 +151,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       publishedTime: article.date,
       locale: 'vi_VN',
-      siteName: 'Shinhan Finance Việt Nam',
+      siteName: 'Shinhan Bank Việt Nam',
     },
   }
 }
@@ -186,9 +186,9 @@ export default async function NewsDetailPage({ params }: Props) {
     image: article.image,
     datePublished: article.date,
     dateModified: article.date,
-    author: { '@type': 'Organization', name: 'Shinhan Finance Việt Nam' },
+    author: { '@type': 'Organization', name: 'Shinhan Bank Việt Nam' },
     publisher: {
-      '@type': 'Organization', name: 'Shinhan Finance Việt Nam',
+      '@type': 'Organization', name: 'Shinhan Bank Việt Nam',
       logo: { '@type': 'ImageObject', url: `${siteUrl}/images/logo/logo-header.svg` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}/tin-tuc/${slug}` },

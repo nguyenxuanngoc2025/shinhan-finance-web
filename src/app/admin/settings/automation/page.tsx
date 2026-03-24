@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback } from 'react'
 
@@ -29,8 +29,8 @@ const MODULE_INFO: Record<string, {
   shinhan_scraper: {
     icon: '📰',
     friendlyName: 'Cập nhật tin Shinhan',
-    whatItDoes: 'Tự động lấy tin tức mới nhất từ website chính hãng Shinhan Finance và đăng lên trang web của bạn.',
-    howItWorks: 'Hệ thống sẽ kiểm tra website Shinhan Finance 3 lần/tuần. Khi có bài viết mới, nó sẽ tự động sao chép nội dung, hình ảnh và đăng lên mục "Tin tức" trên Trang chủ website của bạn.',
+    whatItDoes: 'Tự động lấy tin tức mới nhất từ website chính hãng Shinhan Bank và đăng lên trang web của bạn.',
+    howItWorks: 'Hệ thống sẽ kiểm tra website Shinhan Bank 3 lần/tuần. Khi có bài viết mới, nó sẽ tự động sao chép nội dung, hình ảnh và đăng lên mục "Tin tức" trên Trang chủ website của bạn.',
     whatYouNeed: 'Không cần làm gì. Tính năng này hoạt động tự động hoàn toàn.',
     schedule: 'Thứ 2 • Thứ 4 • Thứ 6 — lúc 8:00 sáng',
     benefit: 'Website luôn có tin mới nhất từ Shinhan, tăng uy tín thương hiệu',
@@ -41,7 +41,7 @@ const MODULE_INFO: Record<string, {
     icon: '✍️',
     friendlyName: 'Viết bài tự động',
     whatItDoes: 'AI tự động viết bài về tài chính, vay vốn, thẻ tín dụng mỗi ngày để tăng lượng truy cập từ Google.',
-    howItWorks: 'Mỗi sáng, hệ thống đọc tin từ các nguồn uy tín (VnExpress, CafeF, Vietstock...), sau đó viết lại thành bài viết mới với góc nhìn của Shinhan Finance. Bài sẽ lên mục "Blog".',
+    howItWorks: 'Mỗi sáng, hệ thống đọc tin từ các nguồn uy tín (VnExpress, CafeF, Vietstock...), sau đó viết lại thành bài viết mới với góc nhìn của Shinhan Bank. Bài sẽ lên mục "Blog".',
     whatYouNeed: 'Không cần làm gì. Bài viết sẽ tự động xuất hiện trong mục Blog trên website.',
     schedule: 'Mỗi ngày — lúc 7:00 sáng',
     benefit: 'Mỗi tháng thêm 30 bài viết SEO → thu hút khách hàng từ Google',

@@ -1,9 +1,9 @@
-// Hình ảnh giải thưởng thật từ Shinhan Finance (đã tải về /public/images/awards/)
+﻿// Hình ảnh giải thưởng thật từ Shinhan Bank (đã tải về /public/images/awards/)
 const AWARDS = [
   { img: '/images/awards/award-1.png', name: 'HR Award 2020' },
   { img: '/images/awards/award-2.png', name: 'AREA 2021' },
   { img: '/images/awards/award-3.jpg', name: 'Certificate of Achievement' },
-  { img: '/images/awards/award-4.png', name: 'Cup 2020 - Shinhan Finance' },
+  { img: '/images/awards/award-4.png', name: 'Cup 2020 - Shinhan Bank' },
   { img: '/images/awards/award-5.png', name: 'Đơn vị tiêu biểu - CIC 2022' },
   { img: '/images/awards/award-6.png', name: 'Giải thưởng thiết kế xuất sắc' },
   { img: '/images/awards/award-7.png', name: 'Giải thưởng uy tín 2023' },

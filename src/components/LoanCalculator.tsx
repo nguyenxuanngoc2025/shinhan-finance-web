@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -20,7 +20,7 @@ const NEED_CONFIGS: Record<string, NeedConfig> = {
   motorbike: {
     title: 'Tôi muốn mua xe máy',
     description:
-      'Dù với lý do gì, Shinhan Finance luôn hân hạnh đồng hành và hỗ trợ, giúp bạn sớm hoàn thành các dự định. Đơn giản. Uy tín. Nhanh chóng.',
+      'Dù với lý do gì, Shinhan Bank luôn hân hạnh đồng hành và hỗ trợ, giúp bạn sớm hoàn thành các dự định. Đơn giản. Uy tín. Nhanh chóng.',
     image: '/images/needs/motorbike-hero.png',
     maxLoan: 300_000_000,
     minLoan: 1_000_000,
@@ -33,7 +33,7 @@ const NEED_CONFIGS: Record<string, NeedConfig> = {
   'credit-card': {
     title: 'Tôi muốn Thẻ tín dụng',
     description:
-      'Sở hữu thẻ tín dụng Shinhan Finance ngay hôm nay. Ưu đãi hấp dẫn, miễn lãi suất lên đến 45 ngày.',
+      'Sở hữu thẻ tín dụng Shinhan Bank ngay hôm nay. Ưu đãi hấp dẫn, miễn lãi suất lên đến 45 ngày.',
     image: '/images/products/card.png',
     maxLoan: 100_000_000,
     minLoan: 1_000_000,
@@ -46,7 +46,7 @@ const NEED_CONFIGS: Record<string, NeedConfig> = {
   furniture: {
     title: 'Tôi muốn mua nội thất',
     description:
-      'Nâng cấp không gian sống với khoản vay ưu đãi từ Shinhan Finance. Thủ tục đơn giản, giải ngân nhanh chóng.',
+      'Nâng cấp không gian sống với khoản vay ưu đãi từ Shinhan Bank. Thủ tục đơn giản, giải ngân nhanh chóng.',
     image: '/images/products/home-furnishing.png',
     maxLoan: 300_000_000,
     minLoan: 1_000_000,
@@ -59,7 +59,7 @@ const NEED_CONFIGS: Record<string, NeedConfig> = {
   laptop: {
     title: 'Tôi muốn vay mua laptop',
     description:
-      'Sở hữu laptop mới dễ dàng hơn với gói vay linh hoạt từ Shinhan Finance. Lãi suất cạnh tranh.',
+      'Sở hữu laptop mới dễ dàng hơn với gói vay linh hoạt từ Shinhan Bank. Lãi suất cạnh tranh.',
     image: '/images/needs/laptop-hero.png',
     maxLoan: 100_000_000,
     minLoan: 1_000_000,

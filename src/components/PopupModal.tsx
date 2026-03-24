@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
@@ -28,7 +28,7 @@ export default function PopupModal() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&h=350&fit=crop"
-              alt="Ưu đãi Shinhan Finance"
+              alt="Ưu đãi Shinhan Bank"
             />
           </div>
           <div className="popup-info">

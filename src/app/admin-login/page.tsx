@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 export default function AdminLoginPage() {
@@ -291,14 +291,14 @@ export default function AdminLoginPage() {
         {/* Left — Branding */}
         <div className="login-left">
           <div className="login-brand">
-            <img src="/images/logo/logo-color.png" alt="Shinhan Finance" />
+            <img src="/images/logo/logo-color.png" alt="Shinhan Bank" />
             <p className="login-brand-name">Admin Center</p>
           </div>
           <div className="login-quote">
             <blockquote>
               &ldquo;Nền tảng quản trị thông minh giúp bạn kiểm soát toàn bộ nội dung website một cách dễ dàng.&rdquo;
             </blockquote>
-            <cite>Shinhan Finance Vietnam</cite>
+            <cite>Shinhan Bank Vietnam</cite>
           </div>
         </div>
 

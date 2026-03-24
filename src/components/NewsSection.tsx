@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -79,13 +79,13 @@ export default function NewsSection() {
   const mainDate = main.published_at || main.date || ''
 
   return (
-    <section className="hn-section" id="tin-tuc" aria-label="Bản tin Shinhan Finance">
+    <section className="hn-section" id="tin-tuc" aria-label="Bản tin Shinhan Bank">
       <div className="container">
         {/* Header */}
         <div className="hn-header">
           <div>
             <h2 className="hn-title">Bản tin & Ưu đãi</h2>
-            <p className="hn-desc">Tin tức mới nhất, khuyến mại và sự kiện từ Shinhan Finance</p>
+            <p className="hn-desc">Tin tức mới nhất, khuyến mại và sự kiện từ Shinhan Bank</p>
           </div>
           <Link href="/tin-tuc" className="hn-view-all">
             Xem tất cả <i className="fas fa-arrow-right"></i>

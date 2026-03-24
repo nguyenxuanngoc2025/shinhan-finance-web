@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -119,7 +119,7 @@ export default function ProductsSection() {
   return (
     <section className="products-section" id="products">
       <div className="container">
-        <h2 className="section-title">Shinhan Finance</h2>
+        <h2 className="section-title">Shinhan Bank</h2>
 
         {/* Tab buttons */}
         <div className="product-tabs">

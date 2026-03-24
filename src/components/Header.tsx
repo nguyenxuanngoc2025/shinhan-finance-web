@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useSiteSettings } from './SiteSettingsContext'
@@ -70,12 +70,12 @@ export default function Header() {
         <div className="header-inner">
 
           {/* Logo — from CMS via SiteSettingsContext */}
-          <Link href="/" className="header-logo" aria-label="Shinhan Finance">
+          <Link href="/" className="header-logo" aria-label="Shinhan Bank">
             {logo ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={logo}
-                alt="Shinhan Finance"
+                alt="Shinhan Bank"
                 className="header-logo-img"
                 style={{width:160,height:'auto',maxHeight:44}}
               />

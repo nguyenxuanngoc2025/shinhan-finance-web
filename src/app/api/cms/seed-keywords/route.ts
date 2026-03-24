@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 
 // POST /api/cms/seed-keywords — Seed Vietnamese keywords with proper UTF-8
@@ -21,7 +21,7 @@ export async function POST() {
     { keyword: 'vay tín chấp 300 triệu', keyword_cluster: 'san-pham', difficulty: 'medium', scheduled_date: '2026-05-15' },
     { keyword: 'vay online nhanh trong ngày', keyword_cluster: 'san-pham', difficulty: 'hard', scheduled_date: '2026-05-20' },
     { keyword: 'đăng ký thẻ tín dụng miễn phí', keyword_cluster: 'san-pham', difficulty: 'medium', scheduled_date: '2026-05-25' },
-    { keyword: 'shinhan finance giải ngân nhanh', keyword_cluster: 'san-pham', difficulty: 'medium', scheduled_date: '2026-06-01' },
+    { keyword: 'Shinhan Bank giải ngân nhanh', keyword_cluster: 'san-pham', difficulty: 'medium', scheduled_date: '2026-06-01' },
     { keyword: 'vay tín chấp kỳ hạn 48 tháng', keyword_cluster: 'san-pham', difficulty: 'easy', scheduled_date: '2026-06-05' },
 
     // Huong dan (Guides) — 25 keywords
@@ -79,12 +79,12 @@ export async function POST() {
     { keyword: 'vay tín chấp cho người mới đi làm', keyword_cluster: 'long-tail', difficulty: 'easy', scheduled_date: '2026-06-14' },
 
     // Thuong hieu (Brand) — 10 keywords
-    { keyword: 'shinhan finance có uy tín không', keyword_cluster: 'thuong-hieu', difficulty: 'medium', scheduled_date: '2026-04-04' },
-    { keyword: 'đánh giá shinhan finance 2026', keyword_cluster: 'thuong-hieu', difficulty: 'medium', scheduled_date: '2026-04-05' },
-    { keyword: 'shinhan finance chi nhánh gần nhất', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-04-21' },
-    { keyword: 'hotline shinhan finance', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-04-26' },
-    { keyword: 'shinhan finance số điện thoại', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-05-02' },
-    { keyword: 'tuyển dụng shinhan finance', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-05-24' },
+    { keyword: 'Shinhan Bank có uy tín không', keyword_cluster: 'thuong-hieu', difficulty: 'medium', scheduled_date: '2026-04-04' },
+    { keyword: 'đánh giá Shinhan Bank 2026', keyword_cluster: 'thuong-hieu', difficulty: 'medium', scheduled_date: '2026-04-05' },
+    { keyword: 'Shinhan Bank chi nhánh gần nhất', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-04-21' },
+    { keyword: 'hotline Shinhan Bank', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-04-26' },
+    { keyword: 'Shinhan Bank số điện thoại', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-05-02' },
+    { keyword: 'tuyển dụng Shinhan Bank', keyword_cluster: 'thuong-hieu', difficulty: 'easy', scheduled_date: '2026-05-24' },
 
     // Tin tuc (News) — 10 keywords
     { keyword: 'lãi suất ngân hàng tháng 4 2026', keyword_cluster: 'tin-tuc', difficulty: 'easy', scheduled_date: '2026-04-09' },
