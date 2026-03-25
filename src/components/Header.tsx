@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useSiteSettings } from './SiteSettingsContext'
@@ -69,17 +69,16 @@ export default function Header() {
       <header className={`site-header${scrolled ? ' scrolled' : ''}`} id="header">
         <div className="header-inner">
 
-          {/* Logo — from CMS via SiteSettingsContext */}
+          {/* Logo — always render static SVG first, swap to CMS if available */}
           <Link href="/" className="header-logo" aria-label="Shinhan Bank">
-            {logo ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={logo}
-                alt="Shinhan Bank"
-                className="header-logo-img"
-                style={{width:160,height:'auto',maxHeight:44}}
-              />
-            ) : null}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={logo || '/images/logo/logo-header.svg'}
+              alt="Shinhan Bank"
+              className="header-logo-img"
+              style={{width:160,height:'auto',maxHeight:44}}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/images/logo/logo-header.svg' }}
+            />
           </Link>
 
           {/* Cụm phải: Nav + Actions */}

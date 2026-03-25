@@ -27,7 +27,7 @@ const DEFAULTS: SiteSettings = {
   contact_phone: '0969 930 328',
   contact_email: 'cskh@shinhanfinance.com.vn',
   zalo_number: '0969930328',
-  facebook_url: '',
+  facebook_url: 'https://www.facebook.com/Nhanvientuvanshinhankbank',
   instagram_url: '',
   youtube_url: '',
   linkedin_url: '',
@@ -35,13 +35,24 @@ const DEFAULTS: SiteSettings = {
 }
 
 // Cache version: bump this to force-clear stale localStorage cache
-const CACHE_VERSION = 'v7'
+const CACHE_VERSION = 'v8'
 const CACHE_KEY = `site_settings_${CACHE_VERSION}`
 
 const SiteSettingsContext = createContext<SiteSettings>(DEFAULTS)
 
 export function useSiteSettings() {
   return useContext(SiteSettingsContext)
+}
+
+function mergeSettings(base: SiteSettings, override: Partial<SiteSettings>): SiteSettings {
+  const merged = { ...base }
+  for (const key of Object.keys(base) as (keyof SiteSettings)[]) {
+    const val = override[key]
+    if (val !== undefined && val !== null && val !== '') {
+      (merged as Record<string, string>)[key] = val as string
+    }
+  }
+  return merged
 }
 
 export function SiteSettingsProvider({ children }: { children: ReactNode }) {
@@ -61,15 +72,7 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       try {
         const cached = localStorage.getItem(CACHE_KEY)
         if (cached) {
-          const parsed = JSON.parse(cached) as Partial<SiteSettings>
-          const merged = { ...DEFAULTS }
-          for (const key of Object.keys(DEFAULTS) as (keyof SiteSettings)[]) {
-            const val = parsed[key]
-            if (val !== undefined && val !== null && val !== '') {
-              (merged as Record<string, string>)[key] = val as string
-            }
-          }
-          return merged
+          return mergeSettings(DEFAULTS, JSON.parse(cached) as Partial<SiteSettings>)
         }
       } catch { /* ignore */ }
     }
@@ -77,24 +80,21 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   })
 
   useEffect(() => {
-    fetch('/api/cms/settings?key=general')
+    // Fetch with 5s timeout to prevent UI blocking on cold start
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+
+    fetch('/api/cms/settings?key=general', { signal: controller.signal })
       .then(r => r.json())
       .then(res => {
         if (res.data && typeof res.data === 'object') {
-          // Only override non-empty values — keep DEFAULTS if API returns empty string
-          const apiData = res.data as Partial<SiteSettings>
-          const merged: SiteSettings = { ...DEFAULTS }
-          for (const key of Object.keys(DEFAULTS) as (keyof SiteSettings)[]) {
-            const val = apiData[key]
-            if (val !== undefined && val !== null && val !== '') {
-              (merged as Record<string, string>)[key] = val as string
-            }
-          }
+          const merged = mergeSettings(DEFAULTS, res.data as Partial<SiteSettings>)
           setSettings(merged)
           try { localStorage.setItem(CACHE_KEY, JSON.stringify(merged)) } catch { /* ignore */ }
         }
       })
       .catch(() => {})
+      .finally(() => clearTimeout(timeoutId))
   }, [])
 
   return (

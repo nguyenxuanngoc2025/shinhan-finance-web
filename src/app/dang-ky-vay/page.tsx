@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useState, useRef, useEffect, Suspense, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -37,10 +37,10 @@ const DEFAULT_PRODUCTS: ProductConfig[] = [
     id: 'vay-tin-chap',
     name: 'Vay tín chấp cá nhân',
     image: '/images/leadform/card-vay-tin-chap.png',
-    features: ['Lãi suất thấp từ 18%/năm', 'Hạn mức vay đến 300 triệu', 'Tùy chọn thanh toán đến 48 tháng'],
+    features: ['Lãi suất thấp từ 11.5%/năm', 'Hạn mức vay đến 1.2 tỷ', 'Tùy chọn thanh toán đến 60 tháng'],
     cta: 'Ước tính khoản vay',
     detail: '/san-pham/vay-tin-chap',
-    minAmount: 10_000_000, maxAmount: 300_000_000, step: 5_000_000, rate: 0.18,
+    minAmount: 50_000_000, maxAmount: 1_200_000_000, step: 10_000_000, rate: 0.115,
   },
   {
     id: 'vay-tra-gop',
@@ -56,7 +56,7 @@ const DEFAULT_PRODUCTS: ProductConfig[] = [
     name: 'Thẻ tín dụng "THE FIRST"',
     image: '/images/leadform/card-the-tin-dung.png',
     features: [
-      'Rút tiền mặt đến 100% hạn mức thẻ',
+      'Rút tiền mặt đến 80% hạn mức thẻ',
       'Miễn lãi suất lên đến 45 ngày',
       'Trả góp với ưu đãi 0% lãi suất',
       '0.5% điểm thưởng tích lũy không giới hạn',

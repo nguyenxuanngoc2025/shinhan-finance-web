@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -15,7 +15,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Vay tín chấp',
     title: 'Vay tín chấp cá nhân',
     image: '/images/products/loan.png',
-    features: ['Lãi suất thấp từ 18%/năm', 'Hạn mức vay đến 300 triệu', 'Tùy chọn thanh toán đến 48 tháng'],
+    features: ['Lãi suất thấp từ 11.5%/năm', 'Hạn mức vay đến 1.2 tỷ', 'Tùy chọn thanh toán đến 60 tháng'],
     cta: 'Vay ngay',
     ctaLink: '/dang-ky-vay',
     more: '/san-pham/vay-tin-chap',
@@ -26,7 +26,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Thẻ Tín Dụng',
     title: 'Thẻ tín dụng THE FIRST',
     image: '/images/products/card.png',
-    features: ['Rút tiền mặt đến 100% hạn mức thẻ', 'Miễn lãi suất lên đến 45 ngày', '0.5% điểm thưởng tích lũy không giới hạn'],
+    features: ['Rút tiền mặt đến 80% hạn mức thẻ', 'Miễn lãi suất lên đến 45 ngày', '0.5% điểm thưởng tích lũy không giới hạn'],
     cta: 'Mở thẻ ngay',
     ctaLink: '/san-pham/the-tin-dung',
     more: '/san-pham/the-tin-dung',

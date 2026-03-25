@@ -18,9 +18,9 @@ const PRODUCTS = [
     desc: 'Giải pháp tài chính linh hoạt, thủ tục đơn giản, giải ngân nhanh chóng. Không cần tài sản thế chấp.',
     image: '/images/products/loan.png',
     features: [
-      'Lãi suất thấp từ 18%/năm',
-      'Hạn mức vay đến 300 triệu',
-      'Tùy chọn thanh toán đến 48 tháng',
+      'Lãi suất thấp từ 11.5%/năm',
+      'Hạn mức vay đến 1.2 tỷ',
+      'Tùy chọn thanh toán đến 60 tháng',
       'Không cần tài sản thế chấp',
     ],
     cta: 'Đăng ký vay ngay',
@@ -36,7 +36,7 @@ const PRODUCTS = [
     desc: 'Thẻ tín dụng đa năng với nhiều ưu đãi hấp dẫn, thanh toán tiện lợi mọi nơi, tích điểm không giới hạn.',
     image: '/images/products/card.png',
     features: [
-      'Rút tiền mặt đến 100% hạn mức thẻ',
+      'Rút tiền mặt đến 80% hạn mức thẻ',
       'Miễn lãi suất lên đến 45 ngày',
       '0.5% điểm thưởng tích lũy không giới hạn',
       'Miễn phí thường niên năm đầu',

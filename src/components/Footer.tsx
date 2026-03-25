@@ -139,14 +139,13 @@ export default function Footer() {
             {/* Logo — from CMS via SiteSettingsContext */}
             <div className="footer-logo-wrap">
               <Link href="/" aria-label="Shinhan Bank - Trang chủ">
-                {footer_logo ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={footer_logo}
-                    alt="Shinhan Bank"
-                    style={{height: 22, width: 'auto'}}
-                  />
-                ) : null}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={footer_logo || '/images/logo/logo-footer.svg'}
+                  alt="Shinhan Bank"
+                  style={{height: 22, width: 'auto'}}
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/images/logo/logo-footer.svg' }}
+                />
               </Link>
             </div>
             {/* Copyright */}
