@@ -7,6 +7,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import { NEWS_ARTICLES, type NewsCategory } from '../news-data'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // Allow slugs not in generateStaticParams to be rendered on-demand (SSR)
 export const dynamicParams = true
@@ -40,19 +41,47 @@ type ArticleData = {
   image: string
 }
 
-// Fetch all published posts directly from Supabase (no dependency on internal API)
-async function getAllCmsPosts() {
+// Fetch single post by slug — dùng supabaseAdmin (service role), không fetch all
+async function getCmsPostBySlug(slug: string) {
   try {
-    const url = 'https://studio.ngocnguyenxuan.com/rest/v1/posts?status=eq.published&order=published_at.desc'
-    const res = await fetch(url, {
-      headers: {
-        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzcyMTI1MjAwLCJleHAiOjE5Mjk4OTE2MDB9.t3KJySUYE2wo5x4lkyAdAue3u2or2Nk0aYp7De4t_3I',
-        'Accept-Profile': 'site_shinhan',
-      },
-      next: { revalidate: 60 }
-    })
-    if (!res.ok) return []
-    return await res.json()
+    const { data, error } = await supabaseAdmin
+      .from('posts')
+      .select('slug,title,excerpt,content,cover_image,category,published_at,created_at')
+      .eq('status', 'published')
+      .eq('slug', slug)
+      .single()
+    if (error || !data) return null
+    return data
+  } catch {
+    return null
+  }
+}
+
+// Fetch recent published posts (for related section) — giới hạn 20 bài
+async function getRecentCmsPosts(limit = 20) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('posts')
+      .select('slug,title,excerpt,cover_image,category,published_at')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(limit)
+    if (error || !data) return []
+    return data
+  } catch {
+    return []
+  }
+}
+
+// Fetch all slugs for generateStaticParams (chỉ lấy slug field)
+async function getAllCmsSlugs() {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('posts')
+      .select('slug')
+      .eq('status', 'published')
+    if (error || !data) return []
+    return data
   } catch {
     return []
   }
@@ -86,44 +115,32 @@ function cmsToArticle(cmsPost: any, hardcoded?: any): ArticleData {
   }
 }
 
-// Merge CMS data with hardcoded fallback
+// Get article by slug — query trực tiếp thay vì fetch all
 async function getArticle(slug: string): Promise<ArticleData | null> {
-  const cmsPosts = await getAllCmsPosts()
-  const cmsPost = cmsPosts.find((p: any) => p.slug === slug)
+  const cmsPost = await getCmsPostBySlug(slug)
   const hardcoded = NEWS_ARTICLES.find(a => a.slug === slug)
 
   if (cmsPost) return cmsToArticle(cmsPost, hardcoded)
   return hardcoded || null
 }
 
-// Get all articles for related section
-async function getAllArticles(): Promise<ArticleData[]> {
-  const cmsPosts = await getAllCmsPosts()
-
-  // Start with CMS posts
-  const articles: ArticleData[] = cmsPosts.map((p: any) => {
-    const hardcoded = NEWS_ARTICLES.find(a => a.slug === p.slug)
-    return cmsToArticle(p, hardcoded)
-  })
-
-  // Add hardcoded posts that are not in CMS
-  for (const hc of NEWS_ARTICLES) {
-    if (!cmsPosts.find((p: any) => p.slug === hc.slug)) {
-      articles.push(hc)
-    }
-  }
-
-  return articles
+// Get related articles — dùng recent posts thay vì toàn bộ
+async function getRelatedArticles(category: string, currentSlug: string): Promise<ArticleData[]> {
+  const cmsPosts = await getRecentCmsPosts(20)
+  return cmsPosts
+    .filter((p: any) => p.category === category && p.slug !== currentSlug)
+    .slice(0, 3)
+    .map((p: any) => cmsToArticle(p))
 }
 
 export async function generateStaticParams() {
   // Include hardcoded slugs
   const params = NEWS_ARTICLES.map(article => ({ slug: article.slug }))
 
-  // Also include CMS slugs
+  // Also include CMS slugs — chỉ fetch slug field, không cần nội dung
   try {
-    const cmsPosts = await getAllCmsPosts()
-    for (const post of cmsPosts) {
+    const cmsSlugs = await getAllCmsSlugs()
+    for (const post of cmsSlugs) {
       if (!params.find(p => p.slug === post.slug)) {
         params.push({ slug: post.slug })
       }
@@ -194,11 +211,8 @@ export default async function NewsDetailPage({ params }: Props) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}/tin-tuc/${slug}` },
   }
 
-  // Related articles: from both CMS and hardcoded
-  const allArticles = await getAllArticles()
-  const related = allArticles
-    .filter(a => a.category === article.category && a.slug !== article.slug)
-    .slice(0, 3)
+  // Related articles: dùng getRelatedArticles (giới hạn 20 bài, không fetch all)
+  const related = await getRelatedArticles(article.category, slug)
 
   return (
     <>

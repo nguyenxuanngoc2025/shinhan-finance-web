@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import HeroSlider from '@/components/HeroSlider'
@@ -46,7 +46,7 @@ const productsSchema = [
       minValue: 10000000,
       maxValue: 300000000,
     },
-    url: 'https://shinhanfinance-clone.ngocnguyenxuan.com/san-pham/vay-tin-chap',
+    url: 'https://tuvanvienshinhan.com/san-pham/vay-tin-chap',
   },
   {
     '@context': 'https://schema.org',
@@ -57,7 +57,7 @@ const productsSchema = [
       '@type': 'FinancialService',
       name: 'Shinhan Bank Việt Nam',
     },
-    url: 'https://shinhanfinance-clone.ngocnguyenxuan.com/san-pham/the-tin-dung',
+    url: 'https://tuvanvienshinhan.com/san-pham/the-tin-dung',
   },
 ]
 

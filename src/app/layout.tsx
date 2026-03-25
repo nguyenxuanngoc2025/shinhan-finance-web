@@ -1,6 +1,7 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import './globals.css'
 import TrackingScripts from '@/components/TrackingScripts'
+import ClientProviders from '@/components/ClientProviders'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://tuvanvienshinhan.com'
 
@@ -111,7 +112,9 @@ export default function RootLayout({
       </head>
       <body>
         <a href="#main-content" className="skip-link">Bỏ qua đến nội dung chính</a>
-        <div id="main-content">{children}</div>
+        <ClientProviders>
+          <div id="main-content">{children}</div>
+        </ClientProviders>
       </body>
     </html>
   )

@@ -50,14 +50,15 @@ async function getPostStats() {
       'Authorization': `Bearer ${SB_KEY}`,
       'Accept-Profile': 'site_shinhan',
     }
-    const [pubR, schedR] = await Promise.all([
-      fetch(`${SB_URL}/rest/v1/posts?status=eq.published&select=id`, { headers }),
-      fetch(`${SB_URL}/rest/v1/posts?status=eq.scheduled&select=id,published_at&order=published_at.asc`, { headers }),
-    ])
-    const published = await pubR.json()
-    const scheduled = await schedR.json()
+    const pubR = fetch(`${SB_URL}/rest/v1/posts?status=eq.published&select=id`, { headers })
+    const schedR = fetch(`${SB_URL}/rest/v1/posts?status=eq.scheduled&select=id,published_at&order=published_at.asc`, { headers })
+    const lastPubR = fetch(`${SB_URL}/rest/v1/posts?status=eq.published&select=published_at&order=published_at.desc&limit=1`, { headers })
+    const [pubRes, schedRes, lastPubRes] = await Promise.all([pubR, schedR, lastPubR])
+    const published = await pubRes.json()
+    const scheduled = await schedRes.json()
+    const lastPubData = await lastPubRes.json()
     const nextPublish = Array.isArray(scheduled) && scheduled.length > 0 ? scheduled[0].published_at : null
-    const lastPublish = Array.isArray(scheduled) && scheduled.length > 0 ? scheduled[scheduled.length - 1].published_at : null
+    const lastPublish = Array.isArray(lastPubData) && lastPubData.length > 0 ? lastPubData[0].published_at : null
     return {
       published: Array.isArray(published) ? published.length : 0,
       scheduled: Array.isArray(scheduled) ? scheduled.length : 0,
@@ -72,7 +73,8 @@ async function getPostStats() {
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const secret = url.searchParams.get('secret')
-  if (secret !== 'shinhan2026') {
+  const expectedSecret = process.env.CRON_SECRET || 'shinhan2026'
+  if (secret !== expectedSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
