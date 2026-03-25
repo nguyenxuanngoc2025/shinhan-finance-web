@@ -6,7 +6,8 @@ import { useSiteSettings } from './SiteSettingsContext'
 export default function Footer() {
   const { footer_logo, facebook_url, zalo_number, youtube_url, instagram_url, linkedin_url } = useSiteSettings()
 
-  // Social links: dùng CMS nếu có, fallback về hardcode
+  // Social links: dùng URL từ CMS; facebook và zalo luôn hiện với fallback cố định
+  const FALLBACK_FACEBOOK = 'https://www.facebook.com/Nhanvientuvanshinhankbank'
   const socials = [
     {
       href: youtube_url || '#',
@@ -34,7 +35,8 @@ export default function Footer() {
       show: !!linkedin_url,
     },
     {
-      href: facebook_url || 'https://www.facebook.com/Nhanvientuvanshinhankbank',
+      // Dùng facebook_url từ CMS nếu có, fallback về hardcode
+      href: facebook_url && facebook_url.startsWith('http') ? facebook_url : FALLBACK_FACEBOOK,
       label: 'Facebook',
       icon: '/images/social/ic-facebook.svg',
       show: true,

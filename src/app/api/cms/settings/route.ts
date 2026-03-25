@@ -35,21 +35,33 @@ async function readFromDB(key: string): Promise<Record<string, unknown> | null> 
     if (error || !data) return null
 
     const val = data.value
-    if (typeof val === 'string') {
-      try { return JSON.parse(val) } catch { return null }
+    // Handle: object (jsonb auto-parsed), string (old format), or double-encoded string
+    if (typeof val === 'object' && val !== null) {
+      return val as Record<string, unknown>
     }
-    return val as Record<string, unknown>
+    if (typeof val === 'string') {
+      try {
+        const parsed = JSON.parse(val)
+        // Handle double-encoded: string inside string
+        if (typeof parsed === 'string') {
+          try { return JSON.parse(parsed) } catch { return null }
+        }
+        return parsed as Record<string, unknown>
+      } catch { return null }
+    }
+    return null
   } catch {
     return null
   }
 }
 
 async function writeToDB(key: string, grp: string, data: Record<string, unknown>) {
-  const jsonStr = JSON.stringify(data)
+  // Store as object directly — Supabase will serialize to JSONB correctly
+  // Do NOT JSON.stringify here (causes double-encoding in JSONB column)
   await supabaseAdmin
     .from('site_settings')
     .upsert(
-      { key, value: jsonStr, grp, updated_at: new Date().toISOString() },
+      { key, value: data, grp, updated_at: new Date().toISOString() },
       { onConflict: 'key' }
     )
 }
