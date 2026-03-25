@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import '../../dang-ky-vay/dang-ky-vay.css'
@@ -9,11 +9,11 @@ import FloatingButtons from '@/components/FloatingButtons'
 
 // Default values (overridden by API settings)
 const DEFAULT_CONFIG = {
-  min_rate: 18,
+  min_rate: 11.5,
   max_rate: 49,
-  max_amount: 300_000_000,
-  min_amount: 10_000_000,
-  max_term_months: 48,
+  max_amount: 1_200_000_000,
+  min_amount: 50_000_000,
+  max_term_months: 60,
   min_term_months: 12,
   term_options: [12, 18, 24, 36, 48],
   max_salary_multiplier: 12,
@@ -40,6 +40,10 @@ const FAQS = [
   { q: '13. Tham khảo Điều Khoản Cơ Bản của Hợp Đồng Cho Vay với Shinhan Bank?', a: 'Tham khảo tại mục Điều khoản trên website.' },
   { q: '14. Làm thế nào để ký hợp đồng vay (eSigning) trên iShinhan?', a: 'Đăng nhập ứng dụng iShinhan, vào mục Hợp đồng và làm theo hướng dẫn ký điện tử.' },
 ]
+
+function formatRate(rate: number): string {
+  return Number(rate.toFixed(2)).toLocaleString('vi-VN')
+}
 
 function formatVND(n: number) {
   return n.toLocaleString('vi-VN')
@@ -149,7 +153,7 @@ export default function VayTinChapPage() {
               <div className="vtc-highlights-items">
                 <div className="vtc-hl-item">
                   <span className="vtc-hl-check"><i className="fas fa-check-circle"></i></span>
-                  <span>Lãi suất thấp từ {config.min_rate}%/năm</span>
+                  <span>Lãi suất thấp từ {formatRate(config.min_rate)}%/năm</span>
                 </div>
                 <div className="vtc-hl-item">
                   <span className="vtc-hl-check"><i className="fas fa-check-circle"></i></span>
@@ -234,7 +238,7 @@ export default function VayTinChapPage() {
                   </div>
                   <div className="lf-est-rate">
                     <span>Lãi suất minh họa tối thiểu (%/năm)*</span>
-                    <strong>{config.min_rate}%</strong>
+                    <strong>{formatRate(config.min_rate)}%</strong>
                   </div>
                 </div>
                 <div className="lf-est-right">
@@ -262,13 +266,13 @@ export default function VayTinChapPage() {
           <div className="vtc-section-inner">
             <h2 className="vtc-section-title">Đặc điểm</h2>
             <ul className="vtc-plain-list">
-              <li>Lãi suất tối thiểu từ <strong>{config.min_rate}%/năm</strong> đến tối đa <strong>{config.max_rate}%/năm</strong> tính trên dư nợ giảm dần (phụ thuộc kết quả thẩm định).</li>
+              <li>Lãi suất tối thiểu từ <strong>{formatRate(config.min_rate)}%/năm</strong> đến tối đa <strong>{formatRate(config.max_rate)}%/năm</strong> tính trên dư nợ giảm dần (phụ thuộc kết quả thẩm định).</li>
               <li>Khoản vay lên đến <strong>{config.max_salary_multiplier} lần thu nhập</strong> hàng tháng và tối đa <strong>{formatAmount(config.max_amount)} đồng</strong>, cho mục đích tiêu dùng, phục vụ đời sống.</li>
               <li>Thời hạn vay từ tối thiểu <strong>{config.min_term_months} tháng</strong> đến tối đa <strong>{config.max_term_months} tháng</strong>.</li>
               <li>Giải ngân trong vòng <strong>{config.disbursement_hours} giờ</strong> sau khi đăng ký hồ sơ.</li>
             </ul>
             <div className="vtc-example-box">
-              <p>Ví dụ: Với khoản vay tín chấp <strong>60 triệu đồng</strong>, kỳ hạn vay <strong>12 tháng</strong>, lãi suất <strong>{config.min_rate}%/năm</strong> trên dư nợ giảm dần. Khoản thanh toán hàng tháng (bao gồm gốc và lãi) của bạn sẽ là <strong>{formatVND(Math.round(calcMonthly(60_000_000, 12, config.min_rate)))} VNĐ</strong>.</p>
+              <p>Ví dụ: Với khoản vay tín chấp <strong>60 triệu đồng</strong>, kỳ hạn vay <strong>12 tháng</strong>, lãi suất <strong>{formatRate(config.min_rate)}%/năm</strong> trên dư nợ giảm dần. Khoản thanh toán hàng tháng (bao gồm gốc và lãi) của bạn sẽ là <strong>{formatVND(Math.round(calcMonthly(60_000_000, 12, config.min_rate)))} VNĐ</strong>.</p>
             </div>
           </div>
         </section>

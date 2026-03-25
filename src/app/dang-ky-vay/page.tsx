@@ -390,7 +390,7 @@ function DangKyVayInner() {
                         </div>
                         <div className="lf-est-rate">
                           <span>Lãi suất minh họa tối thiểu (%/năm)*</span>
-                          <strong>{(selectedProduct.rate * 100).toFixed(0)}%</strong>
+                           <strong>{Number((selectedProduct.rate * 100).toFixed(2)).toLocaleString('vi-VN')}%</strong>
                         </div>
                       </div>
                       <div className="lf-est-right">
