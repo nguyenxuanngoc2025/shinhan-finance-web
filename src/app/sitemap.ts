@@ -12,8 +12,16 @@ const staticPages: MetadataRoute.Sitemap = [
   { url: `${BASE}/dang-ky-vay`,            lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
   { url: `${BASE}/mo-the`,                 lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
   { url: `${BASE}/tin-tuc`,               lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
+  { url: `${BASE}/blog`,                  lastModified: new Date(), changeFrequency: 'daily',   priority: 0.8 },
+  { url: `${BASE}/hoi-dap`,               lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.6 },
+  { url: `${BASE}/so-do-trang`,           lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
   { url: `${BASE}/chinh-sach-bao-mat`,    lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
   { url: `${BASE}/mien-tru-trach-nhiem`,  lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
+  // Category pages
+  { url: `${BASE}/tin-tuc?tab=khuyen-mai`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+  { url: `${BASE}/tin-tuc?tab=thong-bao`,  lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+  { url: `${BASE}/tin-tuc?tab=su-kien`,    lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+  { url: `${BASE}/tin-tuc?tab=blog`,       lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

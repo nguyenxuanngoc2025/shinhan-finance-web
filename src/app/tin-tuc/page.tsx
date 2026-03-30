@@ -1,14 +1,27 @@
-﻿'use client'
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import type { Metadata } from 'next'
 import './news.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import { NEWS_ARTICLES, CATEGORIES, type NewsCategory } from './news-data'
+import { supabaseAdmin } from '@/lib/supabase'
+import NewsTabs from './NewsTabs'
+
+export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Tin tức & Khuyến mãi | Shinhan Bank',
+  description: 'Cập nhật tin tức, khuyến mãi, sự kiện và thông báo mới nhất từ Shinhan Bank Việt Nam. Ưu đãi vay tín chấp, thẻ tín dụng THE FIRST.',
+  alternates: { canonical: 'https://tuvanvienshinhan.com/tin-tuc' },
+  openGraph: {
+    title: 'Tin tức & Khuyến mãi | Shinhan Bank',
+    description: 'Cập nhật tin tức, khuyến mãi, sự kiện mới nhất từ Shinhan Bank Việt Nam.',
+    type: 'website',
+    locale: 'vi_VN',
+  },
+}
 
 type ArticleItem = {
   slug: string
@@ -56,53 +69,53 @@ function NewsCard({ article }: { article: ArticleItem }) {
   )
 }
 
-// Convert hardcoded articles to unified format
+// Fetch articles server-side
+async function getArticles(): Promise<ArticleItem[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('posts')
+      .select('slug,title,excerpt,cover_image,category,published_at,created_at,status')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(100)
+
+    if (error || !data || data.length === 0) return hardcodedToItems()
+
+    const published = data
+      .filter(p => p.cover_image)
+      .map(p => ({
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt || '',
+        category: p.category || 'blog',
+        date: p.published_at || p.created_at || '',
+        image: p.cover_image || '/images/news/default.jpg',
+      }))
+
+    return published.length > 0 ? published : hardcodedToItems()
+  } catch {
+    return hardcodedToItems()
+  }
+}
+
 function hardcodedToItems(): ArticleItem[] {
   return NEWS_ARTICLES.map(a => ({
     slug: a.slug, title: a.title, excerpt: a.excerpt, category: a.category, date: a.date, image: a.image,
   }))
 }
 
-// Inner component đọc searchParams — phải nằm trong Suspense
-function NewsPageInner() {
-  const searchParams = useSearchParams()
-  const tabFromUrl = searchParams.get('tab') ?? 'tat-ca'
-  const [activeTab, setActiveTab] = useState<string>(
-    VALID_TABS.includes(tabFromUrl) ? tabFromUrl : 'tat-ca'
-  )
-  const [articles, setArticles] = useState<ArticleItem[]>(hardcodedToItems())
+type Props = {
+  searchParams: Promise<{ tab?: string }>
+}
 
-  // Fetch from CMS API — sorted by published_at DESC (newest first)
-  useEffect(() => {
-    fetch('/api/cms/posts?limit=100&sort_by=published_at')
-      .then(r => r.json())
-      .then(res => {
-        if (res.data && res.data.length > 0) {
-          type RawPost = { slug: string; title: string; excerpt?: string; category?: string; published_at?: string; created_at?: string; cover_image?: string; status: string }
-          const published = (res.data as RawPost[])
-            .filter(p => p.status === 'published' && p.cover_image) // ONLY posts with images
-            .map(p => ({
-              slug: p.slug,
-              title: p.title,
-              excerpt: p.excerpt || '',
-              category: p.category || 'blog',
-              date: p.published_at || p.created_at || '',
-              image: p.cover_image || '/images/news/default.jpg',
-            }))
-          if (published.length > 0) {
-            setArticles(published)
-          }
-        }
-      })
-      .catch(() => { /* keep fallback */ })
-  }, [])
+export default async function NewsPage({ searchParams }: Props) {
+  const params = await searchParams
+  const tab = VALID_TABS.includes(params.tab || '') ? params.tab! : 'tat-ca'
+  const articles = await getArticles()
 
-  const derivedTab = VALID_TABS.includes(tabFromUrl) ? tabFromUrl : 'tat-ca'
-  const effectiveTab = derivedTab !== activeTab && derivedTab !== 'tat-ca' ? derivedTab : activeTab
-
-  const filtered = effectiveTab === 'tat-ca'
+  const filtered = tab === 'tat-ca'
     ? articles
-    : articles.filter(a => a.category === effectiveTab)
+    : articles.filter(a => a.category === tab)
 
   const articlesByCategory = SECTION_CATEGORIES.map(cat => ({
     category: cat,
@@ -111,99 +124,71 @@ function NewsPageInner() {
   })).filter(g => g.articles.length > 0)
 
   return (
-    <main className="news-page">
-      {/* Hero */}
-      <section className="news-hero">
-        <div className="container">
-          <h1>Bản tin</h1>
-          <p>Tin tức, khuyến mại và sự kiện mới nhất từ Shinhan Bank</p>
-        </div>
-      </section>
-
-      {/* Category tabs */}
-      <nav className="news-tabs">
-        <div className="container">
-          <div className="news-tabs-list">
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat.id}
-                className={`news-tab${effectiveTab === cat.id ? ' active' : ''}`}
-                onClick={() => setActiveTab(cat.id)}
-              >
-                {cat.label}
-              </button>
-            ))}
+    <>
+      <Header />
+      <main className="news-page">
+        {/* Hero */}
+        <section className="news-hero">
+          <div className="container">
+            <h1>Bản tin</h1>
+            <p>Tin tức, khuyến mại và sự kiện mới nhất từ Shinhan Bank</p>
           </div>
-        </div>
-      </nav>
+        </section>
 
-      {/* Content area */}
-      <div className="container">
-        {effectiveTab === 'tat-ca' ? (
-          <>
-            {/* Featured: 3 bài mới nhất */}
-            <section className="news-featured">
-              <div className="news-featured-grid">
-                {articles.slice(0, 3).map(article => (
-                  <NewsCard key={article.slug} article={article} />
-                ))}
-              </div>
-            </section>
+        {/* Category tabs — client component for interactivity */}
+        <NewsTabs activeTab={tab} categories={CATEGORIES} />
 
-            {/* Sections by category */}
-            {articlesByCategory.map(group => (
-              <section key={group.category} className="news-section">
-                <div className="news-section-header">
-                  <h2 className="news-section-title">{group.label}</h2>
-                  <button
-                    className="news-section-more"
-                    onClick={() => setActiveTab(group.category)}
-                  >
-                    Xem tiếp <i className="fas fa-chevron-right"></i>
-                  </button>
-                </div>
-                <div className="news-section-content">
-                  {group.articles.slice(0, 1).map(article => (
+        {/* Content area */}
+        <div className="container">
+          {tab === 'tat-ca' ? (
+            <>
+              {/* Featured: 3 bài mới nhất */}
+              <section className="news-featured">
+                <div className="news-featured-grid">
+                  {articles.slice(0, 3).map(article => (
                     <NewsCard key={article.slug} article={article} />
                   ))}
                 </div>
               </section>
-            ))}
-          </>
-        ) : (
-          <>
-            {filtered.length === 0 ? (
-              <div className="news-empty">
-                <i className="fas fa-newspaper"></i>
-                <p>Chưa có bài viết trong danh mục này</p>
-              </div>
-            ) : (
-              <div className="news-grid">
-                {filtered.map(article => (
-                  <NewsCard key={article.slug} article={article} />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </main>
-  )
-}
 
-export default function NewsPage() {
-  return (
-    <>
-      <Header />
-      <Suspense fallback={
-        <main className="news-page">
-          <section className="news-hero">
-            <div className="container"><h1>Bản tin</h1></div>
-          </section>
-        </main>
-      }>
-        <NewsPageInner />
-      </Suspense>
+              {/* Sections by category */}
+              {articlesByCategory.map(group => (
+                <section key={group.category} className="news-section">
+                  <div className="news-section-header">
+                    <h2 className="news-section-title">{group.label}</h2>
+                    <Link
+                      href={`/tin-tuc?tab=${group.category}`}
+                      className="news-section-more"
+                    >
+                      Xem tiếp <i className="fas fa-chevron-right"></i>
+                    </Link>
+                  </div>
+                  <div className="news-section-content">
+                    {group.articles.slice(0, 1).map(article => (
+                      <NewsCard key={article.slug} article={article} />
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </>
+          ) : (
+            <>
+              {filtered.length === 0 ? (
+                <div className="news-empty">
+                  <i className="fas fa-newspaper"></i>
+                  <p>Chưa có bài viết trong danh mục này</p>
+                </div>
+              ) : (
+                <div className="news-grid">
+                  {filtered.map(article => (
+                    <NewsCard key={article.slug} article={article} />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </main>
       <Footer />
       <FloatingButtons />
     </>

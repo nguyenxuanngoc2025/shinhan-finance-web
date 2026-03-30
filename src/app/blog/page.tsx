@@ -1,11 +1,26 @@
-'use client'
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import '../tin-tuc/news.css'
+import { supabaseAdmin } from '@/lib/supabase'
+import BlogPagination from './BlogPagination'
+
+export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Blog Tài chính | Shinhan Bank',
+  description: 'Kiến thức tài chính cá nhân, mẹo vay vốn, quản lý chi tiêu và cập nhật thị trường mỗi ngày từ Shinhan Bank Việt Nam.',
+  alternates: { canonical: 'https://tuvanvienshinhan.com/blog' },
+  openGraph: {
+    title: 'Blog Tài chính | Shinhan Bank',
+    description: 'Kiến thức tài chính cá nhân và cập nhật thị trường mỗi ngày.',
+    type: 'website',
+    locale: 'vi_VN',
+  },
+}
 
 type BlogPost = {
   id: string
@@ -17,8 +32,6 @@ type BlogPost = {
   published_at: string
   created_at: string
   author: string
-  keyword_target: string
-  source: string
 }
 
 function formatDate(dateStr: string) {
@@ -27,27 +40,36 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
-export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>([])
-  const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
+type Props = {
+  searchParams: Promise<{ page?: string }>
+}
 
+export default async function BlogPage({ searchParams }: Props) {
+  const params = await searchParams
+  const page = Math.max(1, parseInt(params.page || '1'))
+  const limit = 12
+  const from = (page - 1) * limit
+  const to = from + limit - 1
 
-  useEffect(() => {
-    setLoading(true)
-    fetch(`/api/cms/posts?status=published&category=blog&page=${page}&limit=12`)
-      .then(r => r.json())
-      .then(res => {
-        if (res.data) {
-          setPosts(res.data)
-          setTotalPages(res.pagination?.totalPages || 1)
+  let posts: BlogPost[] = []
+  let totalPages = 1
 
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [page])
+  try {
+    const { data, error, count } = await supabaseAdmin
+      .from('posts')
+      .select('id,slug,title,excerpt,category,cover_image,published_at,created_at,author', { count: 'exact' })
+      .eq('status', 'published')
+      .eq('category', 'blog')
+      .order('published_at', { ascending: false })
+      .range(from, to)
+
+    if (!error && data) {
+      posts = data as BlogPost[]
+      totalPages = Math.ceil((count || 0) / limit)
+    }
+  } catch {
+    // fallback empty
+  }
 
   return (
     <>
@@ -58,18 +80,12 @@ export default function BlogPage() {
           <div className="container">
             <h1>Blog Tài chính</h1>
             <p>Tin tức, kiến thức tài chính cá nhân và cập nhật thị trường mỗi ngày</p>
-
           </div>
         </section>
 
         {/* Posts grid */}
         <div className="container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
-          {loading ? (
-            <div className="news-empty">
-              <i className="fas fa-spinner fa-spin" style={{ fontSize: '2rem', color: '#007bc3' }}></i>
-              <p>Đang tải bài viết...</p>
-            </div>
-          ) : posts.length === 0 ? (
+          {posts.length === 0 ? (
             <div className="news-empty">
               <i className="fas fa-newspaper" style={{ fontSize: '3rem', color: '#ccc' }}></i>
               <p>Chưa có bài viết nào trong Blog</p>
@@ -112,33 +128,7 @@ export default function BlogPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div style={{
-                  display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '2rem'
-                }}>
-                  <button
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    style={{
-                      padding: '8px 16px', borderRadius: '6px', border: '1px solid #ddd',
-                      background: page === 1 ? '#f5f5f5' : '#fff', cursor: page === 1 ? 'default' : 'pointer'
-                    }}
-                  >
-                    ← Trước
-                  </button>
-                  <span style={{ padding: '8px 16px', display: 'flex', alignItems: 'center' }}>
-                    Trang {page}/{totalPages}
-                  </span>
-                  <button
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    style={{
-                      padding: '8px 16px', borderRadius: '6px', border: '1px solid #ddd',
-                      background: page === totalPages ? '#f5f5f5' : '#fff', cursor: page === totalPages ? 'default' : 'pointer'
-                    }}
-                  >
-                    Sau →
-                  </button>
-                </div>
+                <BlogPagination currentPage={page} totalPages={totalPages} />
               )}
             </>
           )}
