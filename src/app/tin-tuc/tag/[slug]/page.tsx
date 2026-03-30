@@ -1,0 +1,118 @@
+import { Metadata } from 'next'
+import Link from 'next/link'
+import Image from 'next/image'
+import { supabaseAdmin } from '@/lib/supabase'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import FloatingButtons from '@/components/FloatingButtons'
+import '../../news.css'
+
+type Props = {
+  params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const decodedTag = decodeURIComponent(slug).replace(/-/g, ' ')
+
+  return {
+    title: `Thẻ: ${decodedTag} | Shinhan Bank`,
+    description: `Khám phá các bài viết, tin tức nổi bật liên quan đến thẻ "${decodedTag}" từ Shinhan Bank.`,
+  }
+}
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+export default async function TagPage({ params }: Props) {
+  const { slug } = await params
+  const decodedTag = decodeURIComponent(slug).replace(/-/g, ' ')
+
+  // Fetch Posts containing this tag using Contains string functionality in Supabase array
+  // Warning: tags is string[] in postgres
+  const { data: ObjectData } = await supabaseAdmin
+    .from('posts')
+    .select('slug,title,excerpt,cover_image,published_at,created_at,tags')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+
+  // Manual filter because tags array filtering in supabase JS can be tricky
+  // with simple text elements inside JSON/Array sometimes. We'll do it elegantly:
+  let posts: any[] = []
+  if (ObjectData) {
+    posts = ObjectData.filter(p => {
+      if (!p.tags || !Array.isArray(p.tags)) return false
+      // Match exactly or closely
+      return p.tags.some((t: string) => 
+        t.trim().toLowerCase() === decodedTag.toLowerCase() || 
+        t.trim().toLowerCase().includes(decodedTag.toLowerCase())
+      )
+    })
+  }
+
+  return (
+    <>
+      <Header />
+      <main className="news-page">
+        {/* Hero */}
+        <section className="news-hero">
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+            <nav aria-label="Breadcrumb" style={{ marginBottom: 12, fontSize: 13, color: 'rgba(255,255,255,0.8)', display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Link href="/" style={{ color: 'white', textDecoration: 'none' }}>Trang chủ</Link>
+              <span>›</span>
+              <Link href="/tin-tuc" style={{ color: 'white', textDecoration: 'none' }}>Tin tức</Link>
+              <span>›</span>
+              <span style={{ color: 'rgba(255,255,255,0.6)' }}>Thẻ: {decodedTag}</span>
+            </nav>
+            <h1>Thẻ: {decodedTag}</h1>
+            <p>Tuyển tập các bài viết được gắn thẻ "{decodedTag}"</p>
+          </div>
+        </section>
+
+        {/* Content area */}
+        <div className="container" style={{ padding: '3rem 15px' }}>
+          {posts.length === 0 ? (
+            <div className="news-empty">
+              <i className="fas fa-tags"></i>
+              <p>Chưa có bài viết trong thẻ này</p>
+              <Link href="/tin-tuc" className="btn-primary" style={{ marginTop: 20, display: 'inline-block' }}>Quay lại bản tin</Link>
+            </div>
+          ) : (
+            <div className="news-grid">
+              {posts.map(article => (
+                <article key={article.slug} className="news-card">
+                  <Link href={`/tin-tuc/${article.slug}`} style={{ display: 'block', textDecoration: 'none' }}>
+                    <div className="news-card-image">
+                      <Image 
+                        src={article.cover_image || '/images/news/default.jpg'} 
+                        alt={article.title} 
+                        fill 
+                        sizes="(max-width:768px) 100vw, 33vw" 
+                        style={{ objectFit: 'cover' }} 
+                      />
+                    </div>
+                  </Link>
+                  <div className="news-card-body">
+                    <span className="news-card-date">{formatDate(article.published_at || article.created_at)}</span>
+                    <h3 className="news-card-title">
+                      <Link href={`/tin-tuc/${article.slug}`}>{article.title}</Link>
+                    </h3>
+                    <p className="news-card-excerpt">{article.excerpt}</p>
+                    <Link href={`/tin-tuc/${article.slug}`} className="news-card-readmore">
+                      Đọc tiếp <i className="fas fa-arrow-right"></i>
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+      <Footer />
+      <FloatingButtons />
+    </>
+  )
+}

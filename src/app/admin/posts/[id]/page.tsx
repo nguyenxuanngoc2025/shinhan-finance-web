@@ -13,10 +13,14 @@ export default function EditPostPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'edit' | 'preview'>('edit')
   const [showImagePicker, setShowImagePicker] = useState(false)
+  const [categories, setCategories] = useState<{slug: string, label: string}[]>([])
   const [form, setForm] = useState({
     title: '', slug: '', excerpt: '', content: '', cover_image: '',
     seo_image: '', category: '', tags: '', seo_title: '', seo_description: '', status: 'draft',
+    published_at: ''
   })
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null)
 
   useEffect(() => {
     fetch(`/api/cms/posts/${params.id}`).then(r => r.json()).then(d => {
@@ -35,8 +39,13 @@ export default function EditPostPage() {
           category: p.category || '', tags: Array.isArray(p.tags) ? p.tags.join(', ') : '',
           seo_title: p.seo_title || '', seo_description: p.seo_description || '',
           status: p.status || 'draft',
+          published_at: p.published_at ? new Date(p.published_at).toISOString().slice(0, 16) : ''
         })
       }
+    })
+
+    fetch('/api/cms/categories').then(r => r.json()).then(d => {
+      if (d.data) setCategories(d.data)
     }).finally(() => setLoading(false))
   }, [params.id])
 
@@ -53,12 +62,86 @@ export default function EditPostPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          published_at: (form.status === 'published' || form.status === 'scheduled') && form.published_at 
+            ? new Date(form.published_at).toISOString() 
+            : form.status === 'published' 
+              ? new Date().toISOString() 
+              : null,
           tags: form.tags ? form.tags.split(',').map((t: string) => t.trim()) : [],
           content: form.content, // HTML string
         }),
       })
       if (res.ok) router.push('/admin/posts')
       else alert('Lỗi khi lưu')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Auto Save
+  useEffect(() => {
+    if (loading || !form.title) return
+    const timer = setTimeout(async () => {
+      setAutoSaveStatus('saving')
+      try {
+        const res = await fetch(`/api/cms/posts/${params.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...form,
+            published_at: (form.status === 'published' || form.status === 'scheduled') && form.published_at 
+              ? new Date(form.published_at).toISOString() 
+              : form.status === 'published' 
+                ? new Date().toISOString() 
+                : null,
+            tags: form.tags ? form.tags.split(',').map((t: string) => t.trim()) : [],
+            content: form.content,
+          }),
+        })
+        if (res.ok) {
+          setAutoSaveStatus('saved')
+          setLastSavedTime(new Date())
+        } else {
+          setAutoSaveStatus('error')
+        }
+      } catch (e) {
+        setAutoSaveStatus('error')
+      }
+    }, 15000) // Auto save every 15s after user stops typing
+    
+    return () => {
+      clearTimeout(timer)
+      setAutoSaveStatus('idle')
+    }
+  }, [form, loading, params.id])
+
+  async function handleDuplicate() {
+    if (!confirm('Bạn có muốn nhân bản bài viết này?')) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/cms/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          title: form.title + ' (Bản sao)',
+          slug: form.slug + '-ban-sao-' + Date.now().toString().slice(-4),
+          status: 'draft',
+          published_at: null,
+          tags: form.tags ? form.tags.split(',').map((t: string) => t.trim()) : [],
+          content: form.content,
+        })
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.data?.id) {
+          router.push(`/admin/posts/${data.data.id}`)
+        } else {
+          router.push('/admin/posts')
+        }
+      } else {
+        alert('Có lỗi xảy ra khi nhân bản')
+      }
     } finally {
       setSaving(false)
     }
@@ -113,10 +196,26 @@ export default function EditPostPage() {
       `}</style>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1a1a2e', margin: 0 }}>Chỉnh sửa bài viết</h1>
-        <span className={`badge badge-${form.status === 'published' ? 'done' : 'new'}`}>
-          {form.status === 'published' ? 'Đã xuất bản' : 'Bản nháp'}
-        </span>
+        <div>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1a1a2e', margin: 0, marginBottom: 4 }}>Chỉnh sửa bài viết</h1>
+          <div style={{ fontSize: 13, color: '#6b7280', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span>
+              {autoSaveStatus === 'saving' && 'Đang lưu tự động...'}
+              {autoSaveStatus === 'saved' && lastSavedTime && `Đã lưu tự động lúc ${lastSavedTime.toLocaleTimeString('vi-VN')}`}
+              {autoSaveStatus === 'error' && <span style={{color: '#dc2626'}}>Lỗi lưu tự động</span>}
+            </span>
+            <span>|</span>
+            <span>{form.content ? form.content.replace(/<[^>]*>?/gm, '').split(/\s+/).filter(w => w.length > 0).length : 0} từ</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <button type="button" onClick={handleDuplicate} disabled={saving} className="btn-secondary" style={{ padding: '6px 14px' }}>
+            <i className="fas fa-copy" style={{ marginRight: 6 }}></i> Nhân bản
+          </button>
+          <span className={`badge badge-${form.status === 'published' ? 'done' : form.status === 'scheduled' ? 'processing' : 'new'}`}>
+            {form.status === 'published' ? 'Đã xuất bản' : form.status === 'scheduled' ? 'Hẹn giờ' : 'Bản nháp'}
+          </span>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -175,20 +274,37 @@ export default function EditPostPage() {
               <div className="post-section-body">
                 <div className="post-field">
                   <label>Trạng thái</label>
-                  <select value={form.status} onChange={e => update('status', e.target.value)}>
+                  <select value={form.status} onChange={e => {
+                    const newStatus = e.target.value;
+                    let newPubTime = form.published_at;
+                    if (newStatus === 'scheduled' && !newPubTime) {
+                      newPubTime = new Date().toISOString().slice(0, 16);
+                    }
+                    setForm(prev => ({...prev, status: newStatus, published_at: newPubTime}))
+                  }}>
                     <option value="draft">Bản nháp</option>
                     <option value="published">Xuất bản</option>
+                    <option value="scheduled">Hẹn giờ</option>
                   </select>
                 </div>
-                <div className="post-field">
+                {form.status === 'scheduled' && (
+                  <div className="post-field" style={{ marginTop: 12 }}>
+                    <label>Thời gian hẹn giờ</label>
+                    <input 
+                      type="datetime-local" 
+                      value={form.published_at} 
+                      onChange={e => update('published_at', e.target.value)}
+                      required={form.status === 'scheduled'}
+                    />
+                  </div>
+                )}
+                <div className="post-field" style={{ marginTop: 16 }}>
                   <label>Danh mục</label>
                   <select value={form.category} onChange={e => update('category', e.target.value)}>
                     <option value="">— Chọn —</option>
-                    <option value="khuyen-mai">Khuyến mãi</option>
-                    <option value="thong-bao">Thông báo</option>
-                    <option value="su-kien">Sự kiện</option>
-                    <option value="blog">Blog</option>
-                    <option value="tin-tuc">Tin tức</option>
+                    {categories.map(c => (
+                      <option key={c.slug} value={c.slug}>{c.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="post-field">

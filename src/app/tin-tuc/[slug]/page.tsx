@@ -8,6 +8,8 @@ import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import { NEWS_ARTICLES, type NewsCategory } from '../news-data'
 import { supabaseAdmin } from '@/lib/supabase'
+import TableOfContents from '@/components/TableOfContents'
+import ShareButtons from '@/components/ShareButtons'
 
 // Allow slugs not in generateStaticParams to be rendered on-demand (SSR)
 export const dynamicParams = true
@@ -39,6 +41,7 @@ type ArticleData = {
   category: NewsCategory
   date: string
   image: string
+  tags?: string[]
 }
 
 // Fetch single post by slug — dùng supabaseAdmin (service role), không fetch all
@@ -46,7 +49,7 @@ async function getCmsPostBySlug(slug: string) {
   try {
     const { data, error } = await supabaseAdmin
       .from('posts')
-      .select('slug,title,excerpt,content,cover_image,category,published_at,created_at')
+      .select('slug,title,excerpt,content,cover_image,category,published_at,created_at,tags')
       .eq('status', 'published')
       .eq('slug', slug)
       .single()
@@ -62,7 +65,7 @@ async function getRecentCmsPosts(limit = 20) {
   try {
     const { data, error } = await supabaseAdmin
       .from('posts')
-      .select('slug,title,excerpt,cover_image,category,published_at')
+      .select('slug,title,excerpt,cover_image,category,published_at,tags')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(limit)
@@ -112,6 +115,7 @@ function cmsToArticle(cmsPost: any, hardcoded?: any): ArticleData {
     category: (cmsPost.category || hardcoded?.category || 'blog') as NewsCategory,
     date: cmsPost.published_at || cmsPost.created_at || hardcoded?.date || '',
     image: cmsPost.cover_image || hardcoded?.image || '/images/news/default.jpg',
+    tags: Array.isArray(cmsPost.tags) ? cmsPost.tags : [],
   }
 }
 
@@ -124,13 +128,39 @@ async function getArticle(slug: string): Promise<ArticleData | null> {
   return hardcoded || null
 }
 
-// Get related articles — dùng recent posts thay vì toàn bộ
-async function getRelatedArticles(category: string, currentSlug: string): Promise<ArticleData[]> {
-  const cmsPosts = await getRecentCmsPosts(20)
-  return cmsPosts
-    .filter((p: any) => p.category === category && p.slug !== currentSlug)
+// Get related articles — score based on tag overlap, fallback to category
+async function getRelatedArticles(category: string, currentSlug: string, currentTags: string[] = []): Promise<ArticleData[]> {
+  const cmsPosts = await getRecentCmsPosts(50)
+  
+  const scoredPosts = cmsPosts
+    .filter((p: any) => p.slug !== currentSlug)
+    .map((p: any) => {
+      let score = 0
+      const pTags = Array.isArray(p.tags) ? p.tags : []
+      if (currentTags.length > 0) {
+        score += currentTags.filter(t => pTags.includes(t)).length * 10
+      }
+      if (p.category === category) {
+        score += 5
+      }
+      return { post: p, score }
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
     .slice(0, 3)
-    .map((p: any) => cmsToArticle(p))
+    .map(item => cmsToArticle(item.post))
+    
+  // If not enough related via score, fallback to recent
+  if (scoredPosts.length < 3) {
+    const existingSlugs = new Set([...scoredPosts.map(p => p.slug), currentSlug])
+    const fallbacks = cmsPosts
+      .filter((p: any) => !existingSlugs.has(p.slug))
+      .slice(0, 3 - scoredPosts.length)
+      .map((p: any) => cmsToArticle(p))
+    return [...scoredPosts, ...fallbacks]
+  }
+
+  return scoredPosts
 }
 
 export async function generateStaticParams() {
@@ -211,8 +241,8 @@ export default async function NewsDetailPage({ params }: Props) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}/tin-tuc/${slug}` },
   }
 
-  // Related articles: dùng getRelatedArticles (giới hạn 20 bài, không fetch all)
-  const related = await getRelatedArticles(article.category, slug)
+  // Related articles: dùng getRelatedArticles hỗ trợ tags-based
+  const related = await getRelatedArticles(article.category, slug, article.tags)
 
   return (
     <>
@@ -256,10 +286,14 @@ export default async function NewsDetailPage({ params }: Props) {
               priority
             />
 
+            <TableOfContents selector=".news-detail-content" />
+
             <div
               className="news-detail-content"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
+
+            <ShareButtons title={article.title} text={article.excerpt} />
 
             {/* Related articles */}
             {related.length > 0 && (

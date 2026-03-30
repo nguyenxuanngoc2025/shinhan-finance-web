@@ -127,9 +127,13 @@ export default async function NewsPage({ searchParams }: Props) {
     <>
       <Header />
       <main className="news-page">
-        {/* Hero */}
         <section className="news-hero">
-          <div className="container">
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+            <nav aria-label="Breadcrumb" style={{ marginBottom: 12, fontSize: 13, color: 'rgba(255,255,255,0.8)', display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Link href="/" style={{ color: 'white', textDecoration: 'none' }}>Trang chủ</Link>
+              <span>›</span>
+              <span style={{ color: 'rgba(255,255,255,0.6)' }}>Tin tức</span>
+            </nav>
             <h1>Bản tin</h1>
             <p>Tin tức, khuyến mại và sự kiện mới nhất từ Shinhan Bank</p>
           </div>

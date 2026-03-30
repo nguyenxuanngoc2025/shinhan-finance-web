@@ -61,6 +61,7 @@ const menuGroups: MenuGroup[] = [
     collapsible: true,
     items: [
       { label: 'Trang', href: '/admin/pages', icon: 'page' },
+      { label: 'Danh mục', href: '/admin/categories', icon: 'file' },
       { label: 'Bài viết', href: '/admin/posts', icon: 'article' },
       { label: 'Sản phẩm', href: '/admin/products', icon: 'product' },
       { label: 'Slider', href: '/admin/sliders', icon: 'slider' },

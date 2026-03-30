@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import RichEditor from '../../components/RichEditor'
 import ImagePicker from '../../components/ImagePicker'
@@ -11,6 +11,14 @@ export default function NewPostPage() {
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState<'edit' | 'preview'>('edit')
   const [showImagePicker, setShowImagePicker] = useState(false)
+  const [categories, setCategories] = useState<{slug: string, label: string}[]>([])
+  
+  useEffect(() => {
+    fetch('/api/cms/categories').then(r => r.json()).then(d => {
+      if (d.data) setCategories(d.data)
+    })
+  }, [])
+
   const [form, setForm] = useState({
     title: '',
     slug: '',
@@ -23,6 +31,7 @@ export default function NewPostPage() {
     seo_title: '',
     seo_description: '',
     status: 'draft',
+    published_at: ''
   })
 
   function autoSlug(title: string) {
@@ -56,6 +65,11 @@ export default function NewPostPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          published_at: (form.status === 'published' || form.status === 'scheduled') && form.published_at 
+            ? new Date(form.published_at).toISOString() 
+            : form.status === 'published' 
+              ? new Date().toISOString() 
+              : null,
           tags: form.tags ? form.tags.split(',').map((t: string) => t.trim()) : [],
           content: form.content, // HTML string
         }),
@@ -111,11 +125,23 @@ export default function NewPostPage() {
         .post-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
         .post-actions .btn-primary { padding: 10px 24px; }
         .post-actions .btn-secondary { padding: 10px 18px; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .badge-new { background: #e5e7eb; color: #374151; }
+        .badge-processing { background: #fef3c7; color: #92400e; }
+        .badge-done { background: #dcfce7; color: #166534; }
         @media (max-width: 1024px) { .post-editor-layout { grid-template-columns: 1fr; } }
       `}</style>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1a1a2e', margin: 0 }}>Tạo bài viết mới</h1>
+        <div>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1a1a2e', margin: 0, marginBottom: 4 }}>Thêm bài viết mới</h1>
+          <div style={{ fontSize: 13, color: '#6b7280', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span>{form.content ? form.content.replace(/<[^>]*>?/gm, '').split(/\s+/).filter(w => w.length > 0).length : 0} từ</span>
+          </div>
+        </div>
+        <span className={`badge badge-${form.status === 'published' ? 'done' : form.status === 'scheduled' ? 'processing' : 'new'}`}>
+          {form.status === 'published' ? 'Đã xuất bản' : form.status === 'scheduled' ? 'Hẹn giờ' : 'Bản nháp'}
+        </span>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -182,20 +208,37 @@ export default function NewPostPage() {
               <div className="post-section-body">
                 <div className="post-field">
                   <label>Trạng thái</label>
-                  <select value={form.status} onChange={e => update('status', e.target.value)}>
+                  <select value={form.status} onChange={e => {
+                    const newStatus = e.target.value;
+                    let newPubTime = form.published_at;
+                    if (newStatus === 'scheduled' && !newPubTime) {
+                      newPubTime = new Date().toISOString().slice(0, 16);
+                    }
+                    setForm(prev => ({...prev, status: newStatus, published_at: newPubTime}))
+                  }}>
                     <option value="draft">Bản nháp</option>
                     <option value="published">Xuất bản</option>
+                    <option value="scheduled">Hẹn giờ</option>
                   </select>
                 </div>
-                <div className="post-field">
+                {form.status === 'scheduled' && (
+                  <div className="post-field" style={{ marginTop: 12 }}>
+                    <label>Thời gian hẹn giờ</label>
+                    <input 
+                      type="datetime-local" 
+                      value={form.published_at} 
+                      onChange={e => update('published_at', e.target.value)}
+                      required={form.status === 'scheduled'}
+                    />
+                  </div>
+                )}
+                <div className="post-field" style={{ marginTop: 16 }}>
                   <label>Danh mục</label>
                   <select value={form.category} onChange={e => update('category', e.target.value)}>
                     <option value="">— Chọn danh mục —</option>
-                    <option value="khuyen-mai">Khuyến mãi</option>
-                    <option value="thong-bao">Thông báo</option>
-                    <option value="su-kien">Sự kiện</option>
-                    <option value="blog">Blog</option>
-                    <option value="tin-tuc">Tin tức</option>
+                    {categories.map(c => (
+                      <option key={c.slug} value={c.slug}>{c.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="post-field">
