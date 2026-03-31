@@ -11,8 +11,33 @@ interface RichEditorProps {
 
 export default function RichEditor({ value, onChange, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
+  const savedRangeRef = useRef<Range | null>(null)  // save cursor pos before modal opens
   const [showSource, setShowSource] = useState(false)
   const [showImageModal, setShowImageModal] = useState(false)
+
+  // Save current selection (cursor position) in editor
+  function saveEditorSelection() {
+    const sel = window.getSelection()
+    if (sel && sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0)
+      // Only save if selection is inside our editor
+      if (editorRef.current?.contains(range.commonAncestorContainer)) {
+        savedRangeRef.current = range.cloneRange()
+      }
+    }
+  }
+
+  // Restore previously saved selection
+  function restoreEditorSelection() {
+    const range = savedRangeRef.current
+    if (!range) return false
+    const sel = window.getSelection()
+    if (sel) {
+      sel.removeAllRanges()
+      sel.addRange(range)
+    }
+    return true
+  }
 
   const exec = useCallback((cmd: string, val?: string) => {
     document.execCommand(cmd, false, val)
@@ -47,11 +72,21 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
   }
 
   function handleInsertImageHtml(html: string) {
-    if (editorRef.current) {
-      editorRef.current.focus()
-      // Save selection before modal opened — insert at current position
-      exec('insertHTML', html)
+    if (!editorRef.current) return
+    editorRef.current.focus()
+    // Restore the cursor position that was saved before modal opened
+    const restored = restoreEditorSelection()
+    if (!restored) {
+      // No saved position: move cursor to end of editor as fallback
+      const range = document.createRange()
+      range.selectNodeContents(editorRef.current)
+      range.collapse(false)
+      const sel = window.getSelection()
+      if (sel) { sel.removeAllRanges(); sel.addRange(range) }
     }
+    document.execCommand('insertHTML', false, html)
+    setTimeout(() => { if (editorRef.current) onChange(editorRef.current.innerHTML) }, 10)
+    savedRangeRef.current = null
   }
 
   function insertHR() {
@@ -144,8 +179,15 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
           </button>
 
-          {/* New image button — opens modal with alignment+size options */}
-          <button type="button" className="re-btn-img" onClick={() => setShowImageModal(true)} title="Chèn ảnh (có tùy chỉnh vị trí & kích thước)">
+          <button
+            type="button"
+            className="re-btn-img"
+            title="Chèn ảnh (có tùy chỉnh vị trí & kích thước)"
+            onClick={() => {
+              saveEditorSelection()
+              setShowImageModal(true)
+            }}
+          >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             Chèn ảnh
           </button>
