@@ -3,14 +3,22 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
-const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif', 'image/bmp', 'image/tiff']
+const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'avif', 'bmp', 'tiff', 'tif']
 const MAX_SIZE = 5 * 1024 * 1024 // 5MB
 
 // Normalize MIME type — browsers sometimes send SVG as text/xml or application/xml
 function normalizeMimeType(file: File): string {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
   if (ext === 'svg') return 'image/svg+xml'
+  if (ext === 'avif') return 'image/avif'
+  if (ext === 'bmp') return 'image/bmp'
+  if (ext === 'tiff' || ext === 'tif') return 'image/tiff'
+  // Fallback: if file.type is empty string, guess from extension
+  if (!file.type && ['jpg', 'jpeg'].includes(ext)) return 'image/jpeg'
+  if (!file.type && ext === 'png') return 'image/png'
+  if (!file.type && ext === 'gif') return 'image/gif'
+  if (!file.type && ext === 'webp') return 'image/webp'
   return file.type
 }
 

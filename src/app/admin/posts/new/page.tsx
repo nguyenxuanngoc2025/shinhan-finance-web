@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation'
 import RichEditor from '../../components/RichEditor'
 import ImagePicker from '../../components/ImagePicker'
 import SeoScorePanel from '../../components/SeoScorePanel'
+import TocPreviewPanel from '../../components/TocPreviewPanel'
 
 export default function NewPostPage() {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState<'edit' | 'preview'>('edit')
-  const [showImagePicker, setShowImagePicker] = useState(false)
   const [categories, setCategories] = useState<{slug: string, label: string}[]>([])
   
   useEffect(() => {
@@ -71,25 +71,13 @@ export default function NewPostPage() {
               ? new Date().toISOString() 
               : null,
           tags: form.tags ? form.tags.split(',').map((t: string) => t.trim()) : [],
-          content: form.content, // HTML string
+          content: form.content,
         }),
       })
       if (res.ok) router.push('/admin/posts')
       else alert('Lỗi khi lưu bài viết')
     } finally {
       setSaving(false)
-    }
-  }
-
-  function handleInsertImage() {
-    setShowImagePicker(true)
-  }
-
-  function handleImageSelected(url: string) {
-    setShowImagePicker(false)
-    // Insert image into editor via global function
-    if ((window as any).__richEditorInsertImage) {
-      (window as any).__richEditorInsertImage(url)
     }
   }
 
@@ -115,9 +103,13 @@ export default function NewPostPage() {
         .post-slug { font-size: 12px; color: #9ca3af; margin-bottom: 16px; display: flex; align-items: center; gap: 4px; }
         .post-slug input { border: none; outline: none; font-size: 12px; color: #6b7280; background: transparent; padding: 0; flex: 1; }
         .post-preview { padding: 20px; min-height: 400px; font-size: 15px; line-height: 1.75; color: #1a1a2e; }
+        .post-preview h1 { font-size: 28px; font-weight: 800; margin: 28px 0 14px; line-height: 1.3; }
         .post-preview h2 { font-size: 22px; font-weight: 700; margin: 24px 0 12px; }
         .post-preview h3 { font-size: 18px; font-weight: 600; margin: 20px 0 10px; }
-        .post-preview img { max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0; }
+        .post-preview h4 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: #4b5563; }
+        .post-preview img { max-width: 100%; height: auto; border-radius: 8px; }
+        .post-preview figure { max-width: 100%; }
+        .post-preview figcaption { font-size: 12px; color: #6b7280; text-align: center; margin-top: 4px; font-style: italic; }
         .post-preview table { width: 100%; border-collapse: collapse; margin: 16px 0; }
         .post-preview table th, .post-preview table td { border: 1px solid #d1d5db; padding: 8px 12px; }
         .post-preview table th { background: #f3f4f6; font-weight: 600; }
@@ -179,8 +171,7 @@ export default function NewPostPage() {
               <RichEditor
                 value={form.content}
                 onChange={val => update('content', val)}
-                onInsertImage={handleInsertImage}
-                placeholder="Bắt đầu viết nội dung bài viết..."
+                placeholder="Bắt đầu viết nội dung bài viết... Dùng nút 'Chèn ảnh' trên toolbar để thêm ảnh với tùy chỉnh vị trí và kích thước."
               />
             ) : (
               <div className="post-section">
@@ -248,6 +239,9 @@ export default function NewPostPage() {
               </div>
             </div>
 
+            {/* TOC Preview Panel - hiển thị mục lục live */}
+            <TocPreviewPanel content={form.content} />
+
             <div className="post-section">
               <div className="post-section-head">Ảnh đại diện</div>
               <div className="post-section-body">
@@ -297,21 +291,6 @@ export default function NewPostPage() {
           </div>
         </div>
       </form>
-
-      {/* Image Picker for inserting into content */}
-      {showImagePicker && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 99999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowImagePicker(false)}>
-          <div style={{ background: '#fff', borderRadius: 14, width: '90vw', maxWidth: 600, maxHeight: '80vh', overflow: 'auto', padding: 20 }} onClick={e => e.stopPropagation()}>
-            <h3 style={{ margin: '0 0 16px', fontSize: 16 }}>Chèn ảnh vào nội dung</h3>
-            <ImagePicker
-              value=""
-              onChange={handleImageSelected}
-              label="Chọn ảnh để chèn"
-              placeholder="Chọn từ thư viện hoặc upload"
-            />
-          </div>
-        </div>
-      )}
     </>
   )
 }

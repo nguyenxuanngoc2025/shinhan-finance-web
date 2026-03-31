@@ -1,22 +1,22 @@
 'use client'
 
-import { useRef, useCallback, useState } from 'react'
+import { useRef, useCallback, useState, useEffect } from 'react'
+import ImageInsertModal from './ImageInsertModal'
 
 interface RichEditorProps {
   value: string
   onChange: (html: string) => void
-  onInsertImage?: () => void
   placeholder?: string
 }
 
-export default function RichEditor({ value, onChange, onInsertImage, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
+export default function RichEditor({ value, onChange, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const [showSource, setShowSource] = useState(false)
+  const [showImageModal, setShowImageModal] = useState(false)
 
   const exec = useCallback((cmd: string, val?: string) => {
     document.execCommand(cmd, false, val)
     editorRef.current?.focus()
-    // Sync content
     setTimeout(() => {
       if (editorRef.current) onChange(editorRef.current.innerHTML)
     }, 10)
@@ -46,26 +46,12 @@ export default function RichEditor({ value, onChange, onInsertImage, placeholder
     exec('insertHTML', html)
   }
 
-  function insertImage() {
-    if (onInsertImage) {
-      onInsertImage()
-    } else {
-      const url = prompt('URL ảnh:')
-      if (url) exec('insertHTML', `<img src="${url}" alt="Image" style="max-width:100%;height:auto;border-radius:8px;margin:12px 0" />`)
-    }
-  }
-
-  // Called externally to insert an image URL from ImagePicker
-  function insertImageUrl(url: string) {
+  function handleInsertImageHtml(html: string) {
     if (editorRef.current) {
       editorRef.current.focus()
-      exec('insertHTML', `<img src="${url}" alt="Image" style="max-width:100%;height:auto;border-radius:8px;margin:12px 0" /><p><br></p>`)
+      // Save selection before modal opened — insert at current position
+      exec('insertHTML', html)
     }
-  }
-
-  // Expose insertImageUrl to parent via data attribute
-  if (typeof window !== 'undefined') {
-    (window as any).__richEditorInsertImage = insertImageUrl
   }
 
   function insertHR() {
@@ -74,6 +60,19 @@ export default function RichEditor({ value, onChange, onInsertImage, placeholder
 
   const onInput = useCallback(() => {
     if (editorRef.current) onChange(editorRef.current.innerHTML)
+  }, [onChange])
+
+  // Expose insertImageHtml to parent (for backward compat)
+  useEffect(() => {
+    const w = window as typeof window & { __richEditorInsertImage?: (url: string) => void }
+    w.__richEditorInsertImage = (url: string) => {
+      if (editorRef.current) {
+        editorRef.current.focus()
+        document.execCommand('insertHTML', false, `<img src="${url}" alt="ảnh" style="max-width:100%;height:auto;border-radius:8px;margin:12px 0" /><p><br></p>`)
+        setTimeout(() => { if (editorRef.current) onChange(editorRef.current.innerHTML) }, 10)
+      }
+    }
+    return () => { delete (window as typeof window & { __richEditorInsertImage?: unknown }).__richEditorInsertImage }
   }, [onChange])
 
   return (
@@ -85,16 +84,22 @@ export default function RichEditor({ value, onChange, onInsertImage, placeholder
         .re-btn { width: 32px; height: 30px; border: none; background: transparent; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #374151; font-size: 14px; transition: all 0.12s; }
         .re-btn:hover { background: #e5e7eb; color: #0078D4; }
         .re-btn.active { background: #dbeafe; color: #0078D4; }
+        .re-btn-img { height: 30px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 4px; background: #fff; cursor: pointer; display: flex; align-items: center; gap: 5px; color: #374151; font-size: 12px; font-weight: 600; transition: all 0.12s; white-space: nowrap; }
+        .re-btn-img:hover { border-color: #0078D4; color: #0078D4; background: #eff8ff; }
         .re-sep { width: 1px; background: #d1d5db; margin: 2px 4px; }
         .re-select { height: 30px; border: 1px solid #d1d5db; border-radius: 4px; background: #fff; font-size: 12px; padding: 0 6px; cursor: pointer; color: #374151; }
         .re-editor { min-height: 360px; padding: 16px 20px; outline: none; font-size: 15px; line-height: 1.75; color: #1a1a2e; overflow-y: auto; font-family: 'Segoe UI', -apple-system, sans-serif; }
         .re-editor:empty::before { content: attr(data-placeholder); color: #9ca3af; pointer-events: none; }
+        .re-editor h1 { font-size: 28px; font-weight: 800; margin: 28px 0 14px; color: #1a1a2e; line-height: 1.3; }
         .re-editor h2 { font-size: 22px; font-weight: 700; margin: 24px 0 12px; color: #1a1a2e; }
         .re-editor h3 { font-size: 18px; font-weight: 600; margin: 20px 0 10px; color: #374151; }
+        .re-editor h4 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: #4b5563; }
         .re-editor p { margin: 8px 0; }
         .re-editor ul, .re-editor ol { margin: 8px 0; padding-left: 24px; }
         .re-editor blockquote { border-left: 3px solid #0078D4; margin: 12px 0; padding: 8px 16px; background: #f8f9fb; color: #4b5563; border-radius: 0 6px 6px 0; }
-        .re-editor img { max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0; }
+        .re-editor img { max-width: 100%; height: auto; border-radius: 8px; }
+        .re-editor figure { max-width: 100%; }
+        .re-editor figcaption { font-size: 12px; color: #6b7280; text-align: center; margin-top: 4px; font-style: italic; }
         .re-editor table { width: 100%; border-collapse: collapse; margin: 16px 0; }
         .re-editor table th, .re-editor table td { border: 1px solid #d1d5db; padding: 8px 12px; }
         .re-editor table th { background: #f3f4f6; font-weight: 600; }
@@ -104,6 +109,7 @@ export default function RichEditor({ value, onChange, onInsertImage, placeholder
         .re-editor hr { border: none; border-top: 2px solid #e5e7eb; margin: 24px 0; }
         .re-source { width: 100%; min-height: 360px; padding: 16px 20px; border: none; outline: none; font-family: 'Cascadia Code', monospace; font-size: 13px; line-height: 1.6; color: #374151; resize: vertical; background: #fafbfc; }
         .re-footer { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: #f8f9fb; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af; }
+        .re-img-hint { font-size: 11px; color: #0078D4; font-weight: 600; }
       `}</style>
 
       <div className="re-wrap">
@@ -111,8 +117,10 @@ export default function RichEditor({ value, onChange, onInsertImage, placeholder
           <select className="re-select" onChange={e => { handleFormat(e.target.value); e.target.value = '' }} defaultValue="">
             <option value="" disabled>Định dạng</option>
             <option value="p">Đoạn văn</option>
-            <option value="h2">Heading 2</option>
-            <option value="h3">Heading 3</option>
+            <option value="h1">Heading 1 (H1)</option>
+            <option value="h2">Heading 2 (H2)</option>
+            <option value="h3">Heading 3 (H3)</option>
+            <option value="h4">Heading 4 (H4)</option>
             <option value="pre">Code Block</option>
             <option value="blockquote">Trích dẫn</option>
           </select>
@@ -135,9 +143,13 @@ export default function RichEditor({ value, onChange, onInsertImage, placeholder
           <button type="button" className="re-btn" onClick={insertLink} title="Chèn link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
           </button>
-          <button type="button" className="re-btn" onClick={insertImage} title="Chèn ảnh">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+
+          {/* New image button — opens modal with alignment+size options */}
+          <button type="button" className="re-btn-img" onClick={() => setShowImageModal(true)} title="Chèn ảnh (có tùy chỉnh vị trí & kích thước)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Chèn ảnh
           </button>
+
           <button type="button" className="re-btn" onClick={insertTable} title="Chèn bảng">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
           </button>
@@ -169,10 +181,18 @@ export default function RichEditor({ value, onChange, onInsertImage, placeholder
         )}
 
         <div className="re-footer">
-          <span>{showSource ? 'Chế độ HTML' : 'Chế độ soạn thảo'}</span>
+          <span>{showSource ? 'Chế độ HTML' : 'Chế độ soạn thảo · Click "Chèn ảnh" để thêm ảnh tại vị trí con trỏ với tùy chỉnh đầy đủ'}</span>
           <span>{value ? `${value.replace(/<[^>]*>/g, '').length} ký tự` : '0 ký tự'}</span>
         </div>
       </div>
+
+      {/* Image Insert Modal */}
+      {showImageModal && (
+        <ImageInsertModal
+          onInsert={handleInsertImageHtml}
+          onClose={() => setShowImageModal(false)}
+        />
+      )}
     </>
   )
 }

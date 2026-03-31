@@ -72,6 +72,17 @@ export default function ImagePicker({
     if (arr.length === 0) return
 
     // Quick validation
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif', 'image/bmp', 'image/tiff']
+    const allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'avif', 'bmp', 'tiff', 'tif']
+
+    const invalid = arr.find(f => {
+      const ext = f.name.split('.').pop()?.toLowerCase() ?? ''
+      return !allowedMimes.includes(f.type) && !allowedExts.includes(ext)
+    })
+    if (invalid) {
+      alert(`"${invalid.name}": Định dạng không hỗ trợ. Vui lòng dùng JPG, PNG, WebP, GIF, SVG, AVIF.`)
+      return
+    }
     const oversized = arr.find(f => f.size > 5 * 1024 * 1024)
     if (oversized) {
       alert(`Ảnh "${oversized.name}" vượt quá 5MB`)
@@ -405,7 +416,7 @@ export default function ImagePicker({
                   <div className="imgp-drop-text">
                     Kéo thả ảnh vào đây hoặc <strong>click để chọn file</strong>
                   </div>
-                  <div className="imgp-drop-hint">JPEG, PNG, GIF, WebP, SVG — tối đa 5MB</div>
+                  <div className="imgp-drop-hint">JPG, PNG, WebP, GIF, SVG, AVIF — tối đa 5MB</div>
                 </div>
                 <span className="imgp-drop-or">hoặc</span>
                 <button
@@ -422,7 +433,7 @@ export default function ImagePicker({
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,.svg"
+              accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif,image/bmp,.jpg,.jpeg,.png,.gif,.webp,.svg,.avif,.bmp"
               style={{ display: 'none' }}
               onChange={e => { if (e.target.files) handleUpload(e.target.files); e.target.value = '' }}
             />
