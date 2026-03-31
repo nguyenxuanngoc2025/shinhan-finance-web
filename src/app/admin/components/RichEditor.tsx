@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useCallback, useState, useEffect } from 'react'
+import { useRef, useCallback, useState, useEffect, useLayoutEffect } from 'react'
 import ImageInsertModal from './ImageInsertModal'
 
 interface RichEditorProps {
@@ -13,7 +13,6 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
   const editorRef = useRef<HTMLDivElement>(null)
   const savedRangeRef = useRef<Range | null>(null)
   const lastEmittedValue = useRef(value)
-  const [initialValue] = useState(() => value)
   const [showSource, setShowSource] = useState(false)
   const [showImageModal, setShowImageModal] = useState(false)
 
@@ -23,11 +22,15 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
     onChange(html)
   }, [onChange])
 
+  // Helper to run before paint to prevent flicker on load
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
   // Sync external changes (e.g., initial load, parent form clear, Source Code toggle)
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!editorRef.current) return
     // Only update innerHTML if the parent's value differs from the last value we emitted
-    if (value !== lastEmittedValue.current) {
+    // and if it differs from what the DOM currently holds
+    if (value !== lastEmittedValue.current && value !== editorRef.current.innerHTML) {
       editorRef.current.innerHTML = value || ''
       lastEmittedValue.current = value
     }
@@ -214,7 +217,6 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
             className="re-editor"
             contentEditable
             data-placeholder={placeholder}
-            dangerouslySetInnerHTML={{ __html: initialValue || '' }}
             onInput={onInput}
             onBlur={onInput}
             suppressContentEditableWarning
