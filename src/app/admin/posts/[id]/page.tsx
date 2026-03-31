@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import RichEditor from '../../components/RichEditor'
 import ImagePicker from '../../components/ImagePicker'
 import SeoScorePanel from '../../components/SeoScorePanel'
+import TocPreviewPanel from '../../components/TocPreviewPanel'
 
 export default function EditPostPage() {
   const router = useRouter()
@@ -12,7 +13,6 @@ export default function EditPostPage() {
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'edit' | 'preview'>('edit')
-  const [showImagePicker, setShowImagePicker] = useState(false)
   const [categories, setCategories] = useState<{slug: string, label: string}[]>([])
   const [form, setForm] = useState({
     title: '', slug: '', excerpt: '', content: '', cover_image: '',
@@ -147,16 +147,6 @@ export default function EditPostPage() {
     }
   }
 
-  function handleInsertImage() {
-    setShowImagePicker(true)
-  }
-
-  function handleImageSelected(url: string) {
-    setShowImagePicker(false)
-    if ((window as any).__richEditorInsertImage) {
-      (window as any).__richEditorInsertImage(url)
-    }
-  }
 
   if (loading) return <div style={{ textAlign: 'center', padding: 60, color: '#9ca3af' }}>Đang tải bài viết...</div>
 
@@ -248,7 +238,6 @@ export default function EditPostPage() {
               <RichEditor
                 value={form.content}
                 onChange={val => update('content', val)}
-                onInsertImage={handleInsertImage}
                 placeholder="Bắt đầu viết nội dung bài viết..."
               />
             ) : (
@@ -314,6 +303,9 @@ export default function EditPostPage() {
               </div>
             </div>
 
+            {/* TOC Preview Panel */}
+            <TocPreviewPanel content={form.content} />
+
             <div className="post-section">
               <div className="post-section-head">Ảnh đại diện</div>
               <div className="post-section-body">
@@ -364,19 +356,6 @@ export default function EditPostPage() {
         </div>
       </form>
 
-      {showImagePicker && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 99999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowImagePicker(false)}>
-          <div style={{ background: '#fff', borderRadius: 14, width: '90vw', maxWidth: 600, maxHeight: '80vh', overflow: 'auto', padding: 20 }} onClick={e => e.stopPropagation()}>
-            <h3 style={{ margin: '0 0 16px', fontSize: 16 }}>Chèn ảnh vào nội dung</h3>
-            <ImagePicker
-              value=""
-              onChange={handleImageSelected}
-              label="Chọn ảnh để chèn"
-              placeholder="Chọn từ thư viện hoặc upload"
-            />
-          </div>
-        </div>
-      )}
     </>
   )
 }
