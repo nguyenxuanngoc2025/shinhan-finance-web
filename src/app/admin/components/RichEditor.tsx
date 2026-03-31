@@ -12,16 +12,34 @@ interface RichEditorProps {
 export default function RichEditor({ value, onChange, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const savedRangeRef = useRef<Range | null>(null)
+  const lastEmittedValue = useRef(value)
+  const [initialValue] = useState(() => value)
   const [showSource, setShowSource] = useState(false)
   const [showImageModal, setShowImageModal] = useState(false)
+
+  // Wrapper around onChange to record the last emitted value
+  const emitChange = useCallback((html: string) => {
+    lastEmittedValue.current = html
+    onChange(html)
+  }, [onChange])
+
+  // Sync external changes (e.g., initial load, parent form clear, Source Code toggle)
+  useEffect(() => {
+    if (!editorRef.current) return
+    // Only update innerHTML if the parent's value differs from the last value we emitted
+    if (value !== lastEmittedValue.current) {
+      editorRef.current.innerHTML = value || ''
+      lastEmittedValue.current = value
+    }
+  }, [value])
 
   const exec = useCallback((cmd: string, val?: string) => {
     document.execCommand(cmd, false, val)
     editorRef.current?.focus()
     setTimeout(() => {
-      if (editorRef.current) onChange(editorRef.current.innerHTML)
+      if (editorRef.current) emitChange(editorRef.current.innerHTML)
     }, 10)
-  }, [onChange])
+  }, [emitChange])
 
   function saveEditorSelection() {
     const sel = window.getSelection()
@@ -82,8 +100,8 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
   }
 
   const onInput = useCallback(() => {
-    if (editorRef.current) onChange(editorRef.current.innerHTML)
-  }, [onChange])
+    if (editorRef.current) emitChange(editorRef.current.innerHTML)
+  }, [emitChange])
 
   // Expose insertImageHtml to parent (for backward compat)
   useEffect(() => {
@@ -92,11 +110,11 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
       if (editorRef.current) {
         editorRef.current.focus()
         document.execCommand('insertHTML', false, `<img src="${url}" alt="ảnh" style="max-width:100%;height:auto;border-radius:8px;margin:12px 0" /><p><br></p>`)
-        setTimeout(() => { if (editorRef.current) onChange(editorRef.current.innerHTML) }, 10)
+        setTimeout(() => { if (editorRef.current) emitChange(editorRef.current.innerHTML) }, 10)
       }
     }
     return () => { delete (window as typeof window & { __richEditorInsertImage?: unknown }).__richEditorInsertImage }
-  }, [onChange])
+  }, [emitChange])
 
   return (
     <>
@@ -188,7 +206,7 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
           <textarea
             className="re-source"
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={e => emitChange(e.target.value)}
           />
         ) : (
           <div
@@ -196,7 +214,7 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
             className="re-editor"
             contentEditable
             data-placeholder={placeholder}
-            dangerouslySetInnerHTML={{ __html: value }}
+            dangerouslySetInnerHTML={{ __html: initialValue || '' }}
             onInput={onInput}
             onBlur={onInput}
             suppressContentEditableWarning
