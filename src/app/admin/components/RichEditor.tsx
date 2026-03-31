@@ -218,6 +218,8 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
             dangerouslySetInnerHTML={{ __html: value }}
             onInput={onInput}
             onBlur={onInput}
+            onMouseUp={saveEditorSelection}
+            onKeyUp={saveEditorSelection}
             suppressContentEditableWarning
           />
         )}
