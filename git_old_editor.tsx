@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRef, useCallback, useState, useEffect } from 'react'
 import ImageInsertModal from './ImageInsertModal'
@@ -9,9 +9,8 @@ interface RichEditorProps {
   placeholder?: string
 }
 
-export default function RichEditor({ value, onChange, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
+export default function RichEditor({ value, onChange, placeholder = 'Bß║»t ─æß║ºu viß║┐t nß╗Öi dung...' }: RichEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
-  const savedRangeRef = useRef<Range | null>(null)
   const [showSource, setShowSource] = useState(false)
   const [showImageModal, setShowImageModal] = useState(false)
 
@@ -23,45 +22,24 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
     }, 10)
   }, [onChange])
 
-  function saveEditorSelection() {
-    const sel = window.getSelection()
-    if (sel && sel.rangeCount > 0) {
-      const range = sel.getRangeAt(0)
-      if (editorRef.current?.contains(range.commonAncestorContainer)) {
-        savedRangeRef.current = range.cloneRange()
-      }
-    }
-  }
-
-  function restoreEditorSelection() {
-    const range = savedRangeRef.current
-    if (!range) return false
-    const sel = window.getSelection()
-    if (sel) {
-      sel.removeAllRanges()
-      sel.addRange(range)
-    }
-    return true
-  }
-
   function handleFormat(tag: string) {
     exec('formatBlock', tag)
   }
 
   function insertLink() {
-    const url = prompt('Nhập URL:')
+    const url = prompt('Nhß║¡p URL:')
     if (url) exec('createLink', url)
   }
 
   function insertTable() {
-    const rows = parseInt(prompt('Số hàng:', '3') || '3')
-    const cols = parseInt(prompt('Số cột:', '3') || '3')
+    const rows = parseInt(prompt('Sß╗æ h├áng:', '3') || '3')
+    const cols = parseInt(prompt('Sß╗æ cß╗Öt:', '3') || '3')
     let html = '<table style="width:100%;border-collapse:collapse;margin:16px 0"><thead><tr>'
-    for (let c = 0; c < cols; c++) html += `<th style="border:1px solid #d1d5db;padding:8px 12px;background:#f3f4f6;text-align:left">Tiêu đề ${c + 1}</th>`
+    for (let c = 0; c < cols; c++) html += `<th style="border:1px solid #d1d5db;padding:8px 12px;background:#f3f4f6;text-align:left">Ti├¬u ─æß╗ü ${c + 1}</th>`
     html += '</tr></thead><tbody>'
     for (let r = 0; r < rows - 1; r++) {
       html += '<tr>'
-      for (let c = 0; c < cols; c++) html += '<td style="border:1px solid #d1d5db;padding:8px 12px">Nội dung</td>'
+      for (let c = 0; c < cols; c++) html += '<td style="border:1px solid #d1d5db;padding:8px 12px">Nß╗Öi dung</td>'
       html += '</tr>'
     }
     html += '</tbody></table><p><br></p>'
@@ -71,8 +49,7 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
   function handleInsertImageHtml(html: string) {
     if (editorRef.current) {
       editorRef.current.focus()
-      // Restore the previously saved selection before the modal was opened
-      restoreEditorSelection()
+      // Save selection before modal opened ΓÇö insert at current position
       exec('insertHTML', html)
     }
   }
@@ -91,7 +68,7 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
     w.__richEditorInsertImage = (url: string) => {
       if (editorRef.current) {
         editorRef.current.focus()
-        document.execCommand('insertHTML', false, `<img src="${url}" alt="ảnh" style="max-width:100%;height:auto;border-radius:8px;margin:12px 0" /><p><br></p>`)
+        document.execCommand('insertHTML', false, `<img src="${url}" alt="ß║únh" style="max-width:100%;height:auto;border-radius:8px;margin:12px 0" /><p><br></p>`)
         setTimeout(() => { if (editorRef.current) onChange(editorRef.current.innerHTML) }, 10)
       }
     }
@@ -138,48 +115,48 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
       <div className="re-wrap">
         <div className="re-toolbar">
           <select className="re-select" onChange={e => { handleFormat(e.target.value); e.target.value = '' }} defaultValue="">
-            <option value="" disabled>Định dạng</option>
-            <option value="p">Đoạn văn</option>
+            <option value="" disabled>─Éß╗ïnh dß║íng</option>
+            <option value="p">─Éoß║ín v─ân</option>
             <option value="h1">Heading 1 (H1)</option>
             <option value="h2">Heading 2 (H2)</option>
             <option value="h3">Heading 3 (H3)</option>
             <option value="h4">Heading 4 (H4)</option>
             <option value="pre">Code Block</option>
-            <option value="blockquote">Trích dẫn</option>
+            <option value="blockquote">Tr├¡ch dß║½n</option>
           </select>
           <div className="re-sep" />
 
-          <button type="button" className="re-btn" onClick={() => exec('bold')} title="In đậm (Ctrl+B)"><b>B</b></button>
-          <button type="button" className="re-btn" onClick={() => exec('italic')} title="In nghiêng (Ctrl+I)"><i>I</i></button>
-          <button type="button" className="re-btn" onClick={() => exec('underline')} title="Gạch chân (Ctrl+U)"><u>U</u></button>
-          <button type="button" className="re-btn" onClick={() => exec('strikeThrough')} title="Gạch ngang"><s>S</s></button>
+          <button type="button" className="re-btn" onClick={() => exec('bold')} title="In ─æß║¡m (Ctrl+B)"><b>B</b></button>
+          <button type="button" className="re-btn" onClick={() => exec('italic')} title="In nghi├¬ng (Ctrl+I)"><i>I</i></button>
+          <button type="button" className="re-btn" onClick={() => exec('underline')} title="Gß║ích ch├ón (Ctrl+U)"><u>U</u></button>
+          <button type="button" className="re-btn" onClick={() => exec('strikeThrough')} title="Gß║ích ngang"><s>S</s></button>
           <div className="re-sep" />
 
-          <button type="button" className="re-btn" onClick={() => exec('insertUnorderedList')} title="Danh sách">
+          <button type="button" className="re-btn" onClick={() => exec('insertUnorderedList')} title="Danh s├ích">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
           </button>
-          <button type="button" className="re-btn" onClick={() => exec('insertOrderedList')} title="Danh sách số">
+          <button type="button" className="re-btn" onClick={() => exec('insertOrderedList')} title="Danh s├ích sß╗æ">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><text x="3" y="8" fontSize="8" fill="currentColor" stroke="none">1</text><text x="3" y="14" fontSize="8" fill="currentColor" stroke="none">2</text><text x="3" y="20" fontSize="8" fill="currentColor" stroke="none">3</text></svg>
           </button>
           <div className="re-sep" />
 
-          <button type="button" className="re-btn" onClick={insertLink} title="Chèn link">
+          <button type="button" className="re-btn" onClick={insertLink} title="Ch├¿n link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
           </button>
 
-          {/* New image button — opens modal with alignment+size options */}
-          <button type="button" className="re-btn-img" onClick={() => { saveEditorSelection(); setShowImageModal(true) }} title="Chèn ảnh (có tùy chỉnh vị trí & kích thước)">
+          {/* New image button ΓÇö opens modal with alignment+size options */}
+          <button type="button" className="re-btn-img" onClick={() => setShowImageModal(true)} title="Ch├¿n ß║únh (c├│ t├╣y chß╗ënh vß╗ï tr├¡ & k├¡ch th╞░ß╗¢c)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            Chèn ảnh
+            Ch├¿n ß║únh
           </button>
 
-          <button type="button" className="re-btn" onClick={insertTable} title="Chèn bảng">
+          <button type="button" className="re-btn" onClick={insertTable} title="Ch├¿n bß║úng">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
           </button>
-          <button type="button" className="re-btn" onClick={insertHR} title="Đường kẻ ngang">—</button>
+          <button type="button" className="re-btn" onClick={insertHR} title="─É╞░ß╗¥ng kß║╗ ngang">ΓÇö</button>
           <div className="re-sep" />
 
-          <button type="button" className={`re-btn${showSource ? ' active' : ''}`} onClick={() => setShowSource(!showSource)} title="Xem mã nguồn HTML">
+          <button type="button" className={`re-btn${showSource ? ' active' : ''}`} onClick={() => setShowSource(!showSource)} title="Xem m├ú nguß╗ôn HTML">
             {'</>'}
           </button>
         </div>
@@ -204,8 +181,8 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
         )}
 
         <div className="re-footer">
-          <span>{showSource ? 'Chế độ HTML' : 'Chế độ soạn thảo · Click "Chèn ảnh" để thêm ảnh tại vị trí con trỏ với tùy chỉnh đầy đủ'}</span>
-          <span>{value ? `${value.replace(/<[^>]*>/g, '').length} ký tự` : '0 ký tự'}</span>
+          <span>{showSource ? 'Chß║┐ ─æß╗Ö HTML' : 'Chß║┐ ─æß╗Ö soß║ín thß║úo ┬╖ Click "Ch├¿n ß║únh" ─æß╗â th├¬m ß║únh tß║íi vß╗ï tr├¡ con trß╗Å vß╗¢i t├╣y chß╗ënh ─æß║ºy ─æß╗º'}</span>
+          <span>{value ? `${value.replace(/<[^>]*>/g, '').length} k├╜ tß╗▒` : '0 k├╜ tß╗▒'}</span>
         </div>
       </div>
 
