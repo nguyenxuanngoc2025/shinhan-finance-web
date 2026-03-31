@@ -12,8 +12,18 @@ interface RichEditorProps {
 export default function RichEditor({ value, onChange, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const savedRangeRef = useRef<Range | null>(null)  // save cursor pos before modal opens
+  const [initialValue] = useState(value) // keep initial value to prevent cursor jump
   const [showSource, setShowSource] = useState(false)
   const [showImageModal, setShowImageModal] = useState(false)
+
+  // Sync external value changes (e.g., loaded from API) WITHOUT breaking typing
+  useEffect(() => {
+    if (!editorRef.current) return
+    // Only update innerHTML if it's different and we are NOT actively typing in it
+    if (value !== editorRef.current.innerHTML && document.activeElement !== editorRef.current) {
+      editorRef.current.innerHTML = value || ''
+    }
+  }, [value])
 
   // Save current selection (cursor position) in editor
   function saveEditorSelection() {
@@ -215,12 +225,13 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
             className="re-editor"
             contentEditable
             data-placeholder={placeholder}
-            dangerouslySetInnerHTML={{ __html: value }}
             onInput={onInput}
             onBlur={onInput}
             onMouseUp={saveEditorSelection}
             onKeyUp={saveEditorSelection}
             suppressContentEditableWarning
+            /* Initial value only via dangerouslySetInnerHTML to prevent cursor jumps */
+            dangerouslySetInnerHTML={{ __html: initialValue || '' }}
           />
         )}
 
