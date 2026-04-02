@@ -63,7 +63,9 @@ export async function POST(request: Request) {
       seo_title: body.seo_title || null,
       seo_description: body.seo_description || null,
       status: body.status || 'draft',
-      published_at: body.status === 'published' ? new Date().toISOString() : null,
+      published_at: body.status === 'published' 
+        ? new Date().toISOString() 
+        : body.status === 'scheduled' ? body.published_at : null,
       // Auto SEO fields
       source: body.source || 'manual',
       priority: body.priority || 'normal',

@@ -30,6 +30,8 @@ export default function EditPostPage() {
         let content = ''
         if (typeof p.content === 'string') {
           content = p.content
+        } else if (p.content && typeof p.content === 'object' && 'html' in p.content) {
+          content = (p.content as any).html || ''
         } else if (Array.isArray(p.content) && p.content.length > 0) {
           content = p.content.map((c: any) => c.text || c.html || '').join('\n')
         }

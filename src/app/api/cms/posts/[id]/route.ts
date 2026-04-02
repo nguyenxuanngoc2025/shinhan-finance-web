@@ -18,7 +18,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const body = await request.json()
 
   // Remove fields that don't exist in DB schema
-  const { seo_image: _seoImg, ...cleanBody } = body
+  const { id: _id, created_at: _cat, updated_at: _uat, ...cleanBody } = body
   // Wrap content as JSON if it's a raw HTML string
   if (cleanBody.content && typeof cleanBody.content === 'string') {
     cleanBody.content = { html: cleanBody.content, type: 'html' }
@@ -29,7 +29,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     .update({
       ...cleanBody,
       updated_at: new Date().toISOString(),
-      published_at: body.status === 'published' ? (body.published_at || new Date().toISOString()) : null,
+      published_at: body.status === 'published' 
+        ? (body.published_at || new Date().toISOString()) 
+        : body.status === 'scheduled' ? body.published_at : null,
     })
     .eq('id', id)
     .select()
