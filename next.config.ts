@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
       { hostname: 'studio.ngocnguyenxuan.com' },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: 'https://tuvanvienshinhan.com/uploads/:path*',
+      },
+    ]
+  },
   // Security headers
   poweredByHeader: false,
   async headers() {

@@ -17,17 +17,26 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const { id } = await params
   const body = await request.json()
 
-  // Remove fields that don't exist in DB schema
-  const { id: _id, created_at: _cat, updated_at: _uat, ...cleanBody } = body
-  // Wrap content as JSON if it's a raw HTML string
-  if (cleanBody.content && typeof cleanBody.content === 'string') {
-    cleanBody.content = { html: cleanBody.content, type: 'html' }
+  // Extract only fields that exist in the DB schema to avoid 500 errors from extra UI fields
+  const allowedFields = [
+    'title', 'slug', 'excerpt', 'content', 'cover_image', 'category', 'tags',
+    'seo_title', 'seo_description', 'status', 'published_at', 'source',
+    'priority', 'auto_generated', 'source_url', 'keyword_target', 'author', 'canonical_url'
+  ]
+  const dbBody: any = {}
+  allowedFields.forEach(f => {
+    if (f in body) dbBody[f] = body[f]
+  })
+
+  // Wrap content as JSON if it's a raw HTML string (only if content is in dbBody)
+  if (dbBody.content && typeof dbBody.content === 'string') {
+    dbBody.content = { html: dbBody.content, type: 'html' }
   }
 
   const { data, error } = await supabaseAdmin
     .from('posts')
     .update({
-      ...cleanBody,
+      ...dbBody,
       updated_at: new Date().toISOString(),
       published_at: body.status === 'published' 
         ? (body.published_at || new Date().toISOString()) 
@@ -37,7 +46,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    console.error('Update error:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
   return NextResponse.json({ data })
 }
 
