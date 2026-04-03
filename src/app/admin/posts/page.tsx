@@ -81,7 +81,7 @@ export default function PostsPage() {
   async function deletePost(id: string) {
     if (!confirm('Bạn có chắc muốn xóa bài viết này?')) return
     await fetch(`/api/cms/posts/${id}`, { method: 'DELETE' })
-    fetchPosts()
+    fetchPosts(page, filter)
   }
 
   function formatDate(dateStr: string) {
