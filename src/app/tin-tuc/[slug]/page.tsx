@@ -185,20 +185,12 @@ async function getRelatedArticles(category: string, currentSlug: string, current
 }
 
 export async function generateStaticParams() {
-  // Include hardcoded slugs
+  // Include hardcoded slugs only.
+  // We DELIBERATELY do not pre-render all CMS slugs here to prevent OOM
+  // crashes on the VPS during 'next build' for hundreds of articles.
+  // Instead, CMS articles will be generated on-demand (ISR) upon first visit
+  // because export const dynamicParams = true.
   const params = NEWS_ARTICLES.map(article => ({ slug: article.slug }))
-
-  // Also include CMS slugs — chỉ fetch slug field, không cần nội dung
-  try {
-    const cmsSlugs = await getAllCmsSlugs()
-    for (const post of cmsSlugs) {
-      if (!params.find(p => p.slug === post.slug)) {
-        params.push({ slug: post.slug })
-      }
-    }
-  } catch {
-    // ignore — hardcoded slugs are always included
-  }
 
   return params
 }
