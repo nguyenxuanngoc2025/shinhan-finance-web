@@ -6,7 +6,8 @@
     "dev": "next dev -p 3005",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "node -e \"const fs=require('fs'),path=require('path');const src=path.join('node_modules','tinymce');const dst=path.join('public','tinymce');if(fs.existsSync(src)){fs.cpSync(src,dst,{recursive:true,force:true});console.log('TinyMCE assets copied to public/tinymce')}\""
   },
   "dependencies": {
     "@payloadcms/db-sqlite": "^3.79.1",
