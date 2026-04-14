@@ -13,7 +13,8 @@ import ShareButtons from '@/components/ShareButtons'
 
 // Allow slugs not in generateStaticParams to be rendered on-demand (SSR)
 export const dynamicParams = true
-export const dynamic = 'force-dynamic'
+// ISR: cache 5 phút — không force SSR từng request
+export const revalidate = 300
 
 const CATEGORY_LABELS: Record<NewsCategory, string> = {
   'khuyen-mai': 'Khuyến mại',

@@ -9,7 +9,8 @@ import { NEWS_ARTICLES, CATEGORIES, type NewsCategory } from './news-data'
 import { supabaseAdmin } from '@/lib/supabase'
 import NewsTabs from './NewsTabs'
 
-export const dynamic = 'force-dynamic'
+// ISR: cache 5 phút, tự revalidate — không force SSR từng request
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Tin tức & Khuyến mãi | Shinhan Bank',

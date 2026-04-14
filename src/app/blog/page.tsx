@@ -8,7 +8,8 @@ import '../tin-tuc/news.css'
 import { supabaseAdmin } from '@/lib/supabase'
 import BlogPagination from './BlogPagination'
 
-export const dynamic = 'force-dynamic'
+// ISR: cache 5 phút — không force SSR từng request
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Blog Tài chính | Shinhan Bank',

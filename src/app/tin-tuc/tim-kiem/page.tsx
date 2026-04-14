@@ -7,6 +7,10 @@ import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import '../news.css'
 
+// Search page: mỗi user query đều khác nhau — dùng dynamic để cho phép queryParam
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 type Props = {
   searchParams: Promise<{ q?: string }>
 }

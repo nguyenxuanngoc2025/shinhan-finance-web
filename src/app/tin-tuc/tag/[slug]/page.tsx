@@ -7,6 +7,9 @@ import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import '../../news.css'
 
+// ISR: cache 5 phút — không query DB mỗi request
+export const revalidate = 300
+
 type Props = {
   params: Promise<{ slug: string }>
 }
@@ -31,27 +34,16 @@ export default async function TagPage({ params }: Props) {
   const { slug } = await params
   const decodedTag = decodeURIComponent(slug).replace(/-/g, ' ')
 
-  // Fetch Posts containing this tag using Contains string functionality in Supabase array
-  // Warning: tags is string[] in postgres
-  const { data: ObjectData } = await supabaseAdmin
+  // Dùng .contains() để filter trực tiếp trên DB, có limit — không fetch ALL
+  const { data: postsData } = await supabaseAdmin
     .from('posts')
     .select('slug,title,excerpt,cover_image,published_at,created_at,tags')
     .eq('status', 'published')
+    .contains('tags', [decodedTag])
     .order('published_at', { ascending: false })
+    .limit(50)
 
-  // Manual filter because tags array filtering in supabase JS can be tricky
-  // with simple text elements inside JSON/Array sometimes. We'll do it elegantly:
-  let posts: any[] = []
-  if (ObjectData) {
-    posts = ObjectData.filter(p => {
-      if (!p.tags || !Array.isArray(p.tags)) return false
-      // Match exactly or closely
-      return p.tags.some((t: string) => 
-        t.trim().toLowerCase() === decodedTag.toLowerCase() || 
-        t.trim().toLowerCase().includes(decodedTag.toLowerCase())
-      )
-    })
-  }
+  const posts: any[] = postsData || []
 
   return (
     <>

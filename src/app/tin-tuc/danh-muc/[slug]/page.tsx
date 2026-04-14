@@ -7,6 +7,9 @@ import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import '../../news.css'
 
+// ISR: cache 5 phút — không query DB mỗi request
+export const revalidate = 300
+
 type Props = {
   params: Promise<{ slug: string }>
 }
