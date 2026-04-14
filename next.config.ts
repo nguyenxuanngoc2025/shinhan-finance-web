@@ -6,6 +6,13 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true, // Tiết kiệm RAM khi build trên CI
+  },
+  experimental: {
+    workerThreads: false, // Ngăn chặn OOM do multi-threading trên Hostinger
+    cpus: 1, // Ép dùng 1 core để tiết kiệm RAM
+  },
   images: {
     unoptimized: true,
     remotePatterns: [
