@@ -94,14 +94,34 @@ async function getAllCmsSlugs() {
 function cmsToArticle(cmsPost: any, hardcoded?: any): ArticleData {
   let content = ''
   if (typeof cmsPost.content === 'string') {
-    // Raw HTML string (shinhan_official, ai_generated cũ)
+    // Raw HTML string (legacy)
     content = cmsPost.content
   } else if (cmsPost.content && typeof cmsPost.content === 'object' && !Array.isArray(cmsPost.content)) {
-    // Object format: {html: "...", type: "html"} — scraper mới (shinhan.com.vn, shinhanfinance.com.vn)
+    // Object format: {html: "...", type: "html"} — standard format post-migration
     content = cmsPost.content.html || cmsPost.content.text || cmsPost.content.body || ''
   } else if (Array.isArray(cmsPost.content)) {
     content = cmsPost.content.map((c: any) => c.text || c.html || '').join('')
   }
+
+  // BUG #1 FIX: Strip any remaining full HTML document wrappers (frontier defense)
+  // In case a new post sneaks through with <!DOCTYPE html>
+  if (content.includes('<!DOCTYPE') || content.match(/<html[\s>]/i)) {
+    // Try to extract <body> content
+    const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i)
+    if (bodyMatch && bodyMatch[1]) {
+      content = bodyMatch[1].trim()
+    } else {
+      // Strip all document wrappers
+      content = content
+        .replace(/<!DOCTYPE[^>]*>/gi, '')
+        .replace(/<html[^>]*>/gi, '')
+        .replace(/<\/html>/gi, '')
+        .replace(/<head>[\s\S]*?<\/head>/gi, '')
+        .replace(/<\/?body[^>]*>/gi, '')
+        .trim()
+    }
+  }
+
   // If CMS content is empty, use hardcoded content as fallback
   if (!content && hardcoded) {
     content = hardcoded.content

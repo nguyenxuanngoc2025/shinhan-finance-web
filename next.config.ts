@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       { hostname: 'shinhanfinance.com.vn' },
       { hostname: 'plus.unsplash.com' },
       { hostname: 'studio.ngocnguyenxuan.com' },
+      { hostname: 'shinhan.com.vn' },
+      { hostname: 'www.shinhan.com.vn' },
+      { hostname: 'www.shinhanfinance.com.vn' },
     ],
   },
   async rewrites() {

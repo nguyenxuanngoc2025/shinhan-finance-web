@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import RichEditor from '../../components/RichEditor'
 import ImagePicker from '../../components/ImagePicker'
@@ -21,17 +21,21 @@ export default function EditPostPage() {
   })
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null)
+  // BUG #5 FIX: ref to prevent auto-save racing with manual save
+  const isSavingRef = useRef(false)
 
   useEffect(() => {
     fetch(`/api/cms/posts/${params.id}`).then(r => r.json()).then(d => {
       if (d.data) {
         const p = d.data
-        // Handle content: could be array (old format) or string (HTML)
+        // BUG #1+2 FIX: Handle all content formats correctly
+        // After DB migration, content is always {html, type} object
+        // but keep fallbacks for safety
         let content = ''
         if (typeof p.content === 'string') {
           content = p.content
-        } else if (p.content && typeof p.content === 'object' && 'html' in p.content) {
-          content = (p.content as any).html || ''
+        } else if (p.content && typeof p.content === 'object' && !Array.isArray(p.content)) {
+          content = p.content.html || p.content.text || p.content.body || ''
         } else if (Array.isArray(p.content) && p.content.length > 0) {
           content = p.content.map((c: any) => c.text || c.html || '').join('\n')
         }
@@ -57,6 +61,8 @@ export default function EditPostPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (isSavingRef.current) return // BUG #5 FIX: prevent double-save
+    isSavingRef.current = true
     setSaving(true)
     try {
       const res = await fetch(`/api/cms/posts/${params.id}`, {
@@ -70,20 +76,24 @@ export default function EditPostPage() {
               ? new Date().toISOString() 
               : null,
           tags: form.tags ? form.tags.split(',').map((t: string) => t.trim()) : [],
-          content: form.content, // HTML string
+          content: form.content, // HTML string — API will wrap it
         }),
       })
       if (res.ok) router.push('/admin/posts')
       else alert('Lỗi khi lưu')
     } finally {
       setSaving(false)
+      isSavingRef.current = false
     }
   }
 
-  // Auto Save
+  // Auto Save — BUG #5 FIX: check isSavingRef to prevent race with manual save
   useEffect(() => {
     if (loading || !form.title) return
     const timer = setTimeout(async () => {
+      // Skip if manual save is in progress
+      if (isSavingRef.current) return
+      isSavingRef.current = true
       setAutoSaveStatus('saving')
       try {
         const res = await fetch(`/api/cms/posts/${params.id}`, {
@@ -108,6 +118,8 @@ export default function EditPostPage() {
         }
       } catch (e) {
         setAutoSaveStatus('error')
+      } finally {
+        isSavingRef.current = false
       }
     }, 15000) // Auto save every 15s after user stops typing
     

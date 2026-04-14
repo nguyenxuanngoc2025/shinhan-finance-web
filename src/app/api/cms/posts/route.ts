@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { sanitizeHtmlContent, wrapContentForStorage } from '@/lib/contentUtils'
 
 // GET /api/cms/posts — List posts with optional filters
 export async function GET(request: Request) {
@@ -50,21 +51,49 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const body = await request.json()
 
+  // Deduplicate slug: check if slug already exists and append suffix if needed
+  let slug = body.slug || ''
+  if (slug) {
+    const { data: existing } = await supabaseAdmin
+      .from('posts')
+      .select('id')
+      .eq('slug', slug)
+      .maybeSingle()
+
+    if (existing) {
+      // Append random 4-digit suffix to avoid duplicate
+      slug = `${slug}-${Math.floor(Math.random() * 9000) + 1000}`
+    }
+  }
+
+  // Sanitize content: wrap HTML string into {html, type} object
+  // and strip any full HTML document tags (<!DOCTYPE>, <html>, etc.)
+  let contentValue: { html: string; type: string }
+  if (body.content && typeof body.content === 'object' && 'html' in body.content) {
+    // Already wrapped — just sanitize the html inside
+    contentValue = {
+      html: sanitizeHtmlContent(body.content.html || ''),
+      type: 'html',
+    }
+  } else {
+    contentValue = wrapContentForStorage(body.content || '')
+  }
+
   const { data, error } = await supabaseAdmin
     .from('posts')
     .insert({
       title: body.title,
-      slug: body.slug,
+      slug,
       excerpt: body.excerpt || null,
-      content: body.content ? { html: body.content, type: 'html' } : { html: '', type: 'html' },
+      content: contentValue,
       cover_image: body.cover_image || null,
       category: body.category || null,
       tags: body.tags || [],
       seo_title: body.seo_title || null,
       seo_description: body.seo_description || null,
       status: body.status || 'draft',
-      published_at: body.status === 'published' 
-        ? new Date().toISOString() 
+      published_at: body.status === 'published'
+        ? new Date().toISOString()
         : body.status === 'scheduled' ? body.published_at : null,
       // Auto SEO fields
       source: body.source || 'manual',

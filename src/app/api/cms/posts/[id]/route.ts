@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { sanitizeHtmlContent, wrapContentForStorage } from '@/lib/contentUtils'
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -28,9 +29,43 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (f in body) dbBody[f] = body[f]
   })
 
-  // Wrap content as JSON if it's a raw HTML string (only if content is in dbBody)
-  if (dbBody.content && typeof dbBody.content === 'string') {
-    dbBody.content = { html: dbBody.content, type: 'html' }
+  // BUG #1+2 FIX: Sanitize and normalize content format
+  if ('content' in dbBody) {
+    if (typeof dbBody.content === 'string') {
+      // Raw HTML string → wrap into standard object, strip DOCTYPE
+      dbBody.content = wrapContentForStorage(dbBody.content)
+    } else if (dbBody.content && typeof dbBody.content === 'object' && 'html' in dbBody.content) {
+      // Already wrapped → just sanitize the html inside
+      dbBody.content = {
+        html: sanitizeHtmlContent(dbBody.content.html || ''),
+        type: 'html',
+      }
+    }
+  }
+
+  // BUG #6 FIX: Fetch current published_at before updating
+  // Only set published_at if status is actually changing
+  const { data: current } = await supabaseAdmin
+    .from('posts')
+    .select('status, published_at')
+    .eq('id', id)
+    .single()
+
+  let published_at: string | null = current?.published_at || null
+
+  if (body.status === 'published') {
+    if (current?.status !== 'published') {
+      // Status changing to published for the first time → set now
+      published_at = body.published_at || new Date().toISOString()
+    } else {
+      // Already published → preserve original published_at (don't reset)
+      published_at = current?.published_at || body.published_at || new Date().toISOString()
+    }
+  } else if (body.status === 'scheduled') {
+    published_at = body.published_at || null
+  } else {
+    // draft → null
+    published_at = null
   }
 
   const { data, error } = await supabaseAdmin
@@ -38,9 +73,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     .update({
       ...dbBody,
       updated_at: new Date().toISOString(),
-      published_at: body.status === 'published' 
-        ? (body.published_at || new Date().toISOString()) 
-        : body.status === 'scheduled' ? body.published_at : null,
+      published_at,
     })
     .eq('id', id)
     .select()
