@@ -12,7 +12,7 @@ export async function compressImage(file: File): Promise<File> {
     const options = {
       maxSizeMB: 0.5, // Target max ~500KB
       maxWidthOrHeight: 1600, // Reasonable max resolution for web content
-      useWebWorker: true,
+      useWebWorker: false, // Set to false! Next.js/Hostinger CDN often blocks or 404s dynamic worker blobs causing the Promise to hang indefinitely without throwing!
       fileType: file.type === 'image/png' ? 'image/png' : 'image/jpeg'
     }
     const compressedBlob = await imageCompression(file, options)
