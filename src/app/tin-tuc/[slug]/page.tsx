@@ -289,16 +289,6 @@ export default async function NewsDetailPage({ params }: Props) {
               <span className="news-detail-date">{article.date ? formatDate(article.date) : ''}</span>
             </div>
 
-            <Image
-              src={article.image}
-              alt={article.title}
-              className="news-detail-cover"
-              width={900}
-              height={480}
-              style={{objectFit:'cover', width:'100%', height:'auto'}}
-              priority
-            />
-
             <TableOfContents selector=".news-detail-content" />
 
             <div
