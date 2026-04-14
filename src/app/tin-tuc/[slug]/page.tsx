@@ -135,7 +135,11 @@ function cmsToArticle(cmsPost: any, hardcoded?: any): ArticleData {
     content,
     category: (cmsPost.category || hardcoded?.category || 'blog') as NewsCategory,
     date: cmsPost.published_at || cmsPost.created_at || hardcoded?.date || '',
-    image: cmsPost.cover_image || hardcoded?.image || '/images/news/default.jpg',
+    // Ảnh đại diện: ưu tiên cover_image → fallback lấy ảnh đầu tiên trong content (chỉ để hiển thị)
+    image: cmsPost.cover_image || (() => {
+      const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i)
+      return imgMatch ? imgMatch[1] : (hardcoded?.image || '/images/news/default.jpg')
+    })(),
     tags: Array.isArray(cmsPost.tags) ? cmsPost.tags : [],
   }
 }

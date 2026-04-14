@@ -42,13 +42,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       }
     }
     
-    // Auto-extract cover image if not provided
-    if (!dbBody.cover_image && typeof dbBody.content?.html === 'string') {
-      const extractedImage = extractFirstImage(dbBody.content.html)
-      if (extractedImage) {
-        dbBody.cover_image = extractedImage
-      }
-    }
+    // KHÔNG auto-extract cover_image khi edit bài
+    // User tự chọn ảnh đại diện — ảnh trong content là ảnh trong content
+    // cover_image giữ nguyên giá trị user gửi lên (kể cả rỗng)
   }
 
   // BUG #6 FIX: Fetch current published_at before updating

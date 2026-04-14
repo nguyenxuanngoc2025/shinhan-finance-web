@@ -79,8 +79,12 @@ export async function POST(request: Request) {
     contentValue = wrapContentForStorage(body.content || '')
   }
 
-  // Auto-extract cover image if not provided
-  const coverImage = body.cover_image || extractFirstImage(contentValue.html) || null
+  // Cover image: dùng ảnh user chọn, hoặc auto-extract CHỈ cho bài tự động
+  // Bài thủ công (manual): user tự chọn cover_image, không tự extract
+  let coverImage = body.cover_image || null
+  if (!coverImage && body.source && body.source !== 'manual') {
+    coverImage = extractFirstImage(contentValue.html) || null
+  }
 
   const { data, error } = await supabaseAdmin
     .from('posts')
