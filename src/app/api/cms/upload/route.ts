@@ -24,7 +24,9 @@ function normalizeMimeType(file: File): string {
 
 export async function POST(request: Request) {
   try {
+    const t0 = Date.now()
     const formData = await request.formData()
+    const tFormData = Date.now()
     const files = formData.getAll('files') as File[]
 
     if (!files || files.length === 0) {
@@ -39,6 +41,9 @@ export async function POST(request: Request) {
     const subDir = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', subDir)
     await mkdir(uploadDir, { recursive: true })
+
+    let tWrite = 0
+    let tDB = 0
 
     for (const file of files) {
       // Normalize MIME type (SVG fix)
@@ -67,10 +72,13 @@ export async function POST(request: Request) {
       const publicUrl = `/uploads/${subDir}/${uniqueName}`
 
       // Write file to disk
+      const wt0 = Date.now()
       const buffer = Buffer.from(await file.arrayBuffer())
       await writeFile(filePath, buffer)
+      tWrite += (Date.now() - wt0)
 
       // Save metadata to Supabase
+      const db0 = Date.now()
       const { data, error } = await supabaseAdmin
         .from('media')
         .insert({
@@ -82,6 +90,7 @@ export async function POST(request: Request) {
         })
         .select()
         .single()
+      tDB += (Date.now() - db0)
 
       if (error) {
         errors.push(`${file.name}: DB error — ${error.message}`)
@@ -95,6 +104,12 @@ export async function POST(request: Request) {
       errors: errors.length > 0 ? errors : undefined,
       uploaded: results.length,
       total: files.length,
+      timing: {
+        formData: tFormData - t0,
+        write: tWrite,
+        db: tDB,
+        total: Date.now() - t0
+      }
     }, { status: 201 })
   } catch (err: unknown) {
     return NextResponse.json(

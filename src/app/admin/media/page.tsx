@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { compressImage } from '@/lib/compress'
 
 type MediaItem = {
   id: string
@@ -86,12 +87,22 @@ export default function MediaPage() {
     if (arr.length === 0) return
 
     setUploading(true)
-    setUploadProgress(`Đang upload ${arr.length} file...`)
-
-    const formData = new FormData()
-    arr.forEach(f => formData.append('files', f))
+    setUploadProgress(`Đang xử lý và nén ảnh...`)
 
     try {
+      const formData = new FormData()
+      for (let i = 0; i < arr.length; i++) {
+        const compressedFile = await compressImage(arr[i])
+        if (compressedFile.size > 5 * 1024 * 1024) {
+          alert(`File "${compressedFile.name}" vẫn nặng hơn 5MB sau khi tối ưu. Vui lòng thử ảnh khác.`);
+          setUploading(false);
+          setUploadProgress('');
+          return;
+        }
+        formData.append('files', compressedFile)
+      }
+
+      setUploadProgress(`Đang tải lên ${arr.length} file...`)
       const res = await fetch('/api/cms/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.errors?.length) {

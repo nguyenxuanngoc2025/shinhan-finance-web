@@ -56,6 +56,8 @@ function formatFileSize(bytes: number) {
   return `${(bytes / 1e6).toFixed(1)} MB`
 }
 
+import { compressImage } from '@/lib/compress'
+
 export default function ImageInsertModal({ onInsert, onClose }: Props) {
   const [tab, setTab] = useState<'library' | 'upload' | 'url'>('library')
   const [files, setFiles] = useState<MediaItem[]>([])
@@ -97,13 +99,26 @@ export default function ImageInsertModal({ onInsert, onClose }: Props) {
       return !allowedMimes.includes(f.type) && !allowedExts.includes(ext)
     })
     if (invalid) { alert(`"${invalid.name}": Định dạng không hỗ trợ`); return }
-    const oversized = arr.find(f => f.size > 5 * 1024 * 1024)
-    if (oversized) { alert(`"${oversized.name}" vượt quá 5MB`); return }
 
     setUploading(true)
-    const fd = new FormData()
-    arr.forEach(f => fd.append('files', f))
+    
     try {
+      const fd = new FormData()
+      
+      // Compress files before uploading to prevent server OOM and 504 timeouts
+      for (let i = 0; i < arr.length; i++) {
+        const compressedFile = await compressImage(arr[i])
+        
+        // Final size check after compression fallback
+        if (compressedFile.size > 5 * 1024 * 1024) { 
+          alert(`"${compressedFile.name}" vẫn vượt quá 5MB sau khi tối ưu`); 
+          setUploading(false);
+          return 
+        }
+        
+        fd.append('files', compressedFile)
+      }
+
       const res  = await fetch('/api/cms/upload', { method: 'POST', body: fd })
       const data = await res.json()
       if (data.data?.[0]) {
@@ -112,7 +127,7 @@ export default function ImageInsertModal({ onInsert, onClose }: Props) {
         setTab('library')
       }
       fetchMedia()
-    } catch { alert('Upload thất bại') }
+    } catch { alert('Upload bị lỗi do mạng hoặc server, vui lòng thử lại sau.') }
     finally { setUploading(false) }
   }
 
