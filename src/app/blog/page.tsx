@@ -6,7 +6,6 @@ import Footer from '@/components/Footer'
 import FloatingButtons from '@/components/FloatingButtons'
 import '../tin-tuc/news.css'
 import { supabaseAdmin } from '@/lib/supabase'
-import BlogPagination from './BlogPagination'
 
 // ISR: cache 5 phút — không force SSR từng request
 export const revalidate = 300
@@ -41,32 +40,21 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
-type Props = {
-  searchParams: Promise<{ page?: string }>
-}
-
-export default async function BlogPage({ searchParams }: Props) {
-  const params = await searchParams
-  const page = Math.max(1, parseInt(params.page || '1'))
-  const limit = 12
-  const from = (page - 1) * limit
-  const to = from + limit - 1
-
+export default async function BlogPage() {
+  const limit = 30
   let posts: BlogPost[] = []
-  let totalPages = 1
 
   try {
-    const { data, error, count } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('posts')
-      .select('id,slug,title,excerpt,category,cover_image,published_at,created_at,author', { count: 'exact' })
+      .select('id,slug,title,excerpt,category,cover_image,published_at,created_at,author')
       .eq('status', 'published')
       .eq('category', 'blog')
       .order('published_at', { ascending: false })
-      .range(from, to)
+      .limit(limit)
 
     if (!error && data) {
       posts = data as BlogPost[]
-      totalPages = Math.ceil((count || 0) / limit)
     }
   } catch {
     // fallback empty
@@ -126,11 +114,6 @@ export default async function BlogPage({ searchParams }: Props) {
                   </article>
                 ))}
               </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <BlogPagination currentPage={page} totalPages={totalPages} />
-              )}
             </>
           )}
         </div>

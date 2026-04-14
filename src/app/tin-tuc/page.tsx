@@ -105,18 +105,9 @@ function hardcodedToItems(): ArticleItem[] {
   }))
 }
 
-type Props = {
-  searchParams: Promise<{ tab?: string }>
-}
-
-export default async function NewsPage({ searchParams }: Props) {
-  const params = await searchParams
-  const tab = VALID_TABS.includes(params.tab || '') ? params.tab! : 'tat-ca'
+export default async function NewsPage() {
+  const tab = 'tat-ca'
   const articles = await getArticles()
-
-  const filtered = tab === 'tat-ca'
-    ? articles
-    : articles.filter(a => a.category === tab)
 
   const articlesByCategory = SECTION_CATEGORIES.map(cat => ({
     category: cat,
@@ -145,53 +136,34 @@ export default async function NewsPage({ searchParams }: Props) {
 
         {/* Content area */}
         <div className="container">
-          {tab === 'tat-ca' ? (
-            <>
-              {/* Featured: 3 bài mới nhất */}
-              <section className="news-featured">
-                <div className="news-featured-grid">
-                  {articles.slice(0, 3).map(article => (
-                    <NewsCard key={article.slug} article={article} />
-                  ))}
-                </div>
-              </section>
-
-              {/* Sections by category */}
-              {articlesByCategory.map(group => (
-                <section key={group.category} className="news-section">
-                  <div className="news-section-header">
-                    <h2 className="news-section-title">{group.label}</h2>
-                    <Link
-                      href={`/tin-tuc?tab=${group.category}`}
-                      className="news-section-more"
-                    >
-                      Xem tiếp <i className="fas fa-chevron-right"></i>
-                    </Link>
-                  </div>
-                  <div className="news-section-content">
-                    {group.articles.slice(0, 1).map(article => (
-                      <NewsCard key={article.slug} article={article} />
-                    ))}
-                  </div>
-                </section>
+          {/* Featured: 3 bài mới nhất */}
+          <section className="news-featured">
+            <div className="news-featured-grid">
+              {articles.slice(0, 3).map(article => (
+                <NewsCard key={article.slug} article={article} />
               ))}
-            </>
-          ) : (
-            <>
-              {filtered.length === 0 ? (
-                <div className="news-empty">
-                  <i className="fas fa-newspaper"></i>
-                  <p>Chưa có bài viết trong danh mục này</p>
-                </div>
-              ) : (
-                <div className="news-grid">
-                  {filtered.map(article => (
-                    <NewsCard key={article.slug} article={article} />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+            </div>
+          </section>
+
+          {/* Sections by category */}
+          {articlesByCategory.map(group => (
+            <section key={group.category} className="news-section">
+              <div className="news-section-header">
+                <h2 className="news-section-title">{group.label}</h2>
+                <Link
+                  href={`/tin-tuc/danh-muc/${group.category}`}
+                  className="news-section-more"
+                >
+                  Xem tiếp <i className="fas fa-chevron-right"></i>
+                </Link>
+              </div>
+              <div className="news-section-content">
+                {group.articles.slice(0, 1).map(article => (
+                  <NewsCard key={article.slug} article={article} />
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       </main>
       <Footer />

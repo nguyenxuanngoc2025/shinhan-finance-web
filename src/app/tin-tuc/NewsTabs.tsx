@@ -16,7 +16,7 @@ export default function NewsTabs({ activeTab, categories }: { activeTab: string;
           {categories.map(cat => (
             <Link
               key={cat.id}
-              href={cat.id === 'tat-ca' ? '/tin-tuc' : `/tin-tuc?tab=${cat.id}`}
+              href={cat.id === 'tat-ca' ? '/tin-tuc' : `/tin-tuc/danh-muc/${cat.id}`}
               className={`news-tab${activeTab === cat.id ? ' active' : ''}`}
             >
               {cat.label}
