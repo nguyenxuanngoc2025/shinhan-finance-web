@@ -13,6 +13,7 @@
     "@payloadcms/next": "^3.79.1",
     "@payloadcms/richtext-lexical": "^3.79.1",
     "@supabase/supabase-js": "^2.99.2",
+    "@tinymce/tinymce-react": "^6.3.0",
     "browser-image-compression": "^2.0.2",
     "dotenv": "^17.4.2",
     "graphql": "^16.13.1",
@@ -20,7 +21,8 @@
     "payload": "^3.79.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "tinymce": "^8.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",

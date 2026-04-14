@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif', 'image/bmp', 'image/tiff']
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'avif', 'bmp', 'tiff', 'tif']
 const MAX_SIZE = 5 * 1024 * 1024 // 5MB
+const BUCKET_NAME = 'shinhan-media'
 
 // Normalize MIME type — browsers sometimes send SVG as text/xml or application/xml
 function normalizeMimeType(file: File): string {
@@ -36,11 +35,9 @@ export async function POST(request: Request) {
     const results: { id: string; filename: string; url: string; mime_type: string; size: number }[] = []
     const errors: string[] = []
 
-    // Create upload directory: /public/uploads/YYYY-MM/
+    // Directory mimicking: /YYYY-MM/
     const now = new Date()
     const subDir = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', subDir)
-    await mkdir(uploadDir, { recursive: true })
 
     let tWrite = 0
     let tDB = 0
@@ -68,16 +65,31 @@ export async function POST(request: Request) {
         .replace(/-+/g, '-')
         .substring(0, 60)
       const uniqueName = `${baseName}-${Date.now()}.${ext}`
-      const filePath = path.join(uploadDir, uniqueName)
-      const publicUrl = `/uploads/${subDir}/${uniqueName}`
+      const storagePath = `${subDir}/${uniqueName}`
 
-      // Write file to disk
+      // Upload file to Supabase Storage
       const wt0 = Date.now()
-      const buffer = Buffer.from(await file.arrayBuffer())
-      await writeFile(filePath, buffer)
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from(BUCKET_NAME)
+        .upload(storagePath, file, {
+          contentType: mimeType,
+          cacheControl: '31536000',
+          upsert: false
+        })
       tWrite += (Date.now() - wt0)
 
-      // Save metadata to Supabase
+      if (uploadError) {
+        errors.push(`${file.name}: Lỗi upload tới Cloud - ${uploadError.message}`)
+        continue
+      }
+
+      // Get public URL
+      const { data: publicUrlData } = supabaseAdmin.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(storagePath)
+      const publicUrl = publicUrlData.publicUrl
+
+      // Save metadata to Supabase DB 'media' table
       const db0 = Date.now()
       const { data, error } = await supabaseAdmin
         .from('media')
@@ -85,7 +97,7 @@ export async function POST(request: Request) {
           filename: file.name,
           url: publicUrl,
           alt_text: baseName.replace(/-/g, ' '),
-          mime_type: mimeType, // use normalized mime type
+          mime_type: mimeType,
           size: file.size,
         })
         .select()
