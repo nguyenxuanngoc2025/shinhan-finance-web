@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { sanitizeHtmlContent, wrapContentForStorage } from '@/lib/contentUtils'
+import { sanitizeHtmlContent, wrapContentForStorage, extractFirstImage } from '@/lib/contentUtils'
 
 // GET /api/cms/posts — List posts with optional filters
 export async function GET(request: Request) {
@@ -79,6 +79,9 @@ export async function POST(request: Request) {
     contentValue = wrapContentForStorage(body.content || '')
   }
 
+  // Auto-extract cover image if not provided
+  const coverImage = body.cover_image || extractFirstImage(contentValue.html) || null
+
   const { data, error } = await supabaseAdmin
     .from('posts')
     .insert({
@@ -86,7 +89,7 @@ export async function POST(request: Request) {
       slug,
       excerpt: body.excerpt || null,
       content: contentValue,
-      cover_image: body.cover_image || null,
+      cover_image: coverImage,
       category: body.category || null,
       tags: body.tags || [],
       seo_title: body.seo_title || null,

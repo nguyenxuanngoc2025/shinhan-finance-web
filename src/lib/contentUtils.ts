@@ -72,3 +72,13 @@ export function wrapContentForStorage(htmlString: string): { html: string; type:
     type: 'html',
   }
 }
+
+/**
+ * Extract the first image src attribute from an HTML string
+ * Used as a fallback for cover_image
+ */
+export function extractFirstImage(html: string): string | null {
+  if (!html) return null
+  const imgMatch = html.match(/<img[^>]+src=["']([^"']+)["']/i)
+  return imgMatch ? imgMatch[1] : null
+}

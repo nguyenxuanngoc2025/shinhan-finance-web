@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { sanitizeHtmlContent, wrapContentForStorage } from '@/lib/contentUtils'
+import { sanitizeHtmlContent, wrapContentForStorage, extractFirstImage } from '@/lib/contentUtils'
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -39,6 +39,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       dbBody.content = {
         html: sanitizeHtmlContent(dbBody.content.html || ''),
         type: 'html',
+      }
+    }
+    
+    // Auto-extract cover image if not provided
+    if (!dbBody.cover_image && typeof dbBody.content?.html === 'string') {
+      const extractedImage = extractFirstImage(dbBody.content.html)
+      if (extractedImage) {
+        dbBody.cover_image = extractedImage
       }
     }
   }
