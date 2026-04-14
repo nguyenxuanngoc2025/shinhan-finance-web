@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       { hostname: 'images.unsplash.com' },
       { hostname: 'source.unsplash.com' },
