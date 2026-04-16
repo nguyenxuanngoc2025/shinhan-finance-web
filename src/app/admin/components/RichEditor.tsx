@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import type { Editor as TinyMCEEditor } from 'tinymce'
 
@@ -12,35 +12,15 @@ interface RichEditorProps {
 
 export default function RichEditor({ value, onChange, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
   const editorRef = useRef<TinyMCEEditor | null>(null)
-  const isInternalChange = useRef(false)
-  const valueRef = useRef(value)
-
-  // Always keep the latest value in ref to avoid stale closure during onInit
-  useEffect(() => {
-    valueRef.current = value
-  }, [value])
-
-  // Sync external value changes (e.g. parent form reset, initial load)
-  useEffect(() => {
-    if (editorRef.current && !isInternalChange.current) {
-      const currentContent = editorRef.current.getContent()
-      if (currentContent !== value) {
-        editorRef.current.setContent(value || '')
-      }
-    }
-    isInternalChange.current = false
-  }, [value])
 
   return (
     <Editor
       tinymceScriptSrc="/tinymce/tinymce.min.js"
       licenseKey="gpl"
+      value={value}
+      onEditorChange={(newContent) => onChange(newContent)}
       onInit={(_evt, editor) => {
         editorRef.current = editor
-        // Use the latest value from ref to avoid setting stale empty content from initial render
-        if (valueRef.current) {
-          editor.setContent(valueRef.current)
-        }
       }}
       init={{
         height: 500,
@@ -97,36 +77,26 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
           if (data.data?.[0]?.url) return data.data[0].url
           throw new Error(data.errors?.[0] || 'Upload ảnh thất bại')
         },
-        // Image dialog settings
         image_advtab: true,
         image_caption: true,
-        // Table settings
         table_default_styles: { 'width': '100%', 'border-collapse': 'collapse' },
         table_responsive_width: true,
-        // Paste settings
         paste_data_images: true,
         paste_as_text: false,
-        // Autoresize
         autoresize_bottom_margin: 24,
         min_height: 400,
         max_height: 900,
-        // Link settings
         link_assume_external_targets: true,
         link_context_toolbar: true,
         target_list: [
           { title: 'Cửa sổ mới', value: '_blank' },
           { title: 'Cùng cửa sổ', value: '_self' },
         ],
-        // Word count in status bar
         statusbar: true,
         elementpath: false,
         resize: false,
         branding: false,
         promotion: false,
-      }}
-      onEditorChange={(newContent) => {
-        isInternalChange.current = true
-        onChange(newContent)
       }}
     />
   )

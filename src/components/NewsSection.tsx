@@ -44,26 +44,22 @@ export default function NewsSection() {
   useEffect(() => {
     async function fetchNews() {
       try {
-        // Priority 1: Shinhan official high-priority posts (khuyến mại, sự kiện gần đây)
-        let res = await fetch('/api/cms/posts?priority=high&source=shinhan_official&limit=4').then(r => r.json())
-        let posts = res.data || []
-        
-        // Priority 2: Fallback to any Shinhan official posts (newest)
-        if (posts.length < 4) {
-          res = await fetch('/api/cms/posts?source=shinhan_official&limit=8').then(r => r.json())
-          const morePosts = (res.data || []).filter((p: NewsItem) => !posts.find((e: NewsItem) => e.slug === p.slug))
-          posts = [...posts, ...morePosts].slice(0, 4)
-        }
+        // Fetch 12 most recent posts in a single request to avoid network waterfalls
+        const res = await fetch('/api/cms/posts?limit=12').then(r => r.json())
+        const allPosts = res.data || []
 
-        // Priority 3: Fill remaining with any published post that has image
-        if (posts.length < 4) {
-          res = await fetch('/api/cms/posts?limit=8').then(r => r.json())
-          const anyPosts = (res.data || []).filter((p: NewsItem) => !posts.find((e: NewsItem) => e.slug === p.slug))
-          posts = [...posts, ...anyPosts].slice(0, 4)
-        }
+        // Sort locally: 
+        // 1. priority=high & source=shinhan_official
+        // 2. source=shinhan_official
+        // 3. remaining
+        const important = allPosts.filter((p: NewsItem) => p.priority === 'high' && p.source === 'shinhan_official')
+        const official = allPosts.filter((p: NewsItem) => p.priority !== 'high' && p.source === 'shinhan_official')
+        const rest = allPosts.filter((p: NewsItem) => p.source !== 'shinhan_official')
 
-        if (posts.length > 0) {
-          setArticles(posts.slice(0, 4))
+        const finalPosts = [...important, ...official, ...rest]
+
+        if (finalPosts.length > 0) {
+          setArticles(finalPosts.slice(0, 4))
         }
       } catch {
         /* keep fallback hardcoded data */
