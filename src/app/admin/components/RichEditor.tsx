@@ -42,11 +42,11 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
         placeholder,
         plugins: [
           'lists', 'link', 'image', 'table', 'code',
-          'searchreplace', 'autolink', 'media', 'paste',
+          'searchreplace', 'autolink', 'media',
           'autoresize', 'wordcount', 'emoticons',
         ],
         toolbar:
-          'formatselect | bold italic underline strikethrough | ' +
+          'blocks | bold italic underline strikethrough | ' +
           'forecolor backcolor | ' +
           'alignleft aligncenter alignright alignjustify | ' +
           'bullist numlist | ' +
