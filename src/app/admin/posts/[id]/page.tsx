@@ -6,6 +6,7 @@ import RichEditor from '../../components/RichEditor'
 import ImagePicker from '../../components/ImagePicker'
 import SeoScorePanel from '../../components/SeoScorePanel'
 import TocPreviewPanel from '../../components/TocPreviewPanel'
+import { sanitizeSlug } from '@/lib/slugify'
 
 export default function EditPostPage() {
   const router = useRouter()
@@ -56,7 +57,14 @@ export default function EditPostPage() {
   }, [params.id])
 
   function update(key: string, value: string) {
-    setForm(prev => ({ ...prev, [key]: value }))
+    setForm(prev => {
+      const next = { ...prev, [key]: value }
+      // Sanitize slug when user manually edits it
+      if (key === 'slug') {
+        next.slug = sanitizeSlug(value)
+      }
+      return next
+    })
   }
 
   async function handleSubmit(e: React.FormEvent) {

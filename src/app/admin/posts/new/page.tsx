@@ -6,11 +6,13 @@ import RichEditor from '../../components/RichEditor'
 import ImagePicker from '../../components/ImagePicker'
 import SeoScorePanel from '../../components/SeoScorePanel'
 import TocPreviewPanel from '../../components/TocPreviewPanel'
+import { slugify, sanitizeSlug } from '@/lib/slugify'
 
 export default function NewPostPage() {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState<'edit' | 'preview'>('edit')
+  const [slugLocked, setSlugLocked] = useState(false)
   const [categories, setCategories] = useState<{slug: string, label: string}[]>([])
   
   useEffect(() => {
@@ -34,23 +36,21 @@ export default function NewPostPage() {
     published_at: ''
   })
 
-  function autoSlug(title: string) {
-    return title
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/đ/g, 'd').replace(/Đ/g, 'd')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')
-  }
-
   function update(key: string, value: string) {
     setForm(prev => {
       const next = { ...prev, [key]: value }
-      if (key === 'title' && !prev.slug) {
-        next.slug = autoSlug(value)
+      // Auto-generate slug from title unless user has manually edited it
+      if (key === 'title' && !slugLocked) {
+        next.slug = slugify(value)
       }
+      // Auto-fill SEO title from title (only if empty)
       if (key === 'title' && !prev.seo_title) {
         next.seo_title = value
+      }
+      // Sanitize manual slug input
+      if (key === 'slug') {
+        next.slug = sanitizeSlug(value)
+        setSlugLocked(true)
       }
       return next
     })
@@ -156,6 +156,14 @@ export default function NewPostPage() {
                 onChange={e => update('slug', e.target.value)}
                 placeholder="slug-tu-dong"
               />
+              {slugLocked && (
+                <button
+                  type="button"
+                  onClick={() => { setSlugLocked(false); setForm(prev => ({ ...prev, slug: slugify(prev.title) })) }}
+                  title="Mở khóa — tự tạo lại slug từ tiêu đề"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: '#0078D4', padding: 0, whiteSpace: 'nowrap' }}
+                >↻ Tự động</button>
+              )}
             </div>
 
             <div className="post-tabs">
