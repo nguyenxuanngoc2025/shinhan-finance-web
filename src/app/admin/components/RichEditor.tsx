@@ -54,7 +54,7 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
           'blockquote hr | ' +
           'searchreplace | emoticons | code',
         toolbar_mode: 'wrap',
-        block_formats: 'Đoạn văn=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Code Block=pre; Trích dẫn=blockquote',
+        block_formats: 'Đoạn văn=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Code Block=pre; Trích dẫn=blockquote',
         content_style: `
           body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -64,6 +64,12 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
             padding: 16px 20px;
             margin: 0;
           }
+          h1 { font-size: 2em; font-weight: 700; color: #0f172a; margin: 24px 0 12px; line-height: 1.3; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+          h2 { font-size: 1.6em; font-weight: 700; color: #1e293b; margin: 20px 0 10px; line-height: 1.35; }
+          h3 { font-size: 1.35em; font-weight: 600; color: #334155; margin: 18px 0 8px; line-height: 1.4; }
+          h4 { font-size: 1.15em; font-weight: 600; color: #475569; margin: 16px 0 6px; line-height: 1.45; }
+          h5 { font-size: 1.05em; font-weight: 600; color: #64748b; margin: 14px 0 4px; line-height: 1.5; }
+          h6 { font-size: 0.95em; font-weight: 600; color: #64748b; margin: 12px 0 4px; line-height: 1.5; text-transform: uppercase; letter-spacing: 0.05em; }
           img { max-width: 100%; height: auto; border-radius: 8px; }
           table { width: 100%; border-collapse: collapse; margin: 16px 0; }
           table th, table td { border: 1px solid #d1d5db; padding: 8px 12px; }
