@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -46,19 +46,19 @@ export default function NewsSection() {
       try {
         // Priority 1: Shinhan official high-priority posts (khuyến mại, sự kiện gần đây)
         let res = await fetch('/api/cms/posts?priority=high&source=shinhan_official&limit=4').then(r => r.json())
-        let posts = (res.data || []).filter((p: NewsItem) => p.cover_image)
+        let posts = res.data || []
         
         // Priority 2: Fallback to any Shinhan official posts (newest)
         if (posts.length < 4) {
           res = await fetch('/api/cms/posts?source=shinhan_official&limit=8').then(r => r.json())
-          const morePosts = (res.data || []).filter((p: NewsItem) => p.cover_image && !posts.find((e: NewsItem) => e.slug === p.slug))
+          const morePosts = (res.data || []).filter((p: NewsItem) => !posts.find((e: NewsItem) => e.slug === p.slug))
           posts = [...posts, ...morePosts].slice(0, 4)
         }
 
         // Priority 3: Fill remaining with any published post that has image
         if (posts.length < 4) {
           res = await fetch('/api/cms/posts?limit=8').then(r => r.json())
-          const anyPosts = (res.data || []).filter((p: NewsItem) => p.cover_image && !posts.find((e: NewsItem) => e.slug === p.slug))
+          const anyPosts = (res.data || []).filter((p: NewsItem) => !posts.find((e: NewsItem) => e.slug === p.slug))
           posts = [...posts, ...anyPosts].slice(0, 4)
         }
 

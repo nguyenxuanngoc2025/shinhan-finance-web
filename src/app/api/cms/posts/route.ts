@@ -115,5 +115,10 @@ export async function POST(request: Request) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  
+  // Revalidate frontend cache when a new post is created
+  const { revalidatePath } = require('next/cache')
+  revalidatePath('/', 'layout')
+
   return NextResponse.json({ data }, { status: 201 })
 }

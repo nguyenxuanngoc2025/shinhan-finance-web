@@ -83,7 +83,6 @@ async function getArticles(): Promise<ArticleItem[]> {
     if (error || !data || data.length === 0) return hardcodedToItems()
 
     const published = data
-      .filter(p => p.cover_image)
       .map(p => ({
         slug: p.slug,
         title: p.title,
