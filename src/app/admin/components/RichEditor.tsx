@@ -13,6 +13,12 @@ interface RichEditorProps {
 export default function RichEditor({ value, onChange, placeholder = 'Bắt đầu viết nội dung...' }: RichEditorProps) {
   const editorRef = useRef<TinyMCEEditor | null>(null)
   const isInternalChange = useRef(false)
+  const valueRef = useRef(value)
+
+  // Always keep the latest value in ref to avoid stale closure during onInit
+  useEffect(() => {
+    valueRef.current = value
+  }, [value])
 
   // Sync external value changes (e.g. parent form reset, initial load)
   useEffect(() => {
@@ -31,8 +37,10 @@ export default function RichEditor({ value, onChange, placeholder = 'Bắt đầ
       licenseKey="gpl"
       onInit={(_evt, editor) => {
         editorRef.current = editor
-        // Set initial content after editor is ready
-        if (value) editor.setContent(value)
+        // Use the latest value from ref to avoid setting stale empty content from initial render
+        if (valueRef.current) {
+          editor.setContent(valueRef.current)
+        }
       }}
       init={{
         height: 500,
