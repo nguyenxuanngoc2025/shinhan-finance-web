@@ -9,10 +9,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true, // Tiết kiệm RAM khi build trên CI
   },
-  experimental: {
-    workerThreads: false, // Ngăn chặn OOM do multi-threading trên Hostinger
-    cpus: 1, // Ép dùng 1 core để tiết kiệm RAM
-  },
+  // experimental: {
+  //   workerThreads: false,
+  //   cpus: 1,
+  // },
   images: {
     unoptimized: true,
     remotePatterns: [
